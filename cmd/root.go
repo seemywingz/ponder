@@ -1,9 +1,10 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 Kevin Jayne <kevin.jayne@icloud.com>
 */
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 
@@ -18,13 +19,36 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		say("Hello, I am Ponder. I am a chatbot. I answer	questions	about	anything. Just Ask me!")
+		fmt.Println("Welcome to Ponder! Ask me anything!")
+
+		for {
+			q, err := getUserInput()
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			ans, err := getChatResponse(q)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println()
+				fmt.Print("Ponder: ")
+				for _, v := range ans.Choices {
+					say(v.Text)
+					fmt.Println(v.Text)
+					fmt.Println()
+				}
+			}
+		}
 	},
 }
 
 func say(phrase string) {
 	say := exec.Command(`say`, phrase)
-	say.Start()
+	err := say.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

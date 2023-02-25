@@ -14,45 +14,84 @@ import (
 
 func getUserInput() (string, error) {
 	fmt.Println("You:")
-	reader := bufio.NewReader(os.Stdin)
+
 	// ReadString will block until the delimiter is entered
+	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
+		trace()
 		return "", err
 	}
 	// remove the delimeter from the string
 	input = strings.TrimSuffix(input, "\n")
+	if verbose {
+		trace()
+		fmt.Println(input)
+	}
+	fmt.Println()
 	return input, nil
 }
 
+func getImageResponse(prompt string) (ImageResponse, error) {
+	imageResponse := ImageResponse{}
+	imageRequest := &ImageRequest{
+		Prompt:         prompt,
+		N:              1,
+		Size:           "1024x1024",
+		ResponseFormat: "url",
+	}
+
+	requestBodyJson, err := json.Marshal(imageRequest)
+	if err != nil {
+		return imageResponse, err
+	}
+	if verbose {
+		trace()
+		fmt.Println(string(requestBodyJson))
+	}
+	resp, err := getResponse(requestBodyJson, "images/generations")
+	if err != nil {
+		return imageResponse, err
+	}
+
+	jsonString, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return imageResponse, err
+	}
+
+	err = json.Unmarshal([]byte(jsonString), &imageResponse)
+	if err != nil {
+		return imageResponse, err
+	}
+	if verbose {
+		trace()
+		fmt.Println(string(jsonString))
+	}
+	defer resp.Body.Close()
+	return imageResponse, nil
+}
+
 func getChatResponse(prompt string) (ChatResponse, error) {
-	var chatResponse ChatResponse
+	chatResponse := ChatResponse{}
 	chatRequest := &ChatRequest{
 		Prompt:           prompt,
 		MaxTokens:        1000,
 		Model:            "text-davinci-003",
-		Temperature:      0.5,
+		Temperature:      0.9,
 		TopP:             1.0,
-		FrequencyPenalty: 0.5,
-		PresencePenalty:  0.0,
+		FrequencyPenalty: 0.0,
+		PresencePenalty:  0.6,
 	}
 	requestBodyJson, err := json.Marshal(chatRequest)
 	if err != nil {
 		return chatResponse, err
 	}
-	apiKey := "Bearer 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"
-	requestUrl := "https://api.openai.com/v1/completions"
+	if verbose {
+		trace()
+		fmt.Println(string(requestBodyJson))
+	}
 
-	httpClient := &http.Client{
-		Timeout: time.Second * 30,
-	}
-	request, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(requestBodyJson))
-	if err != nil {
-		return chatResponse, err
-	}
-	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Authorization", apiKey)
-	resp, err := httpClient.Do(request)
+	resp, err := getResponse(requestBodyJson, "completions")
 	if err != nil {
 		return chatResponse, err
 	}
@@ -66,7 +105,31 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 	if err != nil {
 		return chatResponse, err
 	}
-
+	if verbose {
+		trace()
+		fmt.Println(string(jsonString))
+	}
 	defer resp.Body.Close()
 	return chatResponse, nil
+}
+
+func getResponse(requestBodyJson []byte, endpoint string) (*http.Response, error) {
+
+	apiKey := "Bearer " + os.Getenv("OPENAI_API_KEY")
+	requestUrl := "https://api.openai.com/v1/" + endpoint
+
+	httpClient := &http.Client{
+		Timeout: time.Second * 60,
+	}
+	req, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(requestBodyJson))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", apiKey)
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

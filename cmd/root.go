@@ -7,9 +7,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
+
+var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -18,29 +21,9 @@ var rootCmd = &cobra.Command{
 	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome to Ponder! Ask me anything!")
+	// Run: func(cmd *cobra.Command, args []string) {
 
-		for {
-			q, err := getUserInput()
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			ans, err := getChatResponse(q)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				fmt.Println()
-				fmt.Print("Ponder: ")
-				for _, v := range ans.Choices {
-					say(v.Text)
-					fmt.Println(v.Text)
-					fmt.Println()
-				}
-			}
-		}
-	},
+	// },
 }
 
 func say(phrase string) {
@@ -61,13 +44,21 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ponder.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func trace() {
+	pc := make([]uintptr, 10) // at least 1 entry needed
+	runtime.Callers(2, pc)
+	f := runtime.FuncForPC(pc[0])
+	file, line := f.FileLine(pc[0])
+	fmt.Printf("%s:%d\n%s\n", file, line, f.Name())
+}
+
+func catchErr(err error) {
+	if err != nil {
+		trace()
+		fmt.Println("🛑", err)
+	}
 }

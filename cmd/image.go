@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var prompt string
-
 // imageCmd represents the image command
 var imageCmd = &cobra.Command{
 	Use:   "image",
@@ -25,9 +23,6 @@ var imageCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(imageCmd)
-
-	imageCmd.Flags().StringVarP(&prompt, "prompt", "p", "", "Prompt for image generation")
-	imageCmd.MarkFlagRequired("prompt")
 }
 
 func createImage(prompt string) {

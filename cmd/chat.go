@@ -15,34 +15,33 @@ var chatCmd = &cobra.Command{
 	Short: "Openended chat with ChatGPT",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		chat()
+		chat(prompt)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
-
 }
 
-func chat() {
-	fmt.Println("Welcome to Ponder! Ask me anything!")
+func chat(prompt string) {
+	// fmt.Println("Welcome to Ponder! Ask me anything!")
 
-	for {
-		q, err := getUserInput()
-		if err != nil {
-			fmt.Println(err)
-		}
+	// for {
+	// q, err := getUserInput()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 
-		ans, err := getChatResponse(q)
-		catchErr(err)
+	ans, err := getChatResponse(prompt)
+	catchErr(err)
 
+	fmt.Println()
+	// fmt.Print("Ponder: ")
+	for _, v := range ans.Choices {
+		say(v.Text)
+		fmt.Println(v.Text)
 		fmt.Println()
-		fmt.Print("Ponder: ")
-		for _, v := range ans.Choices {
-			say(v.Text)
-			fmt.Println(v.Text)
-			fmt.Println()
-		}
-
 	}
+
+	// }
 }

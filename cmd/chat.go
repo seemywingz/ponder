@@ -4,10 +4,17 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+var loop bool
 
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
@@ -15,33 +22,63 @@ var chatCmd = &cobra.Command{
 	Short: "Openended chat with ChatGPT",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		chat(prompt)
+
+		if loop {
+			for {
+				fmt.Println("\nYou: ")
+				prompt, err := getUserInput()
+				catchErr(err)
+				fmt.Println("\nPonder: ")
+				chat(prompt)
+			}
+		} else {
+			chat(prompt)
+		}
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
+	chatCmd.Flags().BoolVarP(&loop, "loop", "l", false, "Loop chat")
+}
+
+func say(phrase string) {
+	say := exec.Command(`say`, phrase)
+	err := say.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func chat(prompt string) {
-	// fmt.Println("Welcome to Ponder! Ask me anything!")
-
-	// for {
-	// q, err := getUserInput()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
 
 	ans, err := getChatResponse(prompt)
 	catchErr(err)
 
-	fmt.Println()
-	// fmt.Print("Ponder: ")
 	for _, v := range ans.Choices {
-		say(v.Text)
-		fmt.Println(v.Text)
-		fmt.Println()
+		text := v.Text
+		if runtime.GOOS == "darwin" {
+			say(text)
+		}
+		fmt.Println(text[2:])
 	}
 
-	// }
+}
+
+func getUserInput() (string, error) {
+	// ReadString will block until the delimiter is entered
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		trace()
+		return "", err
+	}
+	// remove the delimeter from the string
+	input = strings.TrimSuffix(input, "\n")
+	if verbose {
+		trace()
+		fmt.Println(input)
+	}
+	return input, nil
 }

@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"runtime"
 
 	"github.com/spf13/cobra"
@@ -25,14 +24,6 @@ var rootCmd = &cobra.Command{
 	// Run: func(cmd *cobra.Command, args []string) {
 
 	// },
-}
-
-func say(phrase string) {
-	say := exec.Command(`say`, phrase)
-	err := say.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

@@ -10,26 +10,6 @@ import (
 	"time"
 )
 
-// func getUserInput() (string, error) {
-// 	fmt.Println("You:")
-
-// 	// ReadString will block until the delimiter is entered
-// 	reader := bufio.NewReader(os.Stdin)
-// 	input, err := reader.ReadString('\n')
-// 	if err != nil {
-// 		trace()
-// 		return "", err
-// 	}
-// 	// remove the delimeter from the string
-// 	input = strings.TrimSuffix(input, "\n")
-// 	if verbose {
-// 		trace()
-// 		fmt.Println(input)
-// 	}
-// 	fmt.Println()
-// 	return input, nil
-// }
-
 func getImageResponse(prompt string) (ImageResponse, error) {
 	imageResponse := ImageResponse{}
 	imageRequest := &ImageRequest{
@@ -75,8 +55,8 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 		Prompt:           prompt,
 		MaxTokens:        1000,
 		Model:            "text-davinci-003",
-		Temperature:      0.9,
-		TopP:             1.0,
+		Temperature:      0,
+		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
 	}

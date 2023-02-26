@@ -52,6 +52,7 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
+		User:             "ponder",
 	}
 	requestBodyJson, err := json.Marshal(chatRequest)
 	catchErr(err)

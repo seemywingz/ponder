@@ -9,6 +9,7 @@ type ChatRequest struct {
 	FrequencyPenalty float64  `json:"frequency_penalty"`
 	PresencePenalty  float64  `json:"presence_penalty"`
 	Stop             []string `json:"stop"`
+	User             string   `json:"user"`
 }
 
 type ChatResponse struct {

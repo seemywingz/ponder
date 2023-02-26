@@ -1,36 +1,34 @@
 package cmd
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 )
 
-func getUserInput() (string, error) {
-	fmt.Println("You:")
+// func getUserInput() (string, error) {
+// 	fmt.Println("You:")
 
-	// ReadString will block until the delimiter is entered
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		trace()
-		return "", err
-	}
-	// remove the delimeter from the string
-	input = strings.TrimSuffix(input, "\n")
-	if verbose {
-		trace()
-		fmt.Println(input)
-	}
-	fmt.Println()
-	return input, nil
-}
+// 	// ReadString will block until the delimiter is entered
+// 	reader := bufio.NewReader(os.Stdin)
+// 	input, err := reader.ReadString('\n')
+// 	if err != nil {
+// 		trace()
+// 		return "", err
+// 	}
+// 	// remove the delimeter from the string
+// 	input = strings.TrimSuffix(input, "\n")
+// 	if verbose {
+// 		trace()
+// 		fmt.Println(input)
+// 	}
+// 	fmt.Println()
+// 	return input, nil
+// }
 
 func getImageResponse(prompt string) (ImageResponse, error) {
 	imageResponse := ImageResponse{}

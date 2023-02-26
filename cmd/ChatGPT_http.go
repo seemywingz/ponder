@@ -20,27 +20,20 @@ func getImageResponse(prompt string) (ImageResponse, error) {
 	}
 
 	requestBodyJson, err := json.Marshal(imageRequest)
-	if err != nil {
-		return imageResponse, err
-	}
+	catchErr(err)
+
 	if verbose {
 		trace()
 		fmt.Println(string(requestBodyJson))
 	}
 	resp, err := getResponse(requestBodyJson, "images/generations")
-	if err != nil {
-		return imageResponse, err
-	}
+	catchErr(err)
 
 	jsonString, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return imageResponse, err
-	}
+	catchErr(err)
 
 	err = json.Unmarshal([]byte(jsonString), &imageResponse)
-	if err != nil {
-		return imageResponse, err
-	}
+	catchErr(err)
 	if verbose {
 		trace()
 		fmt.Println(string(jsonString))
@@ -61,28 +54,20 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 		PresencePenalty:  0.6,
 	}
 	requestBodyJson, err := json.Marshal(chatRequest)
-	if err != nil {
-		return chatResponse, err
-	}
+	catchErr(err)
 	if verbose {
 		trace()
 		fmt.Println(string(requestBodyJson))
 	}
 
 	resp, err := getResponse(requestBodyJson, "completions")
-	if err != nil {
-		return chatResponse, err
-	}
+	catchErr(err)
 
 	jsonString, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return chatResponse, err
-	}
+	catchErr(err)
 
 	err = json.Unmarshal([]byte(jsonString), &chatResponse)
-	if err != nil {
-		return chatResponse, err
-	}
+	catchErr(err)
 	if verbose {
 		trace()
 		fmt.Println(string(jsonString))
@@ -100,14 +85,10 @@ func getResponse(requestBodyJson []byte, endpoint string) (*http.Response, error
 		Timeout: time.Second * 60,
 	}
 	req, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(requestBodyJson))
-	if err != nil {
-		return nil, err
-	}
+	catchErr(err)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", apiKey)
 	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
+	catchErr(err)
 	return resp, nil
 }

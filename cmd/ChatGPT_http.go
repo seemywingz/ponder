@@ -1,13 +1,9 @@
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
-	"os"
-	"time"
 )
 
 func getImageResponse(prompt string) (ImageResponse, error) {
@@ -26,7 +22,7 @@ func getImageResponse(prompt string) (ImageResponse, error) {
 		trace()
 		fmt.Println(string(requestBodyJson))
 	}
-	resp, err := getResponse(requestBodyJson, "images/generations")
+	resp, err := getResponse(requestBodyJson, enpoint_openai+"images/generations")
 	catchErr(err)
 
 	jsonString, err := io.ReadAll(resp.Body)
@@ -61,7 +57,7 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 		fmt.Println(string(requestBodyJson))
 	}
 
-	resp, err := getResponse(requestBodyJson, "completions")
+	resp, err := getResponse(requestBodyJson, enpoint_openai+"completions")
 	catchErr(err)
 
 	jsonString, err := io.ReadAll(resp.Body)
@@ -75,21 +71,4 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 	}
 	defer resp.Body.Close()
 	return chatResponse, nil
-}
-
-func getResponse(requestBodyJson []byte, endpoint string) (*http.Response, error) {
-
-	apiKey := "Bearer " + os.Getenv("OPENAI_API_KEY")
-	requestUrl := "https://api.openai.com/v1/" + endpoint
-
-	httpClient := &http.Client{
-		Timeout: time.Second * 60,
-	}
-	req, err := http.NewRequest("POST", requestUrl, bytes.NewBuffer(requestBodyJson))
-	catchErr(err)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", apiKey)
-	resp, err := httpClient.Do(req)
-	catchErr(err)
-	return resp, nil
 }

@@ -25,6 +25,7 @@ jobs:
             VERSION=nightly
           fi
 
+          echo "{imageNVR}={${DOCKER_IMAGE}:${VERSION}}" 
           echo "{imageNVR}={${DOCKER_IMAGE}:${VERSION}}" >> $GITHUB_STATE
 
       - name: Set up QEMU

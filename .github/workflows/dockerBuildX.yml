@@ -27,6 +27,7 @@ jobs:
 
           echo "{imageVersion}={${VERSION}}" 
           echo "{imageVersion}={${VERSION}}" >> $GITHUB_STATE
+          echo "::set-output name=production::true"
           echo "{$GITHUB_STATE}"
 
       - name: Set up QEMU

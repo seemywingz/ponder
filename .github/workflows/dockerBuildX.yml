@@ -32,10 +32,6 @@ jobs:
         run: |
           echo ${{ env.IMAGE_VERSION }}
 
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-
       - name: Build and push
         uses: docker/build-push-action@v4
         with:

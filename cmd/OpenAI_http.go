@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"time"
 )
 
 func openAI_API(requestJson, responseJson interface{}, endpoint string) {
+
+	// Marshal the JSON Request Body
 	requestBodyJson, err := json.Marshal(requestJson)
 	catchErr(err)
 	if verbose {
@@ -18,30 +19,33 @@ func openAI_API(requestJson, responseJson interface{}, endpoint string) {
 		fmt.Println(string(requestBodyJson))
 	}
 
-	apiKeyHeader := "Bearer " + OPENAI_API_KEY
+	// Create HTTP Client
 	httpClient := &http.Client{
 		Timeout: time.Second * 60,
 	}
 
+	// Format HTTP Response and Set Headers
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
 	catchErr(err)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", apiKeyHeader)
+	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
 
 	// Make the HTTP Request
 	resp, err := httpClient.Do(req)
 	catchErr(err)
 
-	// read the JSON Body
+	// Read the JSON Response Body
 	jsonString, err := io.ReadAll(resp.Body)
 	catchErr(err)
 
+	// Unmarshal the JSON Response Body
 	err = json.Unmarshal([]byte(jsonString), &responseJson)
 	catchErr(err)
 	if verbose {
 		trace()
 		fmt.Println(string(jsonString))
 	}
+	// Close the HTTP Response Body
 	defer resp.Body.Close()
 }
 
@@ -52,7 +56,7 @@ func openAI_ImageGen(prompt, imageFile string) OPENAI_ImageResponse {
 
 	if imageFile != "" {
 		endpoint += "images/edits"
-		oaiRequest = &ImageEditRequest{
+		oaiRequest = &OPENAI_ImageEditRequest{
 			Prompt:         prompt,
 			N:              1,
 			Size:           "1024x1024",
@@ -63,7 +67,7 @@ func openAI_ImageGen(prompt, imageFile string) OPENAI_ImageResponse {
 
 	} else {
 		endpoint += "images/generations"
-		oaiRequest = &ImageRequest{
+		oaiRequest = &OPENAI_ImageRequest{
 			Prompt:         prompt,
 			N:              1,
 			Size:           "1024x1024",
@@ -76,13 +80,14 @@ func openAI_ImageGen(prompt, imageFile string) OPENAI_ImageResponse {
 	}
 
 	openAI_API(oaiRequest, &oaiResponse, endpoint)
-
 	return oaiResponse
 }
 
-func getChatResponse(prompt string) (ChatResponse, error) {
-	chatResponse := ChatResponse{}
-	chatRequest := &ChatRequest{
+func openAI_Chat(prompt string) OPENAI_ChatResponse {
+	oaiResponse := OPENAI_ChatResponse{}
+	endpoint := enpoint_openai + "completions"
+
+	oaiRequest := &OPENAI_ChatRequest{
 		Prompt:           prompt,
 		MaxTokens:        1000,
 		Model:            "text-davinci-003",
@@ -90,27 +95,9 @@ func getChatResponse(prompt string) (ChatResponse, error) {
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
-		User:             "ponder" + os.Getenv("OPENAI_API_KEY"),
-	}
-	requestBodyJson, err := json.Marshal(chatRequest)
-	catchErr(err)
-	if verbose {
-		trace()
-		fmt.Println(string(requestBodyJson))
+		User:             "ponder",
 	}
 
-	resp, err := http_POST(requestBodyJson, enpoint_openai+"completions", OPENAI_API_KEY)
-	catchErr(err)
-
-	jsonString, err := io.ReadAll(resp.Body)
-	catchErr(err)
-
-	err = json.Unmarshal([]byte(jsonString), &chatResponse)
-	catchErr(err)
-	if verbose {
-		trace()
-		fmt.Println(string(jsonString))
-	}
-	defer resp.Body.Close()
-	return chatResponse, nil
+	openAI_API(oaiRequest, &oaiResponse, endpoint)
+	return oaiResponse
 }

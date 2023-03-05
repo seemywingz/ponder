@@ -1,6 +1,6 @@
 package cmd
 
-type ChatRequest struct {
+type OPENAI_ChatRequest struct {
 	Prompt           string   `json:"prompt"`
 	MaxTokens        int      `json:"max_tokens"`
 	Model            string   `json:"model"`
@@ -12,7 +12,7 @@ type ChatRequest struct {
 	User             string   `json:"user"`
 }
 
-type ChatResponse struct {
+type OPENAI_ChatResponse struct {
 	ID      string `json:"id"`
 	Object  string `json:"object"`
 	Created int64  `json:"created"`
@@ -30,7 +30,7 @@ type ChatResponse struct {
 	} `json:"usage"`
 }
 
-type ImageRequest struct {
+type OPENAI_ImageRequest struct {
 	Prompt         string `json:"prompt"`
 	N              int    `json:"n"`
 	Size           string `json:"size"`
@@ -38,7 +38,7 @@ type ImageRequest struct {
 	User           string `json:"user"`
 }
 
-type ImageEditRequest struct {
+type OPENAI_ImageEditRequest struct {
 	Prompt         string `json:"prompt"`
 	N              int    `json:"n"`
 	Size           string `json:"size"`

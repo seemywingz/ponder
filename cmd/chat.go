@@ -53,10 +53,9 @@ func say(phrase string) {
 
 func chat(prompt string) {
 
-	ans, err := getChatResponse(prompt)
-	catchErr(err)
+	oaiResponse := openAI_Chat(prompt)
 
-	for _, v := range ans.Choices {
+	for _, v := range oaiResponse.Choices {
 		text := v.Text
 		if runtime.GOOS == "darwin" {
 			say(text)

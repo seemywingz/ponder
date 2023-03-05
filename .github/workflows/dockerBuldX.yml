@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Create NVR
+      - name: Generate NVR
         run: |
           DOCKER_IMAGE=disciplesofai/ponder
           DOCKER_PLATFORMS=linux/arm/v7,linux/amd64
@@ -44,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.nvr.outputs.imageNVR }}
+          tags: disciplesofai/ponder:${{ env.imageNVR }}

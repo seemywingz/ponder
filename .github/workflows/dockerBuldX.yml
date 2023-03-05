@@ -25,7 +25,7 @@ jobs:
             VERSION=nightly
           fi
 
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}:${VERSION}
+          echo "{imageNVR}={${DOCKER_IMAGE}:${VERSION}}" >> $GITHUB_STATE
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -44,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.nvr.outputs.docker_image }}
+          tags: ${{ steps.nvr.outputs.imageNVR }}

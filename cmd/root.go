@@ -4,6 +4,7 @@ Copyright © 2023 Kevin Jayne <kevin.jayne@icloud.com>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -43,8 +44,7 @@ func init() {
 
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
 	if OPENAI_API_KEY == "" {
-		fmt.Println("🛑 OPENAI_API_KEY environment variable is not set")
-		os.Exit(1)
+		catchErr(errors.New("OPENAI_API_KEY environment variable is not set"))
 	}
 }
 
@@ -59,6 +59,7 @@ func trace() {
 func catchErr(err error) {
 	if err != nil {
 		trace()
-		fmt.Println("🛑", err)
+		fmt.Println("💔")
+		panic(err)
 	}
 }

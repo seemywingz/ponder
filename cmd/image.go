@@ -12,7 +12,7 @@ import (
 )
 
 var open bool
-var imageFile string
+var file string
 var n int
 
 // imageCmd represents the image command
@@ -22,7 +22,7 @@ var imageCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		createImage(prompt, imageFile)
+		createImage(prompt, file)
 
 	},
 }
@@ -30,8 +30,8 @@ var imageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in browser")
-	imageCmd.Flags().StringVarP(&imageFile, "image", "i", "", "Image file to be used as prompt")
 	imageCmd.Flags().IntVarP(&n, "n", "n", 1, "Number of images to generate")
+	imageCmd.Flags().StringVarP(&file, "file", "f", "", "Image file to edit")
 }
 
 func createImage(prompt, imageFile string) {

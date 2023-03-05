@@ -15,6 +15,7 @@ import (
 )
 
 var loop bool
+var sayText bool
 
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
@@ -41,6 +42,7 @@ var chatCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(chatCmd)
 	chatCmd.Flags().BoolVarP(&loop, "loop", "l", false, "Loop chat")
+	chatCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
 }
 
 func say(phrase string) {
@@ -57,7 +59,7 @@ func chat(prompt string) {
 
 	for _, v := range oaiResponse.Choices {
 		text := v.Text
-		if runtime.GOOS == "darwin" {
+		if runtime.GOOS == "darwin" && sayText {
 			say(text)
 		}
 		fmt.Println(text[2:])

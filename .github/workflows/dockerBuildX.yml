@@ -37,8 +37,9 @@ jobs:
       - name: Generate image version
         run: |
           echo "IMAGE_VERSION=latest" >> $GITHUB_ENV
-          echo ${{ env.IMAGE_VERSION }}
-          echo ${ IMAGE_VERSION }
+
+      - name: Test Generate image version
+        run: echo ${{ env.IMAGE_VERSION }}}
 
       # - name: Build and push
       #   uses: docker/build-push-action@v4

@@ -24,8 +24,8 @@ jobs:
             VERSION=nightly
           fi
 
-          echo "{imageVersion}={${DOCKER_IMAGE}:${VERSION}}" 
-          echo "{imageVersion}={${DOCKER_IMAGE}:${VERSION}}" >> $GITHUB_STATE
+          echo "{imageVersion}={${VERSION}}" 
+          echo "{imageVersion}={${VERSION}}" >> $GITHUB_STATE
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

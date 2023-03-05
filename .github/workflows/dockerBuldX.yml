@@ -12,6 +12,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Create NVR
+        run: |
+          DOCKER_IMAGE=disciplesofai/ponder
+          DOCKER_PLATFORMS=linux/arm/v7,linux/amd64
+          VERSION=edge
+
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            VERSION=nightly
+          fi
+
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}:${VERSION}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -29,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: disciplesofai/ponder:dev
+          tags: ${{ steps.nvr.outputs.docker_image }}

@@ -31,7 +31,6 @@ jobs:
       - name: Generate image version
         run: |
           echo ${{ env.IMAGE_VERSION }}
-          echo "variable from shell environment : $env_var"
 
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
@@ -42,5 +41,5 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm/v7
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ env.IMAGE_VERSION }}

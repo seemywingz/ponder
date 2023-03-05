@@ -33,6 +33,7 @@ jobs:
 
       - name: Generate image version
         run: |
+          echo "IMAGE_VERSION=latest" >> $GITHUB_ENV
           echo ${{ env.IMAGE_VERSION }}
 
       - name: Build and push

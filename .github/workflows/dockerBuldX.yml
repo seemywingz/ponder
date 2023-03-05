@@ -12,9 +12,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Generate NVR
+      - name: Generate Version Tag
         run: |
-          DOCKER_IMAGE=disciplesofai/ponder
           DOCKER_PLATFORMS=linux/arm/v7,linux/amd64
           VERSION=edge
 
@@ -25,8 +24,8 @@ jobs:
             VERSION=nightly
           fi
 
-          echo "{imageNVR}={${DOCKER_IMAGE}:${VERSION}}" 
-          echo "{imageNVR}={${DOCKER_IMAGE}:${VERSION}}" >> $GITHUB_STATE
+          echo "{imageVersion}={${DOCKER_IMAGE}:${VERSION}}" 
+          echo "{imageVersion}={${DOCKER_IMAGE}:${VERSION}}" >> $GITHUB_STATE
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -45,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: disciplesofai/ponder:${{ env.imageNVR }}
+          tags: disciplesofai/ponder:${{ env.imageVersion }}

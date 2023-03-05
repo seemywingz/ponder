@@ -80,7 +80,7 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	}
 
 	// Send the request
-	fmt.Println("📁 Uploading File: " + fullPath)
+	fmt.Println("⏳ Uploading File: " + fullPath)
 	resp, err := httpClient.Do(req)
 	catchErr(err)
 

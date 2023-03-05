@@ -6,14 +6,17 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"os"
 	"runtime"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
 
 var verbose bool
 var prompt string
+var user string
 var OPENAI_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
@@ -46,6 +49,9 @@ func init() {
 	if OPENAI_API_KEY == "" {
 		catchErr(errors.New("OPENAI_API_KEY environment variable is not set"))
 	}
+	h := fnv.New32a()
+	h.Write([]byte(OPENAI_API_KEY))
+	user = "ponder" + strconv.Itoa(int(h.Sum32()))
 }
 
 func trace() {

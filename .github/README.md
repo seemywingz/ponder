@@ -28,7 +28,7 @@ ponder chat --prompt "AI is Amazing"
 ```
 ### Docker
 ```bash
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --prompt "Ai is Amazing"
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest chat --prompt "Ai is Amazing"
 ```
 #### Example Output
 ```bash
@@ -42,7 +42,7 @@ ponder chat --loop
 ```
 ### Docker
 ```bash
-docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --loop
+docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest chat --loop
 ```
 #### Example Ouput
 ```bash
@@ -66,7 +66,7 @@ ponder image -p "watercolor of a corgie"
 ```
 ### Docker
 ```bash
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge image -p "watercolor of a corgie"
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest image -p "watercolor of a corgie"
 ```
 #### Example Ouput
 ```bash

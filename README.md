@@ -8,7 +8,6 @@ OpenAI Powerd Chat Tool
 go install github.com/seemywingz/ponder
 ```
 
-
 ## Usage
 ### Setup Your Environment
 The [OpenAI API](https://platform.openai.com/docs/api-reference/authentication) uses API keys for authentication. Visit your [API Keys](https://platform.openai.com/account/api-keys) page to retrieve the API key you'll use in your requests.

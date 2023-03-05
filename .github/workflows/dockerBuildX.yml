@@ -46,4 +46,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: disciplesofai/ponder:${{ steps.nvr.outputs.imageVersion}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:dev

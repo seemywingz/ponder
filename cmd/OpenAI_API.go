@@ -154,6 +154,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
+			User:           user,
 		}
 		openAI_API_Multipart(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
 
@@ -164,6 +165,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
+			User:           user,
 		}
 		openAI_API_JSON(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
 	}
@@ -187,7 +189,7 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
-		User:             "ponder",
+		User:             user,
 	}
 	if verbose {
 		trace()

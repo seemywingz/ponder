@@ -30,7 +30,9 @@ jobs:
 
       - name: Generate image version
         run: |
-          echo "$GITHUB_REF"
+          echo ${{ env.IMAGE_VERSION }}
+          echo "variable from shell environment : $env_var"
+
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
           fi

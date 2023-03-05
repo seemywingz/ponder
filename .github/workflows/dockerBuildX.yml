@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - "dev"
+      - "main"
+
+env:
+  imageVErsion: edge
 
 jobs:
   docker:
@@ -11,22 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Generate Version Tag
-        id: nvr
-        run: |
-          DOCKER_PLATFORMS=linux/arm/v7,linux/amd64
-          VERSION=edge
-
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            VERSION=nightly
-          fi
-
-          echo "{imageVersion}={${VERSION}}" 
-          echo "{imageVersion}={${VERSION}}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -40,9 +28,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Generate image version
+        run: |
+          echo "$GITHUB_REF"
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ steps.nvr.outputs.imageVersion }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ env.imageVersion }}

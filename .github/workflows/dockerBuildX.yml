@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-    # Pattern matched against refs/tags
     tags:
       - "**"
 
@@ -36,7 +35,7 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            VERSION=${GITHUB_REF#refs/heads/}
+            VERSION=latest
           else
             VERSION=latest
           fi

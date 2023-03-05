@@ -38,7 +38,6 @@ jobs:
         run: |
           echo "IMAGE_VERSION=latest" >> $GITHUB_ENV
           echo ${{ env.IMAGE_VERSION }}
-          echo ${{ IMAGE_VERSION }}
           echo ${ IMAGE_VERSION }
 
       # - name: Build and push

@@ -26,6 +26,7 @@ jobs:
 
           echo "{imageVersion}={${VERSION}}" 
           echo "{imageVersion}={${VERSION}}" >> $GITHUB_STATE
+          echo "{$GITHUB_STATE}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2

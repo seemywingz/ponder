@@ -26,9 +26,7 @@ jobs:
           fi
 
           echo "{imageVersion}={${VERSION}}" 
-          echo "{imageVersion}={${VERSION}}" >> $GITHUB_STATE
-          echo "::set-output name=production::true"
-          echo "{$GITHUB_STATE}"
+          echo "{imageVersion}={${VERSION}}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -47,4 +45,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:dev
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ steps.nvr.outputs.imageVersion }}

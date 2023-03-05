@@ -1,7 +1,8 @@
 Ponder
 -------
-###### OpenAI Powerd Chat Tool ![example branch parameter](https://github.com/github/docs/actions/workflows/dockerBuildX.yml/badge.svg?branch=main)
-
+###### OpenAI Powerd Chat Tool  
+![example branch parameter](https://github.com/github/docs/actions/workflows/dockerBuildX.yml/badge.svg?branch=main)
+![example event parameter](https://github.com/github/docs/actions/workflows/dockerBuildX.yml/badge.svg?event=push)
 
 # Install
 ```bash

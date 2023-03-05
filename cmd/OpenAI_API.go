@@ -38,6 +38,14 @@ func openAI_API(requestJson, responseJson interface{}, endpoint string) {
 	jsonString, err := io.ReadAll(resp.Body)
 	catchErr(err)
 
+	// Check for OpenAI API Error
+	if resp.StatusCode != 200 {
+		trace()
+		fmt.Println("🛑 Error: ", resp.StatusCode)
+		fmt.Println(string(jsonString))
+		return
+	}
+
 	// Unmarshal the JSON Response Body
 	err = json.Unmarshal([]byte(jsonString), &responseJson)
 	catchErr(err)
@@ -49,27 +57,28 @@ func openAI_API(requestJson, responseJson interface{}, endpoint string) {
 	defer resp.Body.Close()
 }
 
-func openAI_ImageGen(prompt, imageFile string) OPENAI_ImageResponse {
+func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 	var oaiRequest interface{}
 	oaiResponse := OPENAI_ImageResponse{}
 	endpoint := enpoint_openai
 
+	// Check if we are editing an image or generating a new one
 	if imageFile != "" {
 		endpoint += "images/edits"
 		oaiRequest = &OPENAI_ImageEditRequest{
 			Prompt:         prompt,
-			N:              1,
+			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
 			Mask:           "",
 			Image:          imageFile,
 		}
 
-	} else {
+	} else { // Generate a new image
 		endpoint += "images/generations"
 		oaiRequest = &OPENAI_ImageRequest{
 			Prompt:         prompt,
-			N:              1,
+			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
 		}
@@ -96,6 +105,10 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
 		User:             "ponder",
+	}
+	if verbose {
+		trace()
+		fmt.Println(oaiRequest)
 	}
 
 	openAI_API(oaiRequest, &oaiResponse, endpoint)

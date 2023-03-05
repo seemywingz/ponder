@@ -54,3 +54,12 @@ type OPENAI_ImageResponse struct {
 		URL string `json:"url"`
 	} `json:"data"`
 }
+
+type OPENAI_ErrorResponse struct {
+	Error struct {
+		Message string `json:"message"`
+		Type    string `json:"type"`
+		Param   string `json:"param"`
+		Code    string `json:"code"`
+	} `json:"error"`
+}

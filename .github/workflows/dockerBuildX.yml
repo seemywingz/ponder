@@ -2,6 +2,9 @@ name: Docker BuildX
 
 on:
   push:
+    branches:
+      - "main"
+      - "dev"
     # Pattern matched against refs/tags
     tags:
       - "*"
@@ -36,10 +39,10 @@ jobs:
           echo "IMAGE_VERSION=latest" >> $GITHUB_ENV
           echo ${{ env.IMAGE_VERSION }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm/v7
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ env.IMAGE_VERSION }}
+      # - name: Build and push
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     push: true
+      #     platforms: linux/amd64,linux/arm/v7
+      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ env.IMAGE_VERSION }}

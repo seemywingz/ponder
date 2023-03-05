@@ -8,7 +8,6 @@ OpenAI Powerd Chat Tool
 go get github.com/seemywingz/ponder
 ```
 
-
 ## Usage
 ### Setup Your Environment
 ##### ℹ️ This is required for both docker and cli usage
@@ -27,6 +26,7 @@ ponder chat --prompt "AI is Amazing"
 docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --prompt "Ai is Amazing"
 ```
 
+
 ### For a small chat
 #### CLI
 ```bash
@@ -36,7 +36,6 @@ ponder chat --loop
 ```bash
 docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --loop
 ```
-
 ```bash
 You: 
 Hello, Ponder
@@ -50,6 +49,7 @@ you already have thank you
 Ponder: 
 Thank you for your kind words!
 ```
+
 
 ### Image Generation
 #### CLI

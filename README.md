@@ -1,31 +1,31 @@
 Ponder
 -------
-OpenAI Powerd Chat Tool
+###### OpenAI Powerd Chat Tool
 
 
-## Install
+# Install
 ```bash
 go install github.com/seemywingz/ponder
 ```
 
-## Usage
-### Setup Your Environment
+# Usage
+## Setup Your Environment
 The [OpenAI API](https://platform.openai.com/docs/api-reference/authentication) uses API keys for authentication.  
 Visit your [API Keys](https://platform.openai.com/account/api-keys) page to retrieve the API key you'll use in your requests.
 
 
-##### ℹ️ This is required for both docker and cli usage
+#### ℹ️ This is required for both docker and cli usage
 ```bash
 export OPENAI_API_KEY={YOUR OPENAI API KEY}
 ```
 
 
-### A single thought
-#### CLI
+## A single thought
+### CLI
 ```bash
 ponder chat --prompt "AI is Amazing"
 ```
-#### Docker
+### Docker
 ```bash
 docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --prompt "Ai is Amazing"
 ```
@@ -35,11 +35,11 @@ AI is indeed amazing. It has the potential to revolutionize many industries, fro
 ```
 
 ## A small chat
-#### CLI
+### CLI
 ```bash
 ponder chat --loop
 ```
-#### Docker
+### Docker
 ```bash
 docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge chat --loop
 ```
@@ -59,13 +59,13 @@ Thank you for your kind words!
 ```
 
 ## Image Generation
-#### CLI
+### CLI
 ```bash
 ponder image -p "watercolor of a corgie"
 ```
-#### Docker
+### Docker
 ```bash
-docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge image -p "watercolor of a corgie"
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:edge image -p "watercolor of a corgie"
 ```
 #### Example Ouput
 ```bash

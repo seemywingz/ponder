@@ -13,6 +13,7 @@ import (
 
 var verbose bool
 var prompt string
+var OPENAI_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -39,6 +40,12 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
 	rootCmd.MarkFlagRequired("prompt")
+
+	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
+	if OPENAI_API_KEY == "" {
+		fmt.Println("🛑 OPENAI_API_KEY environment variable is not set")
+		os.Exit(1)
+	}
 }
 
 func trace() {

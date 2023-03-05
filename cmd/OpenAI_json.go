@@ -38,7 +38,17 @@ type ImageRequest struct {
 	User           string `json:"user"`
 }
 
-type ImageResponse struct {
+type ImageEditRequest struct {
+	Prompt         string `json:"prompt"`
+	N              int    `json:"n"`
+	Size           string `json:"size"`
+	ResponseFormat string `json:"response_format"`
+	User           string `json:"user"`
+	Image          string `json:"image"`
+	Mask           string `json:"mask"`
+}
+
+type OPENAI_ImageResponse struct {
 	Created int64 `json:"created"`
 	Data    []struct {
 		URL string `json:"url"`

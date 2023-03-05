@@ -12,6 +12,7 @@ import (
 )
 
 var open bool
+var imageFile string
 
 // imageCmd represents the image command
 var imageCmd = &cobra.Command{
@@ -19,22 +20,26 @@ var imageCmd = &cobra.Command{
 	Short: "Generate an image from a prompt",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		createImage(prompt)
+
+		createImage(prompt, imageFile)
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in browser")
+	imageCmd.Flags().StringVarP(&imageFile, "image", "i", "", "Image file to be used as prompt")
 }
 
-func createImage(prompt string) {
+func createImage(prompt, imageFile string) {
 	fmt.Println("🖼  Creating Image...")
-	res, err := getImageResponse(prompt)
-	catchErr(err)
+	res := openAI_ImageGen(prompt, imageFile)
+
 	url := res.Data[0].URL
 	fmt.Println("🌐 Image URL: " + url)
 
+	err := error(nil)
 	if open {
 		fmt.Println("💻 Opening Image URL...")
 		switch runtime.GOOS {

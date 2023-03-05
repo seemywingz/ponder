@@ -2,8 +2,11 @@ name: Docker BuildX
 
 on:
   push:
+    # Pattern matched against refs/tags
+    tags:
+      - "*"
+  pull_request:
     branches:
-      - "dev"
       - "main"
 
 env:

@@ -58,8 +58,8 @@ func trace() {
 
 func catchErr(err error) {
 	if err != nil {
-		trace()
-		fmt.Println("💔")
-		panic(err)
+		// trace()
+		fmt.Println("💔", err)
+		os.Exit(1)
 	}
 }

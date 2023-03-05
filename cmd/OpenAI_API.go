@@ -25,6 +25,10 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	fullPath, err := filepath.Abs(filePath)
 	catchErr(err)
 
+	// https://platform.openai.com/docs/api-reference/images/create-edit#images/create-edit-image
+	// The image to edit. Must be a valid PNG file, less than 4MB, and square.
+	// If mask is not provided, image must have transparency, which will be used as the mask.
+	//
 	// Open the PNG image file
 	file, err := os.Open(fullPath)
 	catchErr(err)
@@ -34,26 +38,46 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
-	if verbose {
-		trace()
-		fmt.Println(body)
-	}
-
 	// Add the PNG file to the request
 	part, err := writer.CreateFormFile("image", filePath)
 	catchErr(err)
 	_, err = io.Copy(part, file)
 	catchErr(err)
 
+	oaiImageEditJson := requestJson.(*OPENAI_ImageEditRequest)
+
+	// Add the JSON payload to the request
+	part, err = writer.CreateFormField("prompt")
+	catchErr(err)
+	part.Write([]byte(oaiImageEditJson.Prompt))
+
+	part, err = writer.CreateFormField("n")
+	catchErr(err)
+	part.Write([]byte(strconv.Itoa(oaiImageEditJson.N)))
+
+	part, err = writer.CreateFormField("size")
+	catchErr(err)
+	part.Write([]byte(oaiImageEditJson.Size))
+
+	part, err = writer.CreateFormField("user")
+	catchErr(err)
+	part.Write([]byte(oaiImageEditJson.User))
+
 	// Close the multipart writer
 	err = writer.Close()
 	catchErr(err)
 
 	// Create a new HTTP request
-	req, err := http.NewRequest("POST", "https://example.com/api/image/edit", body)
+	req, err := http.NewRequest("POST", endpoint, body)
 	catchErr(err)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
+
+	if verbose {
+		trace()
+		fmt.Println("Request Body: ", req.Body)
+		fmt.Println("Request JSON: ", oaiImageEditJson)
+	}
 
 	// Send the request
 	fmt.Println("📁 Uploading File: " + fullPath)

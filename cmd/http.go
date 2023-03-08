@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,24 +15,10 @@ var httpClient = &http.Client{
 	Timeout: time.Second * 60,
 }
 
-func httpPostJson(requestJson, responseJson interface{}, endpoint, apiKey string) {
-
-	// Marshal the JSON Request Body
-	requestBodyJson, err := json.Marshal(requestJson)
-	catchErr(err)
-	if verbose {
-		trace()
-		fmt.Println(string(requestBodyJson))
-	}
-
-	// Format HTTP Response and Set Headers
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
-	catchErr(err)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+apiKey)
+func httpMakeRequest(request *http.Request, responseJson interface{}) {
 
 	// Make the HTTP Request
-	resp, err := httpClient.Do(req)
+	resp, err := httpClient.Do(request)
 	catchErr(err)
 
 	// Read the JSON Response Body

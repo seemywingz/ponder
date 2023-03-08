@@ -109,7 +109,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
-			User:           user,
+			User:           openAIUser,
 		}
 		openAI_UploadImage(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
 
@@ -120,9 +120,9 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			N:              n,
 			Size:           "1024x1024",
 			ResponseFormat: "url",
-			User:           user,
+			User:           openAIUser,
 		}
-		httpPostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations", OPENAI_API_KEY)
+		openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
 	}
 	if verbose {
 		trace()
@@ -134,8 +134,6 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 
 func openAI_Chat(prompt string) OPENAI_ChatResponse {
 	oaiResponse := OPENAI_ChatResponse{}
-	endpoint := openai_endpoint + "completions"
-
 	oaiRequest := &OPENAI_ChatRequest{
 		Prompt:           prompt,
 		MaxTokens:        1000,
@@ -144,13 +142,32 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
-		User:             user,
+		User:             openAIUser,
 	}
 	if verbose {
 		trace()
 		fmt.Println(oaiRequest)
 	}
 
-	httpPostJson(oaiRequest, &oaiResponse, endpoint, OPENAI_API_KEY)
+	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"completions")
 	return oaiResponse
+}
+
+func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
+
+	// Marshal the JSON Request Body
+	requestBodyJson, err := json.Marshal(requestJson)
+	catchErr(err)
+	if verbose {
+		trace()
+		fmt.Println(string(requestBodyJson))
+	}
+
+	// Format HTTP Response and Set Headers
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
+	catchErr(err)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
+
+	httpMakeRequest(req, responseJson)
 }

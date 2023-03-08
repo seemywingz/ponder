@@ -16,8 +16,9 @@ import (
 
 var verbose bool
 var prompt string
-var user string
+var openAIUser string
 var OPENAI_API_KEY string
+var ETSY_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -45,13 +46,21 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
 	rootCmd.MarkFlagRequired("prompt")
 
+	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
 	if OPENAI_API_KEY == "" {
 		catchErr(errors.New("OPENAI_API_KEY environment variable is not set"))
 	}
+	ETSY_API_KEY = os.Getenv("ETSY_API_KEY")
+	if ETSY_API_KEY == "" {
+		catchErr(errors.New("ETSY_API_KEY environment variable is not set"))
+	}
+
+	// Create a unique user for OpenAI
 	h := fnv.New32a()
 	h.Write([]byte(OPENAI_API_KEY))
-	user = "ponder" + strconv.Itoa(int(h.Sum32()))
+	openAIUser = "ponder" + strconv.Itoa(int(h.Sum32()))
+
 }
 
 func trace() {

@@ -3,9 +3,11 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -38,10 +40,10 @@ func httpPostJson(requestJson, responseJson interface{}, endpoint, apiKey string
 	jsonString, err := io.ReadAll(resp.Body)
 	catchErr(err)
 
-	// Check for API Errors
-	openAI_API_Error(resp, jsonString)
+	// Check for HTTP Errors
+	httpCatchErr(resp, jsonString)
 
-	// Unmarshal the JSON Response Body
+	// Unmarshal the JSON Response Body into provided responseJson
 	err = json.Unmarshal([]byte(jsonString), &responseJson)
 	catchErr(err)
 	if verbose {
@@ -50,4 +52,11 @@ func httpPostJson(requestJson, responseJson interface{}, endpoint, apiKey string
 	}
 	// Close the HTTP Response Body
 	defer resp.Body.Close()
+}
+
+func httpCatchErr(resp *http.Response, jsonString []byte) {
+	// Check for HTTP Response Errors
+	if resp.StatusCode != 200 {
+		catchErr(errors.New("API Error: " + strconv.Itoa(resp.StatusCode) + "\n" + string(jsonString)))
+	}
 }

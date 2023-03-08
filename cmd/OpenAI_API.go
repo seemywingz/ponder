@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -13,7 +12,7 @@ import (
 	"strconv"
 )
 
-func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, filePath string) {
+func openAI_UploadImage(requestJson, responseJson interface{}, endpoint, filePath string) {
 
 	// Get the absolute path of the file
 	fullPath, err := filepath.Abs(filePath)
@@ -83,7 +82,7 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	catchErr(err)
 
 	// Check for API Errors
-	openAI_API_Error(resp, jsonString)
+	httpCatchErr(resp, jsonString)
 
 	// Unmarshal the JSON Response Body
 	err = json.Unmarshal([]byte(jsonString), &responseJson)
@@ -96,44 +95,6 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	// Close the HTTP Response Body
 	defer resp.Body.Close()
 }
-
-// func openAI_API_JSON(requestJson, responseJson interface{}, endpoint string) {
-
-// 	// Marshal the JSON Request Body
-// 	requestBodyJson, err := json.Marshal(requestJson)
-// 	catchErr(err)
-// 	if verbose {
-// 		trace()
-// 		fmt.Println(string(requestBodyJson))
-// 	}
-
-// 	// Format HTTP Response and Set Headers
-// 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
-// 	catchErr(err)
-// 	req.Header.Set("Content-Type", "application/json")
-// 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
-
-// 	// Make the HTTP Request
-// 	resp, err := httpClient.Do(req)
-// 	catchErr(err)
-
-// 	// Read the JSON Response Body
-// 	jsonString, err := io.ReadAll(resp.Body)
-// 	catchErr(err)
-
-// 	// Check for API Errors
-// 	openAI_API_Error(resp, jsonString)
-
-// 	// Unmarshal the JSON Response Body
-// 	err = json.Unmarshal([]byte(jsonString), &responseJson)
-// 	catchErr(err)
-// 	if verbose {
-// 		trace()
-// 		fmt.Println(string(jsonString))
-// 	}
-// 	// Close the HTTP Response Body
-// 	defer resp.Body.Close()
-// }
 
 func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 	var oaiRequest interface{}
@@ -150,7 +111,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			ResponseFormat: "url",
 			User:           user,
 		}
-		openAI_API_Multipart(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
+		openAI_UploadImage(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
 
 	} else { // Generate a new image
 
@@ -192,11 +153,4 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 
 	httpPostJson(oaiRequest, &oaiResponse, endpoint, OPENAI_API_KEY)
 	return oaiResponse
-}
-
-func openAI_API_Error(resp *http.Response, jsonString []byte) {
-	// Check for OpenAI API Errors
-	if resp.StatusCode != 200 {
-		catchErr(errors.New("OpenAI API Error: " + strconv.Itoa(resp.StatusCode) + "\n" + string(jsonString)))
-	}
 }

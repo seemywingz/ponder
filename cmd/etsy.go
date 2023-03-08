@@ -4,8 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ var etsyCmd = &cobra.Command{
 	Short: "Make Etsy API calls",
 	Long:  `Make calls to the Etsy API.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("etsy called")
+		etsy_CreateRequest()
 	},
 }
 

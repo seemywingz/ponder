@@ -11,13 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"time"
 )
-
-// Create HTTP Client
-var httpClient = &http.Client{
-	Timeout: time.Second * 60,
-}
 
 func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, filePath string) {
 
@@ -103,43 +97,43 @@ func openAI_API_Multipart(requestJson, responseJson interface{}, endpoint, fileP
 	defer resp.Body.Close()
 }
 
-func openAI_API_JSON(requestJson, responseJson interface{}, endpoint string) {
+// func openAI_API_JSON(requestJson, responseJson interface{}, endpoint string) {
 
-	// Marshal the JSON Request Body
-	requestBodyJson, err := json.Marshal(requestJson)
-	catchErr(err)
-	if verbose {
-		trace()
-		fmt.Println(string(requestBodyJson))
-	}
+// 	// Marshal the JSON Request Body
+// 	requestBodyJson, err := json.Marshal(requestJson)
+// 	catchErr(err)
+// 	if verbose {
+// 		trace()
+// 		fmt.Println(string(requestBodyJson))
+// 	}
 
-	// Format HTTP Response and Set Headers
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
-	catchErr(err)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
+// 	// Format HTTP Response and Set Headers
+// 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
+// 	catchErr(err)
+// 	req.Header.Set("Content-Type", "application/json")
+// 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
 
-	// Make the HTTP Request
-	resp, err := httpClient.Do(req)
-	catchErr(err)
+// 	// Make the HTTP Request
+// 	resp, err := httpClient.Do(req)
+// 	catchErr(err)
 
-	// Read the JSON Response Body
-	jsonString, err := io.ReadAll(resp.Body)
-	catchErr(err)
+// 	// Read the JSON Response Body
+// 	jsonString, err := io.ReadAll(resp.Body)
+// 	catchErr(err)
 
-	// Check for API Errors
-	openAI_API_Error(resp, jsonString)
+// 	// Check for API Errors
+// 	openAI_API_Error(resp, jsonString)
 
-	// Unmarshal the JSON Response Body
-	err = json.Unmarshal([]byte(jsonString), &responseJson)
-	catchErr(err)
-	if verbose {
-		trace()
-		fmt.Println(string(jsonString))
-	}
-	// Close the HTTP Response Body
-	defer resp.Body.Close()
-}
+// 	// Unmarshal the JSON Response Body
+// 	err = json.Unmarshal([]byte(jsonString), &responseJson)
+// 	catchErr(err)
+// 	if verbose {
+// 		trace()
+// 		fmt.Println(string(jsonString))
+// 	}
+// 	// Close the HTTP Response Body
+// 	defer resp.Body.Close()
+// }
 
 func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 	var oaiRequest interface{}
@@ -167,7 +161,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			ResponseFormat: "url",
 			User:           user,
 		}
-		openAI_API_JSON(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
+		httpPostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations", OPENAI_API_KEY)
 	}
 	if verbose {
 		trace()
@@ -196,7 +190,7 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 		fmt.Println(oaiRequest)
 	}
 
-	openAI_API_JSON(oaiRequest, &oaiResponse, endpoint)
+	httpPostJson(oaiRequest, &oaiResponse, endpoint, OPENAI_API_KEY)
 	return oaiResponse
 }
 

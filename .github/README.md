@@ -16,8 +16,13 @@ Visit your [API Keys](https://platform.openai.com/account/api-keys) page to retr
 
 
 #### ℹ️ This is required for both docker and cli usage
+### Mac/Linux
 ```bash
 export OPENAI_API_KEY={YOUR OPENAI API KEY}
+```
+### Windows
+```bash
+set OPENAI_API_KE={YOUR OPENAI API KEY}
 ```
 
 

@@ -62,12 +62,13 @@ func createImage(prompt, imageFile string) {
 			// Create the directory (if it doesn't exist)
 			err := os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
+			fmt.Printf("💾 Downloading Image...")
 			url = httpDownloadFile(url, fullFilePath)
-			fmt.Printf("💾 Saving Image...\"%s\"\n", url)
+			fmt.Printf(" \"%s\"\n", url)
 		}
 		err := error(nil)
 		if open { // Open image in browser if open flag is set
-			fmt.Println("💻 Opening Image...", url)
+			fmt.Println("💻 Opening Image...")
 			switch runtime.GOOS {
 			case "linux":
 				err = exec.Command("xdg-open", url).Start()

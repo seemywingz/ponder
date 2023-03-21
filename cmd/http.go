@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -49,8 +50,9 @@ func httpCatchErr(resp *http.Response, jsonString []byte) {
 }
 
 // download file from url and save to local directory
-func httpDownloadFile(url string, filePath string) {
-
+func httpDownloadFile(url string, filePath string) string {
+	// Replace spaces with underscores
+	filePath = strings.ReplaceAll(filePath, " ", "_")
 	// Check if the file already exists
 	if _, err := os.Stat(filePath); err == nil {
 		// File already exists, so rename the new file
@@ -59,7 +61,7 @@ func httpDownloadFile(url string, filePath string) {
 		name := filepath.Base(filePath[:len(filePath)-len(ext)])
 		i := 1
 		for {
-			newName := fmt.Sprintf("%s (%d)%s", name, i, ext)
+			newName := fmt.Sprintf("%s_%d%s", name, i, ext)
 			newFilepath := filepath.Join(dir, newName)
 			_, err := os.Stat(newFilepath)
 			if os.IsNotExist(err) {
@@ -84,4 +86,5 @@ func httpDownloadFile(url string, filePath string) {
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	catchErr(err)
+	return filePath
 }

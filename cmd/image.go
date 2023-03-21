@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -67,18 +68,18 @@ func createImage(prompt, imageFile string) {
 			}
 		}
 		if download { // Download image to local directory if download flag is set
+			promptPath := strings.ReplaceAll(prompt, " ", "_")
 			if filePath == "HOME" { // If no path is specified, use the user's home directory
 				currentUser, err := user.Current()
 				catchErr(err)
-				filePath = currentUser.HomeDir + "/Ponder/Images"
+				filePath = currentUser.HomeDir + "/Ponder/Images/" + promptPath
 			}
-			fileName := prompt + "_" + strconv.Itoa(imgNum) + ".jpg"
+			fileName := strconv.Itoa(imgNum) + ".jpg"
 			fullFilePath := filepath.Join(filePath, fileName)
 			// Create the directory (if it doesn't exist)
 			err := os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
-			fmt.Println("📥 Downloading Image...", fullFilePath)
-			httpDownloadFile(url, fullFilePath)
+			fmt.Printf("📥 Downloading Image...\"%s\"\n", httpDownloadFile(url, fullFilePath))
 		}
 	}
 }

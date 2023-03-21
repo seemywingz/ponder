@@ -69,6 +69,7 @@ func createImage(prompt, imageFile string) {
 		}
 		if download { // Download image to local directory if download flag is set
 			promptPath := strings.ReplaceAll(prompt, " ", "_")
+			promptPath = strings.ReplaceAll(promptPath, "/", "-")
 			if filePath == "HOME" { // If no path is specified, use the user's home directory
 				currentUser, err := user.Current()
 				catchErr(err)

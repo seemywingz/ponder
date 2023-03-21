@@ -80,7 +80,7 @@ func createImage(prompt, imageFile string) {
 			// Create the directory (if it doesn't exist)
 			err := os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
-			fmt.Printf("📥 Downloading Image...\"%s\"\n", httpDownloadFile(url, fullFilePath))
+			fmt.Printf("💾 Saving Image...\"%s\"\n", httpDownloadFile(url, fullFilePath))
 		}
 	}
 }

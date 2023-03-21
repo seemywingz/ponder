@@ -5,13 +5,18 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
 	"runtime"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
 
-var open bool
+var filePath = "HOME"
+var open, download bool
 var file string
 var n int
 
@@ -29,6 +34,7 @@ var imageCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(imageCmd)
+	imageCmd.Flags().BoolVarP(&download, "download", "d", false, "Download image(s) to local directory")
 	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in browser")
 	imageCmd.Flags().IntVarP(&n, "n", "n", 1, "Number of images to generate")
 	imageCmd.Flags().StringVarP(&file, "file", "f", "", "Image file to edit")
@@ -38,7 +44,7 @@ func createImage(prompt, imageFile string) {
 	fmt.Println("🖼  Creating Image...")
 	res := openAI_ImageGen(prompt, imageFile, n)
 
-	for _, data := range res.Data {
+	for imgNum, data := range res.Data {
 		url := data.URL
 		fmt.Println("🌐 Image URL: " + url)
 
@@ -59,6 +65,20 @@ func createImage(prompt, imageFile string) {
 				trace()
 				fmt.Println(err)
 			}
+		}
+		if download { // Download image to local directory if download flag is set
+			if filePath == "HOME" { // If no path is specified, use the user's home directory
+				currentUser, err := user.Current()
+				catchErr(err)
+				filePath = currentUser.HomeDir + "/Ponder/Images"
+			}
+			fileName := prompt + "_" + strconv.Itoa(imgNum) + ".jpg"
+			fullFilePath := filepath.Join(filePath, fileName)
+			// Create the directory (if it doesn't exist)
+			err := os.MkdirAll(filePath, os.ModePerm)
+			catchErr(err)
+			fmt.Println("📥 Downloading Image...", fullFilePath)
+			httpDownloadFile(url, fullFilePath)
 		}
 	}
 }

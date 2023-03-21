@@ -49,24 +49,6 @@ func createImage(prompt, imageFile string) {
 		url := data.URL
 		fmt.Println("🌐 Image URL: " + url)
 
-		err := error(nil)
-		if open { // Open image in browser if open flag is set
-			fmt.Println("💻 Opening Image URL...")
-			switch runtime.GOOS {
-			case "linux":
-				err = exec.Command("xdg-open", url).Start()
-			case "windows":
-				err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-			case "darwin":
-				err = exec.Command("open", url).Start()
-			default:
-				err = fmt.Errorf("unsupported platform")
-			}
-			if err != nil {
-				trace()
-				fmt.Println(err)
-			}
-		}
 		if download { // Download image to local directory if download flag is set
 			promptPath := strings.ReplaceAll(prompt, " ", "_")
 			promptPath = strings.ReplaceAll(promptPath, "/", "-")
@@ -80,7 +62,26 @@ func createImage(prompt, imageFile string) {
 			// Create the directory (if it doesn't exist)
 			err := os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
-			fmt.Printf("💾 Saving Image...\"%s\"\n", httpDownloadFile(url, fullFilePath))
+			url = httpDownloadFile(url, fullFilePath)
+			fmt.Printf("💾 Saving Image...\"%s\"\n", url)
+		}
+		err := error(nil)
+		if open { // Open image in browser if open flag is set
+			fmt.Println("💻 Opening Image...", url)
+			switch runtime.GOOS {
+			case "linux":
+				err = exec.Command("xdg-open", url).Start()
+			case "windows":
+				err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+			case "darwin":
+				err = exec.Command("open", url).Start()
+			default:
+				err = fmt.Errorf("unsupported platform for opening files: %s", runtime.GOOS)
+			}
+			if err != nil {
+				trace()
+				fmt.Println(err)
+			}
 		}
 	}
 }

@@ -37,7 +37,7 @@ func printify_UploadImage(fileName, imageURL string) {
 	// Make the HTTP Request
 	httpMakeRequest(req, &responseJson)
 
-	fmt.Println("Image Uploaded to Printify")
+	fmt.Println("📤 Image Uploaded to Printify")
 	fmt.Println("📁 ID:", responseJson.ID)
 	fmt.Println("📁 Name:", responseJson.FileName)
 	fmt.Println("📁 Height:", responseJson.Height)

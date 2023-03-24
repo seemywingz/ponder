@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -21,19 +22,24 @@ var printifyCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(printifyCmd)
+	printifyCmd.Flags().IntVarP(&n, "num-generated", "n", 1, "Number of images to generate")
 }
 
 func generatImageAndPost() {
 
 	// Generate Image
-	fmt.Println("🖼  Creating Image...")
-	res := openAI_ImageGen(prompt, "", 1)
-	fmt.Println("🌐  Image URL", res.Data[0].URL)
+	fmt.Println("🖼  Generating Image(s)...")
+	res := openAI_ImageGen(prompt, "", n)
 
-	// Format Prompt for use as Product Name
-	fileName := formatPrompt(prompt)
+	for imgNum, data := range res.Data {
+		url := data.URL
+		// Format Prompt for use as Product Name
+		fileName := formatPrompt(prompt)
+		// Create Printify Product
+		fmt.Println()
+		fmt.Println("📦  Creating Printify Product...")
+		fmt.Println("🌐 Image URL: " + url)
+		printify_UploadImage(fileName+"_"+strconv.Itoa(imgNum)+".jpg", url)
+	}
 
-	// Create Printify Product
-	fmt.Println("📦  Creating Printify Product...")
-	printify_UploadImage(fileName+".jpg", res.Data[0].URL)
 }

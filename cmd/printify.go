@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -26,17 +25,15 @@ func init() {
 
 func generatImageAndPost() {
 
-	prompt := "test image under construction"
-
 	// Generate Image
 	fmt.Println("🖼  Creating Image...")
 	res := openAI_ImageGen(prompt, "", 1)
 	fmt.Println("🌐  Image URL", res.Data[0].URL)
 
-	prompt = strings.ReplaceAll(prompt, " ", "_")
-	prompt = strings.ReplaceAll(prompt, "/", "-")
+	// Format Prompt for use as Product Name
+	fileName := formatPrompt(prompt)
 
 	// Create Printify Product
 	fmt.Println("📦  Creating Printify Product...")
-	printify_UploadImage(prompt+".jpg", res.Data[0].URL)
+	printify_UploadImage(fileName+".jpg", res.Data[0].URL)
 }

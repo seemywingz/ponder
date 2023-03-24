@@ -10,6 +10,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -81,4 +82,11 @@ func catchErr(err error) {
 		fmt.Println("💔", err)
 		os.Exit(1)
 	}
+}
+
+func formatPrompt(prompt string) string {
+	prompt = strings.ReplaceAll(prompt, " ", "_")
+	prompt = strings.ReplaceAll(prompt, "/", "-")
+	prompt = strings.ReplaceAll(prompt, ",", "")
+	return prompt
 }

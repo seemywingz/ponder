@@ -36,7 +36,8 @@ func httpMakeRequest(request *http.Request, responseJson interface{}) {
 	catchErr(err)
 	if verbose {
 		trace()
-		fmt.Println(string(jsonString))
+		fmt.Println("🌐 HTTP Response String", string(jsonString))
+		fmt.Println("🌐 HTTP Response JSON", responseJson)
 	}
 	// Close the HTTP Response Body
 	defer resp.Body.Close()

@@ -1,0 +1,27 @@
+# .github/workflows/deployK8S.yml
+name: Deploy to Kubernetes
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "**"
+
+jobs:
+  deployment:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: "Deploy"
+        uses: "deliverybot/helm@v1"
+        with:
+          release: "ponder"
+          namespace: "services"
+          chart: "app"
+          token: "${{ github.token }}"
+          values: |
+            name: foobar
+          value-files: helm/values.yaml
+        env:
+          KUBECONFIG_FILE: "${{ secrets.KUBECONFIG }}"

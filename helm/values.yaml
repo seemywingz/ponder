@@ -7,13 +7,25 @@ replicaCount: 1
 app:
   name: ponder
   args:
-    - chat
+    - printify
     - -p
-    - "hello"
+    - "docker"
   env:
-    ETSY_API_KEY: "ETSY_API_KEY"
-    OPENAI_API_KEY: "OPENAI_API_KEY"
-    PRINTIFY_API_KEY: "PRINTIFY_API_KEY"
+    - name: OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openai-api-key
+          key: api-key
+    - name: ETSY_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: etsy-api-key
+          key: api-key
+    - name: PRINTIFY_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: printify-api-key
+          key: api-key
 
 image:
   repository: disciplesofai/ponder

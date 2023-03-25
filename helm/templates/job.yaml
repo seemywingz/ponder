@@ -12,10 +12,9 @@ spec:
         {{- range .Values.app.args }}
           - {{ . -}}
         {{ end }}
+        {{- with .Values.app.env }}
         env:
-        {{- range $k, $v := .Values.app.env }}
-        - name: {{ $k }}
-          value: {{ $v | upper -}}
-        {{ end }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       restartPolicy: Never
   backoffLimit: 1

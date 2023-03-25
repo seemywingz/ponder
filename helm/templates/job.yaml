@@ -1,20 +1,22 @@
 apiVersion: batch/v1
-kind: Job
+kind: CronJob
 metadata:
   name: {{ .Values.app.name }}
 spec:
-  template:
+  schedule: "*/5 * * * *"
+  jobTemplate:
     spec:
-      containers:
-      - name: {{ .Values.app.name }}-app
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        args: 
-        {{- range .Values.app.args }}
-          - {{ . -}}
-        {{ end }}
-        {{- with .Values.app.env }}
-        env:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-      restartPolicy: Never
-  backoffLimit: 1
+      template:
+        spec:
+          containers:
+          - name: {{ .Values.app.name }}-app
+            image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+            args: 
+            {{- range .Values.app.args }}
+              - {{ . -}}
+            {{ end }}
+            {{- with .Values.app.env }}
+            env:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          restartPolicy: Never

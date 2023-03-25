@@ -7,9 +7,10 @@ replicaCount: 1
 app:
   name: ponder
   args:
-    - printify
+    - chat
     - -p
-    - "docker"
+    - "What is the meaning of life?"
+  schedule: "*/5 * * * *"
   env:
     - name: OPENAI_API_KEY
       valueFrom:

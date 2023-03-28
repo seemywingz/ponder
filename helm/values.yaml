@@ -48,7 +48,11 @@ ingress:
   enabled: true
   className: "nginx"
   annotations:
-    { cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production" }
+    cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production"
+    nginx.ingress.kubernetes.io/auth-response-headers: Authorization
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $token $upstream_http_x_auth_request_access_token;
+  more_set_headers "Request-Id: $req_id";
   hosts:
     - host: discipuli.ai
       paths:

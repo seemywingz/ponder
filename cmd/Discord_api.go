@@ -14,6 +14,8 @@ func initDiscord() {
 	discord, err = discordgo.New("Bot " + DISCORD_API_KEY)
 	catchErr(err)
 
+	discord.Client = httpClient // Set the HTTP client for the Discord session.
+
 	// Open a websocket connection to Discord
 	err = discord.Open()
 	catchErr(err)
@@ -96,6 +98,13 @@ func registerSlashCommand() {
 }
 
 func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Send the initial response.
+	response := &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+	}
+	err := s.InteractionRespond(i.Interaction, response)
+	catchErr(err)
+
 	switch i.ApplicationCommandData().Name {
 	case "hello":
 
@@ -106,7 +115,7 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			responseMessage += v.Text[2:]
 		}
 
-		discordSendMessagesResponse(responseMessage, s, i)
+		discordFollowUpMessage(responseMessage, s, i)
 	case "chat":
 		discordChat(s, i)
 	default:
@@ -126,27 +135,19 @@ func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		responseMessage += v.Text[2:]
 	}
 
+	responseMessage = "prompt: " + prompt + "\n" + responseMessage
+	discordFollowUpMessage(responseMessage, s, i)
+
 	if verbose {
-		fmt.Println("Chatting with Ponder Discord Bot...")
-		fmt.Println("Prompt: " + prompt)
+		fmt.Println("Ponder Discord Bot...")
 		fmt.Println("Response: " + responseMessage)
 	}
-
-	discordSendMessagesResponse(responseMessage, s, i)
-
 }
 
-func discordSendMessagesResponse(responseMessage string, s *discordgo.Session, i *discordgo.InteractionCreate) {
-	// Send a message to the channel
-	// Handle the "test" slash command
-	response := &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: responseMessage,
-		},
+func discordFollowUpMessage(responseMessage string, s *discordgo.Session, i *discordgo.InteractionCreate) {
+	followup := &discordgo.WebhookParams{
+		Content: responseMessage,
 	}
-
-	// Send the response back to the user
-	err := s.InteractionRespond(i.Interaction, response)
+	_, err := s.FollowupMessageCreate(i.Interaction, false, followup)
 	catchErr(err)
 }

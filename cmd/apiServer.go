@@ -67,7 +67,7 @@ func apiServer() {
 func discordHandler(w http.ResponseWriter, r *http.Request) {
 
 	if verbose {
-		fmt.Println("Discord Handler: JSON received")
+		trace()
 		httpDumpRequest(r)
 	}
 

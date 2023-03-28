@@ -65,13 +65,16 @@ func apiServer() {
 
 // Discord Handler
 func discordHandler(w http.ResponseWriter, r *http.Request) {
+	request := discordgo.Webhook{}
 
 	if verbose {
 		trace()
 		httpDumpRequest(r)
 	}
 
-	request := discordgo.Webhook{}
+	if !httpVerifyRequest(w, r, DISCORD_PUB_KEY) {
+		http.Error(w, "Invalid signature", http.StatusUnauthorized)
+	}
 
 	// Read the JSON
 	reqJson, err := io.ReadAll(r.Body)
@@ -91,14 +94,6 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(reqJson)
-	} else {
-		if !httpVerifyRequest(w, r, DISCORD_PUB_KEY) {
-			http.Error(w, "Invalid signature", http.StatusUnauthorized)
-		} else {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			fmt.Fprintf(w, `{"type": 4, "data": {"content": "Pondering..."}}`)
-		}
 	}
 
 }

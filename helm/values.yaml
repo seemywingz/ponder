@@ -24,11 +24,6 @@ app:
         secretKeyRef:
           name: openai-api-key
           key: api-key
-    - name: ETSY_API_KEY
-      valueFrom:
-        secretKeyRef:
-          name: etsy-api-key
-          key: api-key
     - name: PRINTIFY_API_KEY
       valueFrom:
         secretKeyRef:

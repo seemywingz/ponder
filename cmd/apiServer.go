@@ -66,10 +66,7 @@ func apiServer() {
 
 func discordValidateRequest(w http.ResponseWriter, r *http.Request) bool {
 	// Validate the request using the Discord Go library
-	if !discordgo.VerifyInteraction(r, ed25519.PublicKey(DISCORD_PUB_KEY)) {
-		return false
-	}
-	return true
+	return discordgo.VerifyInteraction(r, ed25519.PublicKey(DISCORD_PUB_KEY))
 }
 
 // Discord Handler

@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -35,6 +36,18 @@ func apiServer() {
 
 	// Add routes
 	r.HandleFunc("/api/"+ponder_api_version+"/discord", discordHandler).Methods("POST")
+
+	// add liveness and readiness probes
+	r.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+		fmt.Println("Live and Kicking!", time.Now())
+	})
+	r.HandleFunc("/readyz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+		fmt.Println("API Server is ready to serve requests.", time.Now())
+	})
 
 	// Start the server
 	fmt.Println("Starting API Server on port", ponder_api_port, "...")

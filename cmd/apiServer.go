@@ -94,11 +94,6 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 	reqJson, err := io.ReadAll(r.Body)
 	catchErr(err)
 
-	if len(reqJson) <= 0 {
-		fmt.Fprintf(w, "Discord Handler: No JSON received")
-		return
-	}
-
 	// Unmarshal the JSON
 	err = json.Unmarshal([]byte(reqJson), &request)
 	catchErr(err)

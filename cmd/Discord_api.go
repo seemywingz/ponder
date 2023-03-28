@@ -106,17 +106,7 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			responseMessage += v.Text[2:]
 		}
 
-		// Handle the "test" slash command
-		response := &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: responseMessage,
-			},
-		}
-
-		// Send the response back to the user
-		err := s.InteractionRespond(i.Interaction, response)
-		catchErr(err)
+		discordSendMessagesResponse(responseMessage, s, i)
 	case "chat":
 		discordChat(s, i)
 	default:
@@ -141,6 +131,13 @@ func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		fmt.Println("Prompt: " + prompt)
 		fmt.Println("Response: " + responseMessage)
 	}
+
+	discordSendMessagesResponse(responseMessage, s, i)
+
+}
+
+func discordSendMessagesResponse(responseMessage string, s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Send a message to the channel
 	// Handle the "test" slash command
 	response := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,

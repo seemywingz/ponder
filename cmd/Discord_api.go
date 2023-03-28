@@ -6,10 +6,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var discord *discordgo.Session
+
+func initDiscord() {
+	var err error
+	discord, err = discordgo.New("Bot " + DISCORD_API_KEY)
+	catchErr(err)
+}
+
 func discord_GetImage() {
 
-	discord, err := discordgo.New("Bot " + DISCORD_API_KEY)
-	catchErr(err)
+	initDiscord()
 
 	messages, err := discord.ChannelMessages(discord_channel_midjourney, 10, "", "", "")
 	catchErr(err)

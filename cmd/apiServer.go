@@ -4,8 +4,9 @@ Copyright © 2023 Kevin.Jayne@iCloud.com
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
 	"os"
 
@@ -23,6 +24,7 @@ var apiServerCmd = &cobra.Command{
 	Short: "Start the API Server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		initDiscord()
 		apiServer()
 	},
 }
@@ -62,7 +64,28 @@ func apiServer() {
 
 // Discord Handler
 func discordHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Discord Handler")
-	fmt.Println("Request Body:", r)
-	log.Println("Processing request!")
+	request := DISCORD_Request{}
+
+	// Read the JSON
+	reqJson, err := io.ReadAll(r.Body)
+	catchErr(err)
+
+	if len(reqJson) <= 0 {
+		fmt.Fprintf(w, "Discord Handler: No JSON received")
+		return
+	}
+
+	// Unmarshal the JSON
+	err = json.Unmarshal([]byte(reqJson), &request)
+	catchErr(err)
+
+	if request.Type == 1 {
+		fmt.Println("Discord Ping")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(reqJson)
+	} else {
+		fmt.Fprintf(w, "Discord Handler")
+	}
+
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -24,12 +25,14 @@ func initDiscord() {
 	setStatusOnline()
 	registerHandlers()
 	registerSlashCommand()
+	deregisterSlashCommands()
 
 	log.Println("Ponder Discord Bot is now running...")
 	select {}
 }
 
 func setStatusOnline() {
+	fmt.Println("Setting Status to Online...")
 	// Set status to online with active activity
 	err := discord.UpdateStatusComplex(discordgo.UpdateStatusData{
 		Status: "online",
@@ -45,12 +48,27 @@ func setStatusOnline() {
 }
 
 func registerHandlers() {
+	fmt.Println("Registering Handlers...")
 	// Register a new slash command handler
-	discord.AddHandler(slashCommandHandler)
+	discord.AddHandler(handleCommands)
+}
+
+func deregisterSlashCommands() {
+	fmt.Println("Deregistering Slash Commands...")
+	// Set the ID of the slash command to deregister
+	slashCommandIDs := []string{}
+
+	for _, slashCommandID := range slashCommandIDs {
+		err := discord.ApplicationCommandDelete(discord.State.User.ID, "", slashCommandID)
+		if err != nil {
+			fmt.Println("Error deleting slash command: ", err)
+			return
+		}
+	}
 }
 
 func registerSlashCommand() {
-
+	fmt.Println("Registering Slash Commands...")
 	// /chat command
 	command := &discordgo.ApplicationCommand{
 		Name:        "chat",
@@ -67,6 +85,14 @@ func registerSlashCommand() {
 	_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
 	catchErr(err)
 
+	// /chat command
+	command = &discordgo.ApplicationCommand{
+		Name:        "scrape",
+		Description: "Scrape Discord channel for Upscaled Midjourney Images!",
+	}
+	_, err = discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
+	catchErr(err)
+
 	// /hello command
 	command = &discordgo.ApplicationCommand{
 		Name:        "hello",
@@ -77,15 +103,13 @@ func registerSlashCommand() {
 
 }
 
-func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	// Send initial defer response.
-	response := &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-	}
-	err := s.InteractionRespond(i.Interaction, response)
-	catchErr(err)
-
+func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	discordInitialResponse("Thinking...", s, i)
 	switch i.ApplicationCommandData().Name {
+	case "chat":
+		discordChat(s, i)
+	case "scrape":
+		scrapeImages(s, i)
 	case "hello":
 		oaiResponse := openAI_Chat("Hello World, from Ponder Discord Bot that is kinda cheeky!")
 		responseMessage := ""
@@ -93,16 +117,34 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			responseMessage += v.Text[2:]
 		}
 		discordFollowUp(responseMessage, s, i)
-	case "chat":
-		discordChat(s, i)
-	default:
-		// Handle unknown slash commands
+	default: // Handle unknown slash commands
 		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
 	}
 }
 
-func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func scrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	discordFollowUp("Scraping Discord Channel for Upscaled Midjourney Images...", s, i)
+	// Get the interaction channel ID
+	channelID := i.ChannelID
+	messages, err := discord.ChannelMessages(channelID, 100, "", "", "")
+	catchErr(err)
 
+	for _, v := range messages {
+		if strings.Contains(v.Content, "Upscaled") {
+			fmt.Println()
+			fmt.Println("Message:")
+			fmt.Println("ID: " + v.ID)
+			fmt.Println("Author: " + v.Author.Username)
+			fmt.Println("Content: " + v.Content)
+			if len(v.Attachments) > 0 {
+				fmt.Println("Attachments: " + v.Attachments[0].URL)
+			}
+		}
+	}
+
+}
+
+func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// Get the value of the prompt parameter
 	prompt := i.ApplicationCommandData().Options[0].StringValue()
 	oaiResponse := openAI_Chat(prompt)
@@ -121,6 +163,18 @@ func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
+func discordInitialResponse(content string, s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Send initial defer response.
+	response := &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: content,
+		},
+	}
+	err := s.InteractionRespond(i.Interaction, response)
+	catchErr(err)
+}
+
 func discordFollowUp(message string, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	followup := &discordgo.WebhookParams{
 		Content: message,
@@ -128,23 +182,3 @@ func discordFollowUp(message string, s *discordgo.Session, i *discordgo.Interact
 	_, err := s.FollowupMessageCreate(i.Interaction, false, followup)
 	catchErr(err)
 }
-
-// func discord_GetImage() {
-
-// 	initDiscord()
-
-// 	messages, err := discord.ChannelMessages(discord_channel_midjourney, 10, "", "", "")
-// 	catchErr(err)
-
-// 	for _, v := range messages {
-// 		fmt.Println()
-// 		fmt.Println("Message:")
-// 		fmt.Println("ID: " + v.ID)
-// 		fmt.Println("Author: " + v.Author.Username)
-// 		fmt.Println("Content: " + v.Content)
-// 		if len(v.Attachments) > 0 {
-// 			fmt.Println("Attachments: " + v.Attachments[0].URL)
-// 		}
-// 	}
-
-// }

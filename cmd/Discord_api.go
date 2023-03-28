@@ -8,13 +8,9 @@ import (
 
 func discord_GetImage() {
 
-	fmt.Println("discord called")
-
 	discord, err := discordgo.New("Bot " + DISCORD_API_KEY)
 	catchErr(err)
 
-	// discord.ChannelMessageSend(discord_channel_midjourney, "Hello, from PonderBot!")
-	// discord.ApplicationCommandCreate(discord_app_id, "test", "test")
 	messages, err := discord.ChannelMessages(discord_channel_midjourney, 10, "", "", "")
 	catchErr(err)
 

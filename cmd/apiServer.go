@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -40,20 +39,18 @@ func apiServer() {
 	// Create a new router
 	r := mux.NewRouter()
 
-	// Add routes
-	r.HandleFunc("/api/"+ponder_api_version+"/discord", discordHandler).Methods("POST")
-
 	// add liveness and readiness probes
 	r.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
-		fmt.Println("Live and Kicking!", time.Now())
 	})
 	r.HandleFunc("/readyz", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
-		fmt.Println("API Server is ready to serve requests.", time.Now())
 	})
+
+	// Add routes
+	r.HandleFunc("/api/"+ponder_api_version+"/discord", discordHandler).Methods("POST")
 
 	// Start the server
 	fmt.Println("Starting API Server on port", ponder_api_port, "...")

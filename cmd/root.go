@@ -7,7 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"hash/fnv"
+	"net/url"
 	"os"
+	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -95,4 +98,17 @@ func formatPrompt(prompt string) string {
 	prompt = strings.ReplaceAll(prompt, "/", "-")
 	prompt = strings.ReplaceAll(prompt, ",", "")
 	return prompt
+}
+
+func fileNameFromURL(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	catchErr(err)
+
+	// Get the last path component of the URL
+	filename := filepath.Base(u.Path)
+
+	// Replace any characters that are not letters, numbers, or underscores with dashes
+	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
+
+	return filename
 }

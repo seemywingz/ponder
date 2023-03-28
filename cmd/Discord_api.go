@@ -24,8 +24,8 @@ func initDiscord() {
 
 	setStatusOnline()
 	registerHandlers()
-	registerSlashCommand()
-	deregisterSlashCommands()
+	registerCommands()
+	deregisterCommands()
 
 	log.Println("Ponder Discord Bot is now running...")
 	select {}
@@ -49,11 +49,13 @@ func setStatusOnline() {
 
 func registerHandlers() {
 	fmt.Println("Registering Handlers...")
-	// Register a new slash command handler
+	// A handler function for the "interactionCreate" event
 	discord.AddHandler(handleCommands)
+	// Add a handler function for the "messageCreate" event
+	discord.AddHandler(handleMessages)
 }
 
-func deregisterSlashCommands() {
+func deregisterCommands() {
 	fmt.Println("Deregistering Slash Commands...")
 	// Set the ID of the slash command to deregister
 	slashCommandIDs := []string{}
@@ -67,62 +69,71 @@ func deregisterSlashCommands() {
 	}
 }
 
-func registerSlashCommand() {
+func registerCommands() {
 	fmt.Println("Registering Slash Commands...")
 	// /chat command
 	command := &discordgo.ApplicationCommand{
-		Name:        "chat",
-		Description: "Chat with Ponder Discord Bot, powered by OpenAI GPT-3!",
-		Options: []*discordgo.ApplicationCommandOption{
-			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "prompt",
-				Description: "The prompt message",
-				Required:    true,
-			},
-		},
-	}
-	_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
-	catchErr(err)
-
-	// /chat command
-	command = &discordgo.ApplicationCommand{
 		Name:        "scrape",
 		Description: "Scrape Discord channel for Upscaled Midjourney Images!",
 	}
-	_, err = discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
+	_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
 	catchErr(err)
+}
 
-	// /hello command
-	command = &discordgo.ApplicationCommand{
-		Name:        "hello",
-		Description: "Say hello to Ponder Discord Bot!",
+func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
+
+	// Ignore all messages created by the bot itself
+	if m.Author.ID == discord.State.User.ID {
+		return
 	}
-	_, err = discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
-	catchErr(err)
+
+	// get the channel object using the ID
+	channel, err := discord.Channel(m.ChannelID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// get the name of the channel
+	channelName := channel.Name
+	fmt.Println("Channel Name: " + channelName)
+
+	// Respond to messages in the #ponder channel
+	if channelName == "ponder" {
+		discordOpenAIResponse(s, m, false)
+		return
+	}
+
+	// Check if the message contains an @mention of the bot.
+	for _, user := range m.Mentions {
+		if user.ID == s.State.User.ID {
+			// Send a reply to the user who mentioned the bot.
+			discordOpenAIResponse(s, m, true)
+			return
+		}
+	}
 
 }
 
 func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	discordInitialResponse("Thinking...", s, i)
 	switch i.ApplicationCommandData().Name {
-	case "chat":
-		discordChat(s, i)
 	case "scrape":
-		scrapeImages(s, i)
-	case "hello":
-		oaiResponse := openAI_Chat("Hello World, from Ponder Discord Bot that is kinda cheeky!")
-		responseMessage := ""
-		for _, v := range oaiResponse.Choices {
-			responseMessage += v.Text[2:]
-		}
-		discordFollowUp(responseMessage, s, i)
+		discordScrapeImages(s, i)
 	default: // Handle unknown slash commands
 		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
 	}
 }
 
-func scrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, mention bool) {
+	discord.ChannelTyping(m.ChannelID)
+	response := openai_ChatTXTonly(m.Content)
+	if mention {
+		response = m.Author.Mention() + " " + response
+	}
+	s.ChannelMessageSend(m.ChannelID, response)
+}
+
+func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	discordFollowUp("Scraping Discord Channel for Upscaled Midjourney Images...", s, i)
 	// Get the interaction channel ID
 	channelID := i.ChannelID
@@ -137,30 +148,13 @@ func scrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			fmt.Println("Author: " + v.Author.Username)
 			fmt.Println("Content: " + v.Content)
 			if len(v.Attachments) > 0 {
-				fmt.Println("Attachments: " + v.Attachments[0].URL)
+				url := v.Attachments[0].URL
+				fmt.Println("Attachments: " + url)
+				printify_UploadImage(fileNameFromURL(url), url)
 			}
 		}
 	}
 
-}
-
-func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	// Get the value of the prompt parameter
-	prompt := i.ApplicationCommandData().Options[0].StringValue()
-	oaiResponse := openAI_Chat(prompt)
-	responseMessage := ""
-
-	for _, v := range oaiResponse.Choices {
-		responseMessage += v.Text[2:]
-	}
-
-	responseMessage = "prompt: " + prompt + "\n" + responseMessage
-	discordFollowUp(responseMessage, s, i)
-
-	if verbose {
-		fmt.Println("Ponder Discord Bot...")
-		fmt.Println("Response: " + responseMessage)
-	}
 }
 
 func discordInitialResponse(content string, s *discordgo.Session, i *discordgo.InteractionCreate) {

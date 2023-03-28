@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -64,7 +65,13 @@ func apiServer() {
 
 // Discord Handler
 func discordHandler(w http.ResponseWriter, r *http.Request) {
-	request := DISCORD_Request{}
+
+	if verbose {
+		fmt.Println("Discord Handler: JSON received")
+		httpDumpRequest(r)
+	}
+
+	request := discordgo.Webhook{}
 
 	// Read the JSON
 	reqJson, err := io.ReadAll(r.Body)

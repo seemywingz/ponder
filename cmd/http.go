@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -57,6 +58,13 @@ func httpCatchErr(resp *http.Response, jsonString []byte) {
 	if resp.StatusCode != 200 {
 		catchErr(errors.New("API Error: " + strconv.Itoa(resp.StatusCode) + "\n" + string(jsonString)))
 	}
+}
+
+func httpDumpRequest(r *http.Request) {
+	// Dump the HTTP Request
+	dump, err := httputil.DumpRequest(r, true)
+	catchErr(err)
+	fmt.Println("🌐 HTTP Request", string(dump))
 }
 
 // download file from url and save to local directory

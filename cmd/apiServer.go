@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"crypto/ed25519"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -65,8 +66,13 @@ func apiServer() {
 }
 
 func discordValidateRequest(w http.ResponseWriter, r *http.Request) bool {
+	// Decode the hex string into bytes
+	bytes, err := hex.DecodeString(DISCORD_PUB_KEY)
+	catchErr(err)
+	// Convert bytes to ed25519.PublicKey
+	var publicKey ed25519.PublicKey = bytes
 	// Validate the request using the Discord Go library
-	return discordgo.VerifyInteraction(r, ed25519.PublicKey(DISCORD_PUB_KEY))
+	return discordgo.VerifyInteraction(r, publicKey)
 }
 
 // Discord Handler
@@ -80,6 +86,7 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !discordValidateRequest(w, r) {
 		http.Error(w, "Invalid Signature", http.StatusUnauthorized)
+		fmt.Println("Discord Handler: Invalid Signature")
 		return
 	}
 

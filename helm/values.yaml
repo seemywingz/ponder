@@ -16,7 +16,7 @@ fullnameOverride: ""
 app:
   name: ponder
   args:
-    - api-server
+    - discord-bot
     - -v
   env:
     - name: OPENAI_API_KEY

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +31,14 @@ func httpMakeRequest(request *http.Request, responseJson interface{}) {
 
 	// Check for HTTP Errors
 	httpCatchErr(resp, jsonString)
+	if verbose {
+		b, err := io.ReadAll(resp.Body)
+		// b, err := ioutil.ReadAll(resp.Body)  Go.1.15 and earlier
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("🌐 HTTP Response", b)
+	}
 
 	// Unmarshal the JSON Response Body into provided responseJson
 	err = json.Unmarshal([]byte(jsonString), &responseJson)

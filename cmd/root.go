@@ -21,6 +21,7 @@ var openAIUser string
 var OPENAI_API_KEY string
 var ETSY_API_KEY string
 var PRINTIFY_API_KEY string
+var DISCORD_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -60,6 +61,10 @@ func init() {
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
 	if PRINTIFY_API_KEY == "" {
 		catchErr(errors.New("PRINTIFY_API_KEY environment variable is not set"))
+	}
+	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
+	if DISCORD_API_KEY == "" {
+		catchErr(errors.New("DISCORD_API_KEY environment variable is not set"))
 	}
 
 	// Create a unique user for OpenAI

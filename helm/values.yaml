@@ -39,6 +39,11 @@ app:
         secretKeyRef:
           name: discord-api-key
           key: api-key
+    - name: DISCORD_PUB_KEY
+      valueFrom:
+        secretKeyRef:
+          name: discord-pub-key
+          key: pub-key
 
 service:
   type: ClusterIP

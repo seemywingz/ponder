@@ -92,7 +92,11 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(reqJson)
 	} else {
-		fmt.Fprintf(w, "Discord Handler")
+		if httpVerifyRequest(w, r) {
+
+		} else {
+			http.Error(w, "Invalid signature", http.StatusUnauthorized)
+		}
 	}
 
 }

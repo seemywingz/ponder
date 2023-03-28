@@ -13,8 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"golang.org/x/crypto/nacl/sign"
 )
 
 // Create HTTP Client
@@ -66,38 +64,6 @@ func httpDumpRequest(r *http.Request) {
 	dump, err := httputil.DumpRequest(r, true)
 	catchErr(err)
 	fmt.Println("🌐 HTTP Request", string(dump))
-}
-
-func httpVerifyRequest(w http.ResponseWriter, r *http.Request, appPubKey string) bool {
-
-	// Read the request body
-	body, err := io.ReadAll(r.Body)
-	catchErr(err)
-
-	// Decode the base64-encoded signature from the request header
-	sigHeader := r.Header.Get("X-Signature-Ed25519")
-	if sigHeader == "" {
-		fmt.Println("Failed to Verify Request: No Signature")
-		return false
-	}
-	// sig, err := base64.StdEncoding.DecodeString(sigHeader)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return false
-	// }
-
-	// Generate the public key from the Discord API secret key
-	var pubKey [32]byte
-	copy(pubKey[:], appPubKey)
-
-	// Verify the request signature
-	if _, ok := sign.Open(nil, body, &pubKey); !ok {
-		fmt.Println("Failed to Verify Request: Invalid Signature")
-		return false
-	}
-	// The signature is valid, so continue processing the request
-	fmt.Fprintf(w, "Hello, world!")
-	return true
 }
 
 // download file from url and save to local directory

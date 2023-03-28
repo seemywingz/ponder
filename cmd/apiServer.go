@@ -80,6 +80,7 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 	request := discordgo.Webhook{}
 
 	if verbose {
+		fmt.Println("\nDiscord Handler:")
 		trace()
 		httpDumpRequest(r)
 	}

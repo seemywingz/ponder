@@ -6,8 +6,8 @@ replicaCount: 1
 
 image:
   repository: disciplesofai/ponder
-  pullPolicy: always
-  tag: "latest"
+  pullPolicy: Always
+  tag: "dev"
 
 imagePullSecrets: []
 nameOverride: ""

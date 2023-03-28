@@ -70,7 +70,7 @@ func httpDumpRequest(r *http.Request) {
 	fmt.Println("🌐 HTTP Request", string(dump))
 }
 
-func httpVerifyRequest(w http.ResponseWriter, r *http.Request) bool {
+func httpVerifyRequest(w http.ResponseWriter, r *http.Request, appPubKey string) bool {
 
 	// Read the request body
 	body, err := ioutil.ReadAll(r.Body)
@@ -90,7 +90,7 @@ func httpVerifyRequest(w http.ResponseWriter, r *http.Request) bool {
 
 	// Generate the public key from the Discord API secret key
 	var pubKey [32]byte
-	copy(pubKey[:], DISCORD_PUB_KEY)
+	copy(pubKey[:], appPubKey)
 
 	// Verify the request signature
 	if _, ok := sign.Open(nil, body, &pubKey); !ok {

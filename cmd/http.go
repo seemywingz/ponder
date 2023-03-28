@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -37,7 +36,6 @@ func httpMakeRequest(request *http.Request, responseJson interface{}) {
 	httpCatchErr(resp, jsonString)
 	if verbose {
 		b, err := io.ReadAll(resp.Body)
-		// b, err := ioutil.ReadAll(resp.Body)  Go.1.15 and earlier
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -73,7 +71,7 @@ func httpDumpRequest(r *http.Request) {
 func httpVerifyRequest(w http.ResponseWriter, r *http.Request, appPubKey string) bool {
 
 	// Read the request body
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	catchErr(err)
 
 	// Decode the base64-encoded signature from the request header

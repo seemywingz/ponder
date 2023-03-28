@@ -5,9 +5,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 )
@@ -27,6 +30,9 @@ var apiServerCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(apiServerCmd)
+
+	// port flag
+	apiServerCmd.Flags().StringVarP(&ponder_api_port, "port", "P", "8080", "Port to run the API Server on")
 }
 
 // Start the Gorilla MUX API Server
@@ -51,7 +57,8 @@ func apiServer() {
 
 	// Start the server
 	fmt.Println("Starting API Server on port", ponder_api_port, "...")
-	err := http.ListenAndServe(":"+ponder_api_port, r)
+	loggedRouter := handlers.LoggingHandler(os.Stdout, r)
+	err := http.ListenAndServe(":"+ponder_api_port, loggedRouter)
 	catchErr(err)
 
 }
@@ -59,6 +66,6 @@ func apiServer() {
 // Discord Handler
 func discordHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Discord Handler")
-	// Get the Request Body
 	fmt.Println("Request Body:", r)
+	log.Println("Processing request!")
 }

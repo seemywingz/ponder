@@ -29,26 +29,6 @@ func initDiscord() {
 	select {}
 }
 
-// func discord_GetImage() {
-
-// 	initDiscord()
-
-// 	messages, err := discord.ChannelMessages(discord_channel_midjourney, 10, "", "", "")
-// 	catchErr(err)
-
-// 	for _, v := range messages {
-// 		fmt.Println()
-// 		fmt.Println("Message:")
-// 		fmt.Println("ID: " + v.ID)
-// 		fmt.Println("Author: " + v.Author.Username)
-// 		fmt.Println("Content: " + v.Content)
-// 		if len(v.Attachments) > 0 {
-// 			fmt.Println("Attachments: " + v.Attachments[0].URL)
-// 		}
-// 	}
-
-// }
-
 func setStatusOnline() {
 	// Set status to online with active activity
 	err := discord.UpdateStatusComplex(discordgo.UpdateStatusData{
@@ -98,7 +78,7 @@ func registerSlashCommand() {
 }
 
 func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	// Send the initial response.
+	// Send initial defer response.
 	response := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
 	}
@@ -107,15 +87,12 @@ func slashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	switch i.ApplicationCommandData().Name {
 	case "hello":
-
 		oaiResponse := openAI_Chat("Hello World, from Ponder Discord Bot that is kinda cheeky!")
 		responseMessage := ""
-
 		for _, v := range oaiResponse.Choices {
 			responseMessage += v.Text[2:]
 		}
-
-		discordFollowUpMessage(responseMessage, s, i)
+		discordFollowUp(responseMessage, s, i)
 	case "chat":
 		discordChat(s, i)
 	default:
@@ -136,7 +113,7 @@ func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	responseMessage = "prompt: " + prompt + "\n" + responseMessage
-	discordFollowUpMessage(responseMessage, s, i)
+	discordFollowUp(responseMessage, s, i)
 
 	if verbose {
 		fmt.Println("Ponder Discord Bot...")
@@ -144,10 +121,30 @@ func discordChat(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
-func discordFollowUpMessage(responseMessage string, s *discordgo.Session, i *discordgo.InteractionCreate) {
+func discordFollowUp(message string, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	followup := &discordgo.WebhookParams{
-		Content: responseMessage,
+		Content: message,
 	}
 	_, err := s.FollowupMessageCreate(i.Interaction, false, followup)
 	catchErr(err)
 }
+
+// func discord_GetImage() {
+
+// 	initDiscord()
+
+// 	messages, err := discord.ChannelMessages(discord_channel_midjourney, 10, "", "", "")
+// 	catchErr(err)
+
+// 	for _, v := range messages {
+// 		fmt.Println()
+// 		fmt.Println("Message:")
+// 		fmt.Println("ID: " + v.ID)
+// 		fmt.Println("Author: " + v.Author.Username)
+// 		fmt.Println("Content: " + v.Content)
+// 		if len(v.Attachments) > 0 {
+// 			fmt.Println("Attachments: " + v.Attachments[0].URL)
+// 		}
+// 	}
+
+// }

@@ -55,10 +55,6 @@ func init() {
 	if OPENAI_API_KEY == "" {
 		catchErr(errors.New("OPENAI_API_KEY environment variable is not set"))
 	}
-	ETSY_API_KEY = os.Getenv("ETSY_API_KEY")
-	if ETSY_API_KEY == "" {
-		catchErr(errors.New("ETSY_API_KEY environment variable is not set"))
-	}
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
 	if PRINTIFY_API_KEY == "" {
 		catchErr(errors.New("PRINTIFY_API_KEY environment variable is not set"))

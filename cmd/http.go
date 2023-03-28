@@ -7,7 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -59,12 +58,12 @@ func httpCatchErr(resp *http.Response, jsonString []byte) {
 	}
 }
 
-func httpDumpRequest(r *http.Request) {
-	// Dump the HTTP Request
-	dump, err := httputil.DumpRequest(r, true)
-	catchErr(err)
-	fmt.Println("🌐 HTTP Request", string(dump))
-}
+// func httpDumpRequest(r *http.Request) {
+// 	// Dump the HTTP Request
+// 	dump, err := httputil.DumpRequest(r, true)
+// 	catchErr(err)
+// 	fmt.Println("🌐 HTTP Request", string(dump))
+// }
 
 // download file from url and save to local directory
 func httpDownloadFile(url string, filePath string) string {

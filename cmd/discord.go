@@ -9,11 +9,11 @@ import (
 
 // discordCmd represents the discord command
 var discordCmd = &cobra.Command{
-	Use:   "discord",
+	Use:   "discord-bot",
 	Short: "Discord Chat Bot Integration",
-	Long:  ``,
+	Long:  `Discord Chat Bot Integration utilizing Secure Gateway Websocket`,
 	Run: func(cmd *cobra.Command, args []string) {
-		discord_GetImage()
+		initDiscord()
 	},
 }
 

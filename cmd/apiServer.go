@@ -4,6 +4,7 @@ Copyright © 2023 Kevin.Jayne@iCloud.com
 package cmd
 
 import (
+	"crypto/ed25519"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -63,6 +64,14 @@ func apiServer() {
 
 }
 
+func discordValidateRequest(w http.ResponseWriter, r *http.Request) bool {
+	// Validate the request using the Discord Go library
+	if !discordgo.VerifyInteraction(r, ed25519.PublicKey(DISCORD_PUB_KEY)) {
+		return false
+	}
+	return true
+}
+
 // Discord Handler
 func discordHandler(w http.ResponseWriter, r *http.Request) {
 	request := discordgo.Webhook{}
@@ -72,8 +81,9 @@ func discordHandler(w http.ResponseWriter, r *http.Request) {
 		httpDumpRequest(r)
 	}
 
-	if !httpVerifyRequest(w, r, DISCORD_PUB_KEY) {
-		http.Error(w, "Invalid signature", http.StatusUnauthorized)
+	if !discordValidateRequest(w, r) {
+		http.Error(w, "Invalid Signature", http.StatusUnauthorized)
+		return
 	}
 
 	// Read the JSON

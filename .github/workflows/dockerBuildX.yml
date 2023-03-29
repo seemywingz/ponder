@@ -35,8 +35,8 @@ jobs:
 
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
-          elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            VERSION=latest
+          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+            VERSION=${GITHUB_REF#refs/heads/}
           else
             VERSION=latest
           fi

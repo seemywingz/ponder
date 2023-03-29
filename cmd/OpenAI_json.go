@@ -63,3 +63,36 @@ type OPENAI_ErrorResponse struct {
 		Code    string `json:"code"`
 	} `json:"error"`
 }
+
+type OPENAI_ChatCompletionResponse struct {
+	ID      string          `json:"id"`
+	Object  string          `json:"object"`
+	Created int             `json:"created"`
+	Choices []OPENAI_Choice `json:"choices"`
+	Usage   map[string]int  `json:"usage"`
+}
+
+type OPENAI_Choice struct {
+	Index        int            `json:"index"`
+	Message      OPENAI_Message `json:"message"`
+	FinishReason string         `json:"finish_reason"`
+}
+
+type OPENAI_Message struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type OPENAI_ChatCompletionRequest struct {
+	Model            string           `json:"model"`
+	Messages         []OPENAI_Message `json:"messages"`
+	MaxTokens        int              `json:"max_tokens"`
+	Temperature      float64          `json:"temperature"`
+	TopP             float64          `json:"top_p"`
+	N                int              `json:"n"`
+	Stream           bool             `json:"stream"`
+	PresencePenalty  float64          `json:"presence_penalty"`
+	FrequencyPenalty float64          `json:"frequency_penalty"`
+	Stop             []string         `json:"stop"`
+	User             string           `json:"user"`
+}

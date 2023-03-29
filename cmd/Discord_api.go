@@ -80,6 +80,16 @@ func registerCommands() {
 	catchErr(err)
 }
 
+func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	discordInitialResponse("Thinking...", s, i)
+	switch i.ApplicationCommandData().Name {
+	case "scrape":
+		discordScrapeImages(s, i)
+	default: // Handle unknown slash commands
+		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
+	}
+}
+
 func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// Ignore all messages created by the bot itself
@@ -106,14 +116,35 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 }
 
-func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	discordInitialResponse("Thinking...", s, i)
-	switch i.ApplicationCommandData().Name {
-	case "scrape":
-		discordScrapeImages(s, i)
-	default: // Handle unknown slash commands
-		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
+func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, mention bool) {
+	discord.ChannelTyping(m.ChannelID)
+	openaiMessages := []OPENAI_Message{{
+		Role:    "system",
+		Content: discord_BotSystemMessage,
+	}}
+
+	discordMessages, err := discord.ChannelMessages(m.ChannelID, 30, "", "", "")
+	catchErr(err)
+	discordMessages = discordReverseMessageOrder(discordMessages)
+
+	for _, message := range discordMessages {
+		role := "user"
+		if message.Author.ID == discord.State.User.ID {
+			role = "assistant"
+		}
+		newMessage := OPENAI_Message{
+			Role:    role,
+			Content: message.Content,
+		}
+		openaiMessages = append(openaiMessages, newMessage)
 	}
+
+	oaiResponse := openai_ChatComplete(openaiMessages)
+	responseMessage := oaiResponse.Choices[0].Message.Content
+	if mention {
+		responseMessage = m.Author.Mention() + " " + responseMessage
+	}
+	s.ChannelMessageSend(m.ChannelID, responseMessage)
 }
 
 func discordGetChannelName(channelID string) string {
@@ -133,15 +164,6 @@ func discordGetChannelID(s *discordgo.Session, guildID string, channelName strin
 	}
 
 	return ""
-}
-
-func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, mention bool) {
-	discord.ChannelTyping(m.ChannelID)
-	response := openai_ChatTXTonly(m.Content)
-	if mention {
-		response = m.Author.Mention() + " " + response
-	}
-	s.ChannelMessageSend(m.ChannelID, response)
 }
 
 func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -184,4 +206,12 @@ func discordFollowUp(message string, s *discordgo.Session, i *discordgo.Interact
 	}
 	_, err := s.FollowupMessageCreate(i.Interaction, false, followup)
 	catchErr(err)
+}
+
+// function to reverse the order of a slice
+func discordReverseMessageOrder(s []*discordgo.Message) []*discordgo.Message {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return s
 }

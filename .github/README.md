@@ -33,6 +33,7 @@ DISCORD_PUB_KEY={YOUR DISCORD BOT PUB KEY}
 ponder chat --prompt "AI is Amazing"
 ```
 ### Docker
+#### Running ponder in docker is exactly the same, but you have to provide the env vars when running
 ```bash
 docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest chat --prompt "Ai is Amazing"
 ```
@@ -42,13 +43,8 @@ AI is indeed amazing. It has the potential to revolutionize many industries, fro
 ```
 
 ## A small chat
-### CLI
 ```bash
 ponder chat --loop
-```
-### Docker
-```bash
-docker run -it -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest chat --loop
 ```
 #### Example Ouput
 ```bash
@@ -66,13 +62,8 @@ Thank you for your kind words!
 ```
 
 ## Image Generation
-### CLI
 ```bash
 ponder image -p "watercolor of a corgie"
-```
-### Docker
-```bash
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest image -p "watercolor of a corgie"
 ```
 #### Example Ouput
 ```bash
@@ -80,7 +71,7 @@ docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest image -
 🌐 Image URL: https://oaidalleapiprodscus.blob.core.windows.net/private/org-RCMQxIXre0Olhs0AvLVp672o/user-F1wdcIVNf2VrRqBRD0JWUczI/img-AWku5cm91XAv32jj27XWXZBE.png?st=2023-03-05T05%3A19%3A33Z&se=2023-03-05T07%3A19%3A33Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-05T01%3A25%3A44Z&ske=2023-03-06T01%3A25%3A44Z&sks=b&skv=2021-08-06&sig=xs9vSD0nA0mkxyulHEKABn5cbWH%2B6YOpab25yTAU/nc%3D
 ```
 
-#### You can always refer to the `--help` menue as well.
+### You can always refer to the `--help` menu as well.
 ```shell
 A OpenAI Chat Bot
 

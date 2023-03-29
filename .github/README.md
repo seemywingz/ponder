@@ -72,7 +72,7 @@ ponder image -p "watercolor of a corgie"
 ```
 
 ### You can always refer to the `--help` menu as well.
-```shell
+```yaml
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder

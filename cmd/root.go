@@ -30,7 +30,7 @@ var DISCORD_PUB_KEY string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ponder",
-	Short: "A ChatGPT Chat Bot",
+	Short: "A OpenAI Chat Bot",
 	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:

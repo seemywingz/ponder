@@ -87,15 +87,7 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	// get the channel object using the ID
-	channel, err := discord.Channel(m.ChannelID)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// get the name of the channel
-	channelName := channel.Name
-	fmt.Println("Channel Name: " + channelName)
+	channelName := discordGetChannelName(m.ChannelID)
 
 	// Respond to messages in the #ponder channel
 	if channelName == "ponder" {
@@ -124,6 +116,25 @@ func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
+func discordGetChannelName(channelID string) string {
+	channel, err := discord.Channel(channelID)
+	catchErr(err)
+	return channel.Name
+}
+
+func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
+	channels, err := s.GuildChannels(guildID)
+	catchErr(err)
+
+	for _, channel := range channels {
+		if channel.Name == channelName {
+			return channel.ID
+		}
+	}
+
+	return ""
+}
+
 func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, mention bool) {
 	discord.ChannelTyping(m.ChannelID)
 	response := openai_ChatTXTonly(m.Content)
@@ -134,22 +145,20 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 }
 
 func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	discordFollowUp("Scraping Discord Channel for Upscaled Midjourney Images...", s, i)
+	discord.ChannelTyping(i.ChannelID)
 	// Get the interaction channel ID
 	channelID := i.ChannelID
 	messages, err := discord.ChannelMessages(channelID, 100, "", "", "")
 	catchErr(err)
+	discordFollowUp("Scraping Discord Channel for ALL Image URLs and sending them to #saved-images.\nAll `Upscaled` Midjourney Images will be sent to Printify as well...", s, i)
+
+	savedImagesChannelID := discordGetChannelID(s, i.GuildID, "saved-images")
 
 	for _, v := range messages {
-		if strings.Contains(v.Content, "Upscaled") {
-			fmt.Println()
-			fmt.Println("Message:")
-			fmt.Println("ID: " + v.ID)
-			fmt.Println("Author: " + v.Author.Username)
-			fmt.Println("Content: " + v.Content)
-			if len(v.Attachments) > 0 {
-				url := v.Attachments[0].URL
-				fmt.Println("Attachments: " + url)
+		if len(v.Attachments) > 0 {
+			url := v.Attachments[0].URL
+			s.ChannelMessageSend(savedImagesChannelID, url)
+			if strings.Contains(v.Content, "Upscaled") {
 				printify_UploadImage(fileNameFromURL(url), url)
 			}
 		}

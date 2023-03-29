@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +31,13 @@ func httpMakeRequest(request *http.Request, responseJson interface{}) {
 
 	// Check for HTTP Errors
 	httpCatchErr(resp, jsonString)
+	if verbose {
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("🌐 HTTP Response", b)
+	}
 
 	// Unmarshal the JSON Response Body into provided responseJson
 	err = json.Unmarshal([]byte(jsonString), &responseJson)
@@ -49,6 +57,13 @@ func httpCatchErr(resp *http.Response, jsonString []byte) {
 		catchErr(errors.New("API Error: " + strconv.Itoa(resp.StatusCode) + "\n" + string(jsonString)))
 	}
 }
+
+// func httpDumpRequest(r *http.Request) {
+// 	// Dump the HTTP Request
+// 	dump, err := httputil.DumpRequest(r, true)
+// 	catchErr(err)
+// 	fmt.Println("🌐 HTTP Request", string(dump))
+// }
 
 // download file from url and save to local directory
 func httpDownloadFile(url string, filePath string) string {

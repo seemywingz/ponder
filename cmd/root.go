@@ -7,7 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"hash/fnv"
+	"net/url"
 	"os"
+	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -21,6 +24,8 @@ var openAIUser string
 var OPENAI_API_KEY string
 var ETSY_API_KEY string
 var PRINTIFY_API_KEY string
+var DISCORD_API_KEY string
+var DISCORD_PUB_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -53,13 +58,17 @@ func init() {
 	if OPENAI_API_KEY == "" {
 		catchErr(errors.New("OPENAI_API_KEY environment variable is not set"))
 	}
-	ETSY_API_KEY = os.Getenv("ETSY_API_KEY")
-	if ETSY_API_KEY == "" {
-		catchErr(errors.New("ETSY_API_KEY environment variable is not set"))
-	}
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
 	if PRINTIFY_API_KEY == "" {
 		catchErr(errors.New("PRINTIFY_API_KEY environment variable is not set"))
+	}
+	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
+	if DISCORD_API_KEY == "" {
+		catchErr(errors.New("DISCORD_API_KEY environment variable is not set"))
+	}
+	DISCORD_PUB_KEY = os.Getenv("DISCORD_PUB_KEY")
+	if DISCORD_PUB_KEY == "" {
+		catchErr(errors.New("DISCORD_PUB_KEY environment variable is not set"))
 	}
 
 	// Create a unique user for OpenAI
@@ -89,4 +98,17 @@ func formatPrompt(prompt string) string {
 	prompt = strings.ReplaceAll(prompt, "/", "-")
 	prompt = strings.ReplaceAll(prompt, ",", "")
 	return prompt
+}
+
+func fileNameFromURL(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	catchErr(err)
+
+	// Get the last path component of the URL
+	filename := filepath.Base(u.Path)
+
+	// Replace any characters that are not letters, numbers, or underscores with dashes
+	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
+
+	return filename
 }

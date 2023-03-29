@@ -21,6 +21,7 @@ import (
 var verbose bool
 var prompt string
 var openAIUser string
+var ponderID string
 var OPENAI_API_KEY string
 var ETSY_API_KEY string
 var PRINTIFY_API_KEY string
@@ -74,7 +75,7 @@ func init() {
 	// Create a unique user for OpenAI
 	h := fnv.New32a()
 	h.Write([]byte(OPENAI_API_KEY))
-	openAIUser = "ponder" + strconv.Itoa(int(h.Sum32()))
+	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
 }
 
 func trace() {

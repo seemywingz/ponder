@@ -73,7 +73,14 @@ ponder image -p "watercolor of a corgie"
 
 ### You can always refer to the `--help` menu as well.
 ```shell
-A OpenAI Chat Bot
+
+        Ponder
+        GitHub: https://github.com/seemywingz/ponder
+        App Version: v0.1.2
+
+  Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
+  You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
+  Or whatever else you can think of...
 
 Usage:
   ponder [command]
@@ -92,5 +99,4 @@ Flags:
   -v, --verbose         verbose output
 
 Use "ponder [command] --help" for more information about a command.
-
 ```

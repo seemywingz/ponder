@@ -20,7 +20,7 @@ var sayText bool
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-	Short: "Openended chat with ChatGPT",
+	Short: "Open ended chat with OpenAI",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 

@@ -139,6 +139,8 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 		openaiMessages = append(openaiMessages, newMessage)
 	}
 
+	// Send the messages to OpenAI
+	openAIUser = ponderID + m.Author.Username
 	oaiResponse := openai_ChatComplete(openaiMessages)
 	responseMessage := oaiResponse.Choices[0].Message.Content
 	if mention {

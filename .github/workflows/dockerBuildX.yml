@@ -1,11 +1,6 @@
 name: Docker BuildX
 
 on:
-  release:
-    types:
-      - published
-      - released
-      - prereleased
   push:
     branches:
       - "main"

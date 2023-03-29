@@ -19,20 +19,28 @@ import (
 )
 
 var verbose bool
-var prompt string
-var openAIUser string
-var ponderID string
-var OPENAI_API_KEY string
-var ETSY_API_KEY string
-var PRINTIFY_API_KEY string
-var DISCORD_API_KEY string
-var DISCORD_PUB_KEY string
+var APP_VERSION = "v0.1.2"
+var prompt,
+	openAIUser,
+	ponderID,
+	OPENAI_API_KEY,
+	PRINTIFY_API_KEY,
+	DISCORD_API_KEY,
+	DISCORD_PUB_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "ponder",
-	Short: "A OpenAI Chat Bot",
-	Long:  ``,
+	Short: "Ponder OpenAI Chat Bot " + APP_VERSION,
+	Long: `
+	Ponder
+	GitHub: https://github.com/seemywingz/ponder
+	App Version: ` + APP_VERSION + `
+
+  Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
+  You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
+  Or whatever else you can think of...
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) {

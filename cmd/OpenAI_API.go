@@ -142,7 +142,7 @@ func openai_ChatComplete(messages []OPENAI_Message) OPENAI_ChatCompletionRespons
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
-		MaxTokens:        1000,
+		MaxTokens:        4096,
 		User:             openAIUser,
 	}
 	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")

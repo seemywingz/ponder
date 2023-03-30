@@ -76,7 +76,7 @@ ponder image -p "watercolor of a corgie"
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.0.0
+        App Version: v0.0.1
 
   Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
   You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.

@@ -187,12 +187,3 @@ func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
 
 	httpMakeRequest(req, responseJson)
 }
-
-// func openai_ChatTXTonly(prompt string) string {
-// 	oaiResponse := openAI_Chat(prompt)
-// 	responseMessage := ""
-// 	for _, v := range oaiResponse.Choices {
-// 		responseMessage += v.Text[2:]
-// 	}
-// 	return responseMessage
-// }

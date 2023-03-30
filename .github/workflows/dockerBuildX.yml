@@ -10,7 +10,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_VERSION: edge
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -37,23 +36,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Image Version
-        run: |
-
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
-            VERSION=${GITHUB_REF#refs/heads/}
-          else
-            VERSION=latest
-          fi
-
-          echo "IMAGE_VERSION=${VERSION}"
-          echo "IMAGE_VERSION=${VERSION}" >> $GITHUB_ENV
-
       - name: Docker Extract metadata (tags, labels)
         id: meta
-        uses: docker/metadata-action@v2
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 

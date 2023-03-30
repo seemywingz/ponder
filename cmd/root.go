@@ -19,7 +19,7 @@ import (
 )
 
 var verbose bool
-var APP_VERSION = "v0.1.2"
+var APP_VERSION = "v0.0.0"
 var prompt,
 	openAIUser,
 	ponderID,

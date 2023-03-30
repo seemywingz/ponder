@@ -1,6 +1,6 @@
 Ponder
 -------
-###### OpenAI Powerd Chat Tool  
+###### OpenAI Powered Chat Tool    
 [![main](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml/badge.svg?branch=main)](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml)
 
 
@@ -35,7 +35,7 @@ ponder chat --prompt "AI is Amazing"
 ### Docker
 #### Running ponder in docker is exactly the same, but you have to provide the env vars when running
 ```bash
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY disciplesofai/ponder:latest chat --prompt "Ai is Amazing"
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY  ghcr.io/seemywingz/ponder:latest chat --prompt "Ai is Amazing"
 ```
 #### Example Output
 ```bash
@@ -76,7 +76,7 @@ ponder image -p "watercolor of a corgie"
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.1.2
+        App Version: v0.0.0
 
   Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
   You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.

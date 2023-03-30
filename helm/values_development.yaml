@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/seemywingz/ponder
   pullPolicy: Always
-  tag: development
+  tag: develop
 
 imagePullSecrets: []
 nameOverride: ""

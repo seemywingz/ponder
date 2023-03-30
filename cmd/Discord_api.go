@@ -100,7 +100,7 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	channelName := discordGetChannelName(m.ChannelID)
 
 	// Respond to messages in the #ponder channel
-	if channelName == "ponder" {
+	if channelName == "ponder" || m.GuildID == "" {
 		discordOpenAIResponse(s, m, false)
 		return
 	}
@@ -143,9 +143,9 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	openAIUser = ponderID + m.Author.Username
 	oaiResponse := openai_ChatComplete(openaiMessages)
 	responseMessage := oaiResponse.Choices[0].Message.Content
-	if mention {
-		responseMessage = m.Author.Mention() + " " + responseMessage
-	}
+	// if mention {
+	// 	responseMessage = m.Author.Mention() + " " + responseMessage
+	// }
 	s.ChannelMessageSend(m.ChannelID, responseMessage)
 }
 

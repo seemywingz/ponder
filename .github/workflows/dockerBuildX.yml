@@ -8,28 +8,35 @@ on:
       - "**"
 
 env:
+  REGISTRY: ghcr.io
   IMAGE_VERSION: edge
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker:
+  build-and-push-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout
+      - name: GitHub Checkout
         uses: actions/checkout@v3
 
-      - name: Set up QEMU
+      - name: Docker Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Set up Docker Buildx
+      - name: Docker Set up Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker Hub
+      - name: Docker Login
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate image Version
+      - name: Generate Image Version
         run: |
 
           if [[ $GITHUB_REF == refs/tags/* ]]; then
@@ -43,10 +50,17 @@ jobs:
           echo "IMAGE_VERSION=${VERSION}"
           echo "IMAGE_VERSION=${VERSION}" >> $GITHUB_ENV
 
+      - name: Docker Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm/v7
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ponder:${{ env.IMAGE_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

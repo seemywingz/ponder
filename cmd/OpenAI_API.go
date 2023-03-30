@@ -142,7 +142,7 @@ func openai_ChatComplete(messages []OPENAI_Message) OPENAI_ChatCompletionRespons
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,
 		PresencePenalty:  0.6,
-		MaxTokens:        4096,
+		MaxTokens:        999,
 		User:             openAIUser,
 	}
 	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")
@@ -153,7 +153,7 @@ func openAI_Chat(prompt string) OPENAI_ChatResponse {
 	oaiResponse := OPENAI_ChatResponse{}
 	oaiRequest := &OPENAI_ChatRequest{
 		Prompt:           prompt,
-		MaxTokens:        1000,
+		MaxTokens:        999,
 		Model:            "text-davinci-003",
 		Temperature:      0,
 		TopP:             0.1,

@@ -5,9 +5,9 @@
 replicaCount: 1
 
 image:
-  repository: disciplesofai/ponder
+  repository: ghcr.io/seemywingz/ponder
   pullPolicy: Always
-  tag: "development"
+  tag: development
 
 imagePullSecrets: []
 nameOverride: ""

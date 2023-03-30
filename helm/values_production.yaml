@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: disciplesofai/ponder
+  repository: ghcr.io/seemywingz/ponder
   pullPolicy: Always
   tag: "v0.1.2"
 

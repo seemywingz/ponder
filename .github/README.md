@@ -17,7 +17,7 @@ Visit your [API Keys](https://platform.openai.com/account/api-keys) page to retr
 
 ### Required Environment Variables
 ###### ℹ️ These Environment Variables are required for both docker and cli usage
-###### ℹ️ Only the keys for the API endpoints you are using are required
+###### ℹ️ You can omit keys for unused API endpoints
 ```bash
 OPENAI_API_KEY={YOUR OPENAI API KEY}
 PRINTIFY_API_KEY={YOUR PRINTIFY API KEY}

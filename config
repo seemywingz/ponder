@@ -1,6 +1,12 @@
+ponder:
+  version: "v0.0.2"
+  description: "OpenAI Powered Chat Tool"
+
 openAI:
+  endpoint: "https://api.openai.com/v1/"
   image:
     size: "1024x1024"
+    downloadPath: "HOME"
   completion:
     chat:
       topP: 0.1

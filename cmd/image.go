@@ -13,9 +13,9 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var filePath = "HOME"
 var open, download bool
 var file string
 var n int
@@ -50,6 +50,7 @@ func createImage(prompt, imageFile string) {
 
 		if download { // Download image to local directory if download flag is set
 			promptPath := formatPrompt(prompt)
+			filePath := viper.GetString("image.downloadPath")
 			if filePath == "HOME" { // If no path is specified, use the user's home directory
 				currentUser, err := user.Current()
 				catchErr(err)

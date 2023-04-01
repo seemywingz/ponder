@@ -113,7 +113,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			User:           openAIUser,
 			Size:           viper.GetString("openai.image.size"),
 		}
-		openAI_UploadImage(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
+		openAI_UploadImage(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"images/edits", imageFile)
 
 	} else { // Generate a new image
 
@@ -124,7 +124,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			User:           openAIUser,
 			Size:           viper.GetString("openai.image.size"),
 		}
-		openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
+		openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"images/generations")
 	}
 	if verbose {
 		trace()
@@ -146,7 +146,7 @@ func openai_ChatCompletion(messages []OPENAI_Message) string {
 		FrequencyPenalty: viper.GetFloat64("openai.completion.chat.frequencyPenalty"),
 		PresencePenalty:  viper.GetFloat64("openai.completion.chat.presencePenalty"),
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"chat/completions")
 	return oaiResponse.Choices[0].Message.Content
 }
 
@@ -166,7 +166,7 @@ func openAI_TextCompletion(prompt string) OPENAI_ChatResponse {
 		trace()
 		fmt.Println(oaiRequest)
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"completions")
 	return oaiResponse
 }
 

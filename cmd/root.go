@@ -15,10 +15,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var verbose bool
-var APP_VERSION = "v0.0.0"
+var APP_VERSION = "v0.1.0"
 var prompt,
 	openAIUser,
 	ponderID,
@@ -43,7 +44,6 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) {
-
 	// },
 }
 
@@ -57,6 +57,8 @@ func Execute() {
 }
 
 func init() {
+	viperConfig()
+
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
 	rootCmd.MarkFlagRequired("prompt")
@@ -84,6 +86,25 @@ func init() {
 	h.Write([]byte(OPENAI_API_KEY))
 	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
 	openAIUser = ponderID + "user"
+
+}
+
+func viperConfig() {
+	// use spf13/viper to read config file
+	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
+	viper.SetConfigName("config")        // name of config file (without extension)
+	viper.SetConfigType("yaml")          // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath(".")             // optionally look for config in the working directory
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore error if desired
+			fmt.Println("No config file found, continuing without config file")
+		} else {
+			catchErr(err)
+		}
+	}
+
 }
 
 func trace() {

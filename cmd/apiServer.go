@@ -79,7 +79,7 @@ package cmd
 // func discordHandler(w http.ResponseWriter, r *http.Request) {
 // 	request := discordgo.Interaction{}
 
-// 	if verbose {
+// 	if viper.GetBool("verbose") {
 // 		fmt.Println("\nDiscord Handler:")
 // 		trace()
 // 		httpDumpRequest(r)

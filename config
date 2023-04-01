@@ -1,0 +1,16 @@
+openAI:
+  completion:
+    chat:
+      model: "gpt-3.5-turbo"
+      maxTokens: 999
+      temperature: 0
+      topP: 0.1
+      frequencyPenalty: 0.0
+      presencePenalty: 0.6
+    text:
+      model: "text-davinci-003"
+      maxTokens: 999
+      temperature: 0
+      topP: 0.1
+      frequencyPenalty: 0.0
+      presencePenalty: 0.6

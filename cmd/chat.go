@@ -65,7 +65,7 @@ func chatCompletion(prompt string) string {
 
 func textCompletion(prompt string) {
 
-	oaiResponse := openAI_Completion(prompt)
+	oaiResponse := openAI_TextCompletion(prompt)
 
 	for _, v := range oaiResponse.Choices {
 		text := v.Text

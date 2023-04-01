@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/spf13/viper"
 )
 
 func openAI_UploadImage(requestJson, responseJson interface{}, endpoint, filePath string) {
@@ -135,31 +137,31 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 func openai_ChatCompletion(messages []OPENAI_Message) string {
 	oaiResponse := OPENAI_ChatCompletionResponse{}
 	oaiRequest := OPENAI_ChatCompletionRequest{
-		Model:            "gpt-3.5-turbo",
-		Messages:         messages,
 		N:                1,
-		Temperature:      0,
-		TopP:             0.1,
-		FrequencyPenalty: 0.0,
-		PresencePenalty:  0.6,
-		MaxTokens:        999,
+		Messages:         messages,
 		User:             openAIUser,
+		TopP:             viper.GetFloat64("openai.completion.chat.topP"),
+		Model:            viper.GetString("openai.completion.chat.model"),
+		MaxTokens:        viper.GetInt("openai.completion.chat.maxTokens"),
+		Temperature:      viper.GetFloat64("openai.completion.chat.temperature"),
+		FrequencyPenalty: viper.GetFloat64("openai.completion.chat.frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openai.completion.chat.presencePenalty"),
 	}
 	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")
 	return oaiResponse.Choices[0].Message.Content
 }
 
-func openAI_Completion(prompt string) OPENAI_ChatResponse {
+func openAI_TextCompletion(prompt string) OPENAI_ChatResponse {
 	oaiResponse := OPENAI_ChatResponse{}
 	oaiRequest := &OPENAI_ChatRequest{
-		Model:            "text-davinci-003",
 		Prompt:           prompt,
-		MaxTokens:        999,
-		Temperature:      0,
-		TopP:             0.1,
-		FrequencyPenalty: 0.0,
-		PresencePenalty:  0.6,
 		User:             openAIUser,
+		Model:            viper.GetString("openai.completion.text.model"),
+		MaxTokens:        viper.GetInt("openai.completion.text.maxTokens"),
+		Temperature:      viper.GetFloat64("openai.completion.text.temperature"),
+		TopP:             viper.GetFloat64("openai.completion.text.topP"),
+		FrequencyPenalty: viper.GetFloat64("openai.completion.text.frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openai.completion.text.presencePenalty"),
 	}
 	if verbose {
 		trace()

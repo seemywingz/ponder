@@ -120,10 +120,10 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	discord.ChannelTyping(m.ChannelID)
 	openaiMessages := []OPENAI_Message{{
 		Role:    "system",
-		Content: discord_BotSystemMessage,
+		Content: discord_SystemMessage,
 	}}
 
-	discordMessages, err := discord.ChannelMessages(m.ChannelID, 30, "", "", "")
+	discordMessages, err := discord.ChannelMessages(m.ChannelID, 9, "", "", "")
 	catchErr(err)
 	discordMessages = discordReverseMessageOrder(discordMessages)
 
@@ -141,12 +141,8 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 
 	// Send the messages to OpenAI
 	openAIUser = ponderID + m.Author.Username
-	oaiResponse := openai_ChatComplete(openaiMessages)
-	responseMessage := oaiResponse.Choices[0].Message.Content
-	// if mention {
-	// 	responseMessage = m.Author.Mention() + " " + responseMessage
-	// }
-	s.ChannelMessageSend(m.ChannelID, responseMessage)
+	oaiResponse := openai_ChatCompletion(openaiMessages)
+	s.ChannelMessageSend(m.ChannelID, oaiResponse)
 }
 
 func discordGetChannelName(channelID string) string {

@@ -83,6 +83,7 @@ func init() {
 	h := fnv.New32a()
 	h.Write([]byte(OPENAI_API_KEY))
 	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
+	openAIUser = ponderID + "user"
 }
 
 func trace() {

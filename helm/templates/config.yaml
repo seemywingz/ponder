@@ -3,4 +3,24 @@ kind: ConfigMap
 metadata:
   name: {{ include "ponder.fullname" . }}-config
 data:
-  {{ include .Values.config . | indent 4 }}
+  env: {{ .Values.app.config.env | quote }}
+  openAI:
+    endpoint: {{ .Values.app.config.openAI.endpoint | quote }}
+  image:
+    size: {{ .Values.app.config.image.size | quote }}
+    downloadPath: {{ .Values.app.config.image.downloadPath | quote }}
+  completion:
+    chat:
+      topP: {{ .Values.app.config.completion.chat.topP | quote }}
+      temperature: {{ .Values.app.config.completion.chat.temperature | quote }}
+      maxTokens: {{ .Values.app.config.completion.chat.maxTokens | quote }}
+      presencePenalty: {{ .Values.app.config.completion.chat.presencePenalty | quote }}
+      frequencyPenalty: {{ .Values.app.config.completion.chat.frequencyPenalty | quote }}
+      model: {{ .Values.app.config.completion.chat.model | quote }}
+    text:
+      topP: {{ .Values.app.config.completion.text.topP | quote }}
+      temperature: {{ .Values.app.config.completion.text.temperature | quote }}
+      maxTokens: {{ .Values.app.config.completion.text.maxTokens | quote }}
+      presencePenalty: {{ .Values.app.config.completion.text.presencePenalty | quote }}
+      frequencyPenalty: {{ .Values.app.config.completion.text.frequencyPenalty | quote }}
+      model: {{ .Values.app.config.completion.text.model | quote }}

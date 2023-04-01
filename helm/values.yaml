@@ -18,6 +18,28 @@ app:
   args:
     - discord-bot
     - -v
+  config:
+    env: "development"
+    openAI:
+      endpoint: "https://api.openai.com/v1/"
+    image:
+      size: "1024x1024"
+      downloadPath: "HOME"
+    completion:
+      chat:
+        topP: 0.1
+        temperature: 0
+        maxTokens: 999
+        presencePenalty: 0.6
+        frequencyPenalty: 0.0
+        model: "gpt-3.5-turbo"
+      text:
+        topP: 0.1
+        temperature: 0
+        maxTokens: 999
+        presencePenalty: 0.6
+        frequencyPenalty: 0.0
+        model: "text-davinci-003"
   env:
     - name: OPENAI_API_KEY
       valueFrom:
@@ -39,28 +61,6 @@ app:
         secretKeyRef:
           name: discord-pub-key
           key: pub-key
-
-config:
-  openAI:
-    endpoint: "https://api.openai.com/v1/"
-  image:
-    size: "1024x1024"
-    downloadPath: "HOME"
-  completion:
-    chat:
-      topP: 0.1
-      temperature: 0
-      maxTokens: 999
-      presencePenalty: 0.6
-      frequencyPenalty: 0.0
-      model: "gpt-3.5-turbo"
-    text:
-      topP: 0.1
-      temperature: 0
-      maxTokens: 999
-      presencePenalty: 0.6
-      frequencyPenalty: 0.0
-      model: "text-davinci-003"
 
 service:
   type: ClusterIP

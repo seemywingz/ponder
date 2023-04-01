@@ -107,22 +107,22 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 
 		// Create the JSON Request Body
 		oaiRequest = &OPENAI_ImageEditRequest{
-			Prompt:         prompt,
 			N:              n,
-			Size:           "1024x1024",
 			ResponseFormat: "url",
+			Prompt:         prompt,
 			User:           openAIUser,
+			Size:           viper.GetString("openai.image.size"),
 		}
 		openAI_UploadImage(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
 
 	} else { // Generate a new image
 
 		oaiRequest = &OPENAI_ImageRequest{
-			Prompt:         prompt,
 			N:              n,
-			Size:           "1024x1024",
 			ResponseFormat: "url",
+			Prompt:         prompt,
 			User:           openAIUser,
+			Size:           viper.GetString("openai.image.size"),
 		}
 		openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
 	}
@@ -130,7 +130,6 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 		trace()
 		fmt.Println(oaiRequest)
 	}
-
 	return oaiResponse
 }
 
@@ -172,7 +171,6 @@ func openAI_TextCompletion(prompt string) OPENAI_ChatResponse {
 }
 
 func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
-
 	// Marshal the JSON Request Body
 	requestBodyJson, err := json.Marshal(requestJson)
 	catchErr(err)
@@ -180,12 +178,10 @@ func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
 		trace()
 		fmt.Println(string(requestBodyJson))
 	}
-
 	// Format HTTP Response and Set Headers
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
 	catchErr(err)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
-
 	httpMakeRequest(req, responseJson)
 }

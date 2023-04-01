@@ -1,16 +1,18 @@
 openAI:
+  image:
+    size: "1024x1024"
   completion:
     chat:
+      topP: 0.1
+      temperature: 0
+      maxTokens: 999
+      presencePenalty: 0.6
+      frequencyPenalty: 0.0
       model: "gpt-3.5-turbo"
-      maxTokens: 999
-      temperature: 0
-      topP: 0.1
-      frequencyPenalty: 0.0
-      presencePenalty: 0.6
     text:
-      model: "text-davinci-003"
-      maxTokens: 999
-      temperature: 0
       topP: 0.1
-      frequencyPenalty: 0.0
+      temperature: 0
+      maxTokens: 999
       presencePenalty: 0.6
+      frequencyPenalty: 0.0
+      model: "text-davinci-003"

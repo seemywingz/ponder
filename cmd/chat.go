@@ -14,8 +14,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var loop bool
+var convo bool
 var sayText bool
+var ponderMessages = []OPENAI_Message{{
+	Role:    "system",
+	Content: ponder_SystemMessage,
+}}
+
+func init() {
+	rootCmd.AddCommand(chatCmd)
+	chatCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
+	chatCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
+}
 
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
@@ -24,38 +34,38 @@ var chatCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if loop {
+		if convo {
 			for {
 				fmt.Println("\nYou: ")
 				prompt, err := getUserInput()
 				catchErr(err)
-				fmt.Println("\nPonder: ")
-				chat(prompt)
+				fmt.Println("\nPonder:\n", chatCompletion(prompt))
 			}
 		} else {
-			chat(prompt)
+			textCompletion(prompt)
 		}
 
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(chatCmd)
-	chatCmd.Flags().BoolVarP(&loop, "loop", "l", false, "Loop chat")
-	chatCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
+func chatCompletion(prompt string) string {
+	ponderMessages = append(ponderMessages, OPENAI_Message{
+		Role:    "user",
+		Content: prompt,
+	})
+
+	// Send the messages to OpenAI
+	oaiResponse := openai_ChatCompletion(ponderMessages)
+	ponderMessages = append(ponderMessages, OPENAI_Message{
+		Role:    "assistant",
+		Content: oaiResponse,
+	})
+	return oaiResponse
 }
 
-func say(phrase string) {
-	say := exec.Command(`say`, phrase)
-	err := say.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
-}
+func textCompletion(prompt string) {
 
-func chat(prompt string) {
-
-	oaiResponse := openAI_Chat(prompt)
+	oaiResponse := openAI_Completion(prompt)
 
 	for _, v := range oaiResponse.Choices {
 		text := v.Text
@@ -82,4 +92,12 @@ func getUserInput() (string, error) {
 		fmt.Println(input)
 	}
 	return input, nil
+}
+
+func say(phrase string) {
+	say := exec.Command(`say`, phrase)
+	err := say.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
 }

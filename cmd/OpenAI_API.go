@@ -132,7 +132,7 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 	return oaiResponse
 }
 
-func openai_ChatComplete(messages []OPENAI_Message) OPENAI_ChatCompletionResponse {
+func openai_ChatCompletion(messages []OPENAI_Message) string {
 	oaiResponse := OPENAI_ChatCompletionResponse{}
 	oaiRequest := OPENAI_ChatCompletionRequest{
 		Model:            "gpt-3.5-turbo",
@@ -146,15 +146,15 @@ func openai_ChatComplete(messages []OPENAI_Message) OPENAI_ChatCompletionRespons
 		User:             openAIUser,
 	}
 	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")
-	return oaiResponse
+	return oaiResponse.Choices[0].Message.Content
 }
 
-func openAI_Chat(prompt string) OPENAI_ChatResponse {
+func openAI_Completion(prompt string) OPENAI_ChatResponse {
 	oaiResponse := OPENAI_ChatResponse{}
 	oaiRequest := &OPENAI_ChatRequest{
+		Model:            "text-davinci-003",
 		Prompt:           prompt,
 		MaxTokens:        999,
-		Model:            "text-davinci-003",
 		Temperature:      0,
 		TopP:             0.1,
 		FrequencyPenalty: 0.0,

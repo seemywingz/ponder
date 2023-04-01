@@ -1,6 +1,6 @@
-ponder:
-  version: "v0.0.2"
-  description: "OpenAI Powered Chat Tool"
+# ponder:
+#   version: "v0.0.2"
+#   description: "OpenAI Powered Chat Tool"
 
 openAI:
   endpoint: "https://api.openai.com/v1/"

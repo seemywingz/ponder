@@ -20,7 +20,7 @@ func openAI_UploadImage(requestJson, responseJson interface{}, endpoint, filePat
 	fullPath, err := filepath.Abs(filePath)
 	catchErr(err)
 
-	// https://platform.openai.com/docs/api-reference/images/create-edit#images/create-edit-image
+	// https://platform.openAI_com/docs/api-reference/images/create-edit#images/create-edit-image
 	// The image to edit. Must be a valid PNG file, less than 4MB, and square.
 	// If mask is not provided, image must have transparency, which will be used as the mask.
 	//
@@ -111,9 +111,9 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			ResponseFormat: "url",
 			Prompt:         prompt,
 			User:           openAIUser,
-			Size:           viper.GetString("openai.image.size"),
+			Size:           viper.GetString("openAI_image_size"),
 		}
-		openAI_UploadImage(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"images/edits", imageFile)
+		openAI_UploadImage(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"images/edits", imageFile)
 
 	} else { // Generate a new image
 
@@ -122,9 +122,9 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 			ResponseFormat: "url",
 			Prompt:         prompt,
 			User:           openAIUser,
-			Size:           viper.GetString("openai.image.size"),
+			Size:           viper.GetString("openAI_image_size"),
 		}
-		openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"images/generations")
+		openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"images/generations")
 	}
 	if verbose {
 		trace()
@@ -139,14 +139,14 @@ func openai_ChatCompletion(messages []OPENAI_Message) string {
 		N:                1,
 		Messages:         messages,
 		User:             openAIUser,
-		TopP:             viper.GetFloat64("openai.completion.chat.topP"),
-		Model:            viper.GetString("openai.completion.chat.model"),
-		MaxTokens:        viper.GetInt("openai.completion.chat.maxTokens"),
-		Temperature:      viper.GetFloat64("openai.completion.chat.temperature"),
-		FrequencyPenalty: viper.GetFloat64("openai.completion.chat.frequencyPenalty"),
-		PresencePenalty:  viper.GetFloat64("openai.completion.chat.presencePenalty"),
+		TopP:             viper.GetFloat64("openAI_chat_topP"),
+		Model:            viper.GetString("openAI_chat_model"),
+		MaxTokens:        viper.GetInt("openAI_chat_maxTokens"),
+		Temperature:      viper.GetFloat64("openAI_chat_temperature"),
+		FrequencyPenalty: viper.GetFloat64("openAI_chat_frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openAI_chat_presencePenalty"),
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"chat/completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"chat/completions")
 	return oaiResponse.Choices[0].Message.Content
 }
 
@@ -155,18 +155,18 @@ func openAI_TextCompletion(prompt string) OPENAI_ChatResponse {
 	oaiRequest := &OPENAI_ChatRequest{
 		Prompt:           prompt,
 		User:             openAIUser,
-		Model:            viper.GetString("openai.completion.text.model"),
-		MaxTokens:        viper.GetInt("openai.completion.text.maxTokens"),
-		Temperature:      viper.GetFloat64("openai.completion.text.temperature"),
-		TopP:             viper.GetFloat64("openai.completion.text.topP"),
-		FrequencyPenalty: viper.GetFloat64("openai.completion.text.frequencyPenalty"),
-		PresencePenalty:  viper.GetFloat64("openai.completion.text.presencePenalty"),
+		Model:            viper.GetString("openAI_text_model"),
+		MaxTokens:        viper.GetInt("openAI_text_maxTokens"),
+		Temperature:      viper.GetFloat64("openAI_text_temperature"),
+		TopP:             viper.GetFloat64("openAI_text_topP"),
+		FrequencyPenalty: viper.GetFloat64("openAI_text_frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openAI_text_presencePenalty"),
 	}
 	if verbose {
 		trace()
 		fmt.Println(oaiRequest)
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openai.endpoint")+"completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"completions")
 	return oaiResponse
 }
 

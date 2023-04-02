@@ -18,28 +18,22 @@ app:
   args:
     - discord-bot
     - -v
-  config:
-    env: "development"
-    openAI:
-      endpoint: "https://api.openai.com/v1/"
-    image:
-      size: "1024x1024"
-      downloadPath: "HOME"
-    completion:
-      chat:
-        topP: 0.1
-        temperature: 0
-        maxTokens: 999
-        presencePenalty: 0.6
-        frequencyPenalty: 0.0
-        model: "gpt-3.5-turbo"
-      text:
-        topP: 0.1
-        temperature: 0
-        maxTokens: 999
-        presencePenalty: 0.6
-        frequencyPenalty: 0.0
-        model: "text-davinci-003"
+  configMap:
+    openAI_endpoint: "https://api.openai.com/v1/"
+    openAI_image_size: "1024x1024"
+    openAI_image_downloadPath: "HOME"
+    openAI_chat_topP: 0.1
+    openAI_chat_temperature: 0
+    openAI_chat_maxTokens: 999
+    openAI_chat_presencePenalty: 0.6
+    openAI_chat_frequencyPenalty: 0.0
+    openAI_chat_model: "gpt-3.5-turbo"
+    openAI_text_topP: 0.1
+    openAI_text_temperature: 0
+    openAI_text_maxTokens: 999
+    openAI_text_presencePenalty: 0.6
+    openAI_text_frequencyPenalty: 0.0
+    openAI_text_model: "text-davinci-003"
   env:
     - name: OPENAI_API_KEY
       valueFrom:

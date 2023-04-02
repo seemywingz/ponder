@@ -55,6 +55,17 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-data-volume
+              mountPath: "/config"
+              subPath: config
+      volumes:
+        - name: config-data-volume
+          configMap:
+            name: {{ include "ponder.fullname" . }}-config
+            items:
+              - key: configData
+                path: config
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

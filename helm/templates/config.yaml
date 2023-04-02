@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "ponder.fullname" . }}-config
 data:
-{{- if .Values.app.configMap }}
-{{- toYaml .Values.app.configMap | nindent 2 }}
+  configData: |
+{{- if .Values.app.configData }}
+{{- toYaml .Values.app.configData | nindent 4 }}
 {{- end }}

@@ -18,7 +18,7 @@ app:
   args:
     - discord-bot
     - -v
-  configMap:
+  configData:
     openAI_endpoint: "https://api.openai.com/v1/"
     openAI_image_size: "1024x1024"
     openAI_image_downloadPath: "HOME"

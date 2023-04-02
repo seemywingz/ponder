@@ -97,10 +97,10 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	channelName := discordGetChannelName(m.ChannelID)
+	// channelName := discordGetChannelName(m.ChannelID)
 
 	// Respond to messages in the #ponder channel
-	if channelName == "ponder" || m.GuildID == "" {
+	if m.GuildID == "" {
 		discordOpenAIResponse(s, m, false)
 		return
 	}
@@ -123,7 +123,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 		Content: discord_SystemMessage,
 	}}
 
-	discordMessages, err := discord.ChannelMessages(m.ChannelID, 9, "", "", "")
+	discordMessages, err := discord.ChannelMessages(m.ChannelID, 15, "", "", "")
 	catchErr(err)
 	discordMessages = discordReverseMessageOrder(discordMessages)
 

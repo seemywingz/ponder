@@ -17,6 +17,8 @@ app:
   name: ponder
   args:
     - discord-bot
+    - --config
+    - ./config
     - -v
   configData:
     openAI_endpoint: "https://api.openai.com/v1/"

@@ -22,6 +22,7 @@ var APP_VERSION = "v0.1.0"
 var prompt,
 	openAIUser,
 	ponderID,
+	configFile,
 	OPENAI_API_KEY,
 	PRINTIFY_API_KEY,
 	DISCORD_API_KEY,
@@ -56,10 +57,12 @@ func Execute() {
 }
 
 func init() {
-	viperConfig()
+
+	cobra.OnInitialize(viperConfig)
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "$HOME/.ponder/config", "config file (default is $HOME/.ponder/config")
 	rootCmd.MarkFlagRequired("prompt")
 
 	// Check for Required Environment Variables
@@ -85,17 +88,20 @@ func init() {
 	h.Write([]byte(OPENAI_API_KEY))
 	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
 	openAIUser = ponderID + "user"
-
 }
 
 func viperConfig() {
 	// use spf13/viper to read config file
-	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
-	viper.SetConfigName("config")        // name of config file (without extension)
-	viper.SetConfigType("yaml")          // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(".")             // optionally look for config in the working directory
+	// viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
+	// viper.SetConfigName("config")        // name of config file (without extension)
+	// viper.AddConfigPath(".")             // optionally look for config in the working directory
+	viper.SetConfigFile(configFile)
+	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	if verbose {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
 
-	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1")
+	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
 
 	viper.SetDefault("openAI_image_size", "1024x1024")
 	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
@@ -105,21 +111,19 @@ func viperConfig() {
 	viper.SetDefault("openAI_chat_presencePenalty", "0.6")
 	viper.SetDefault("openAI_chat_temperature", "0")
 	viper.SetDefault("openAI_chat_maxTokens", "999")
-	viper.SetDefault("openAI_chat_mode", "gpt-3.5-turbo")
+	viper.SetDefault("openAI_chat_model", "gpt-3.5-turbo")
 
 	viper.SetDefault("openAI_text_topP", "0.9")
 	viper.SetDefault("openAI_text_frequencyPenalty", "0.0")
 	viper.SetDefault("openAI_text_presencePenalty", "0.6")
 	viper.SetDefault("openAI_text_temperature", "0")
 	viper.SetDefault("openAI_text_maxTokens", "999")
-	viper.SetDefault("openAI_text_mode", "text-davinci-003")
+	viper.SetDefault("openAI_text_model", "text-davinci-003")
 
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		if err != nil {
 			// Config file not found; ignore error if desired
-			fmt.Println("No config file found, continuing with defaults")
-		} else {
-			catchErr(err)
+			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
 		}
 	}
 

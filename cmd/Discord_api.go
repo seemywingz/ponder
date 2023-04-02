@@ -146,11 +146,11 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	s.ChannelMessageSend(m.ChannelID, oaiResponse)
 }
 
-func discordGetChannelName(channelID string) string {
-	channel, err := discord.Channel(channelID)
-	catchErr(err)
-	return channel.Name
-}
+// func discordGetChannelName(channelID string) string {
+// 	channel, err := discord.Channel(channelID)
+// 	catchErr(err)
+// 	return channel.Name
+// }
 
 func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
 	channels, err := s.GuildChannels(guildID)

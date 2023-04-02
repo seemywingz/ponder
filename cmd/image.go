@@ -11,11 +11,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var filePath = "HOME"
 var open, download bool
 var file string
 var n int
@@ -35,7 +36,7 @@ var imageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.Flags().BoolVarP(&download, "download", "d", false, "Download image(s) to local directory")
-	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in browser")
+	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in system default viewer")
 	imageCmd.Flags().IntVarP(&n, "n", "n", 1, "Number of images to generate")
 	imageCmd.Flags().StringVarP(&file, "file", "f", "", "Image file to edit")
 }
@@ -49,18 +50,21 @@ func createImage(prompt, imageFile string) {
 		fmt.Println("🌐 Image URL: " + url)
 
 		if download { // Download image to local directory if download flag is set
-			promptPath := formatPrompt(prompt)
-			if filePath == "HOME" { // If no path is specified, use the user's home directory
-				currentUser, err := user.Current()
-				catchErr(err)
-				filePath = currentUser.HomeDir + "/Ponder/Images/" + promptPath
+			promptFormatted := formatPrompt(prompt)
+			filePath := viper.GetString("openAI_image_downloadPath")
+			currentUser, err := user.Current()
+			homeDir := currentUser.HomeDir
+			catchErr(err)
+			if filePath == `~` || strings.HasPrefix(filePath, "~") { // Replace ~ with home directory
+				filePath = strings.Replace(filePath, "~", homeDir, 1)
 			}
-			fileName := strconv.Itoa(imgNum) + ".jpg"
+
+			fileName := promptFormatted + strconv.Itoa(imgNum) + ".jpg"
 			fullFilePath := filepath.Join(filePath, fileName)
 			// Create the directory (if it doesn't exist)
-			err := os.MkdirAll(filePath, os.ModePerm)
+			err = os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
-			fmt.Printf("💾 Downloading Image...")
+			fmt.Printf("💾 Downloading Image:")
 			url = httpDownloadFile(url, fullFilePath)
 			fmt.Printf(" \"%s\"\n", url)
 		}

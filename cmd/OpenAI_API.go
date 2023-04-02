@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/spf13/viper"
 )
 
 func openAI_UploadImage(requestJson, responseJson interface{}, endpoint, filePath string) {
@@ -18,7 +20,7 @@ func openAI_UploadImage(requestJson, responseJson interface{}, endpoint, filePat
 	fullPath, err := filepath.Abs(filePath)
 	catchErr(err)
 
-	// https://platform.openai.com/docs/api-reference/images/create-edit#images/create-edit-image
+	// https://platform.openAI_com/docs/api-reference/images/create-edit#images/create-edit-image
 	// The image to edit. Must be a valid PNG file, less than 4MB, and square.
 	// If mask is not provided, image must have transparency, which will be used as the mask.
 	//
@@ -105,72 +107,70 @@ func openAI_ImageGen(prompt, imageFile string, n int) OPENAI_ImageResponse {
 
 		// Create the JSON Request Body
 		oaiRequest = &OPENAI_ImageEditRequest{
-			Prompt:         prompt,
 			N:              n,
-			Size:           "1024x1024",
 			ResponseFormat: "url",
+			Prompt:         prompt,
 			User:           openAIUser,
+			Size:           viper.GetString("openAI_image_size"),
 		}
-		openAI_UploadImage(oaiRequest, &oaiResponse, openai_endpoint+"images/edits", imageFile)
+		openAI_UploadImage(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"images/edits", imageFile)
 
 	} else { // Generate a new image
 
 		oaiRequest = &OPENAI_ImageRequest{
-			Prompt:         prompt,
 			N:              n,
-			Size:           "1024x1024",
 			ResponseFormat: "url",
+			Prompt:         prompt,
 			User:           openAIUser,
+			Size:           viper.GetString("openAI_image_size"),
 		}
-		openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"images/generations")
+		openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"images/generations")
 	}
 	if verbose {
 		trace()
 		fmt.Println(oaiRequest)
 	}
-
 	return oaiResponse
 }
 
 func openai_ChatCompletion(messages []OPENAI_Message) string {
 	oaiResponse := OPENAI_ChatCompletionResponse{}
 	oaiRequest := OPENAI_ChatCompletionRequest{
-		Model:            "gpt-3.5-turbo",
-		Messages:         messages,
 		N:                1,
-		Temperature:      0,
-		TopP:             0.1,
-		FrequencyPenalty: 0.0,
-		PresencePenalty:  0.6,
-		MaxTokens:        999,
+		Messages:         messages,
 		User:             openAIUser,
+		TopP:             viper.GetFloat64("openAI_chat_topP"),
+		Model:            viper.GetString("openAI_chat_model"),
+		MaxTokens:        viper.GetInt("openAI_chat_maxTokens"),
+		Temperature:      viper.GetFloat64("openAI_chat_temperature"),
+		FrequencyPenalty: viper.GetFloat64("openAI_chat_frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openAI_chat_presencePenalty"),
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"chat/completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"chat/completions")
 	return oaiResponse.Choices[0].Message.Content
 }
 
-func openAI_Completion(prompt string) OPENAI_ChatResponse {
+func openAI_TextCompletion(prompt string) OPENAI_ChatResponse {
 	oaiResponse := OPENAI_ChatResponse{}
 	oaiRequest := &OPENAI_ChatRequest{
-		Model:            "text-davinci-003",
 		Prompt:           prompt,
-		MaxTokens:        999,
-		Temperature:      0,
-		TopP:             0.1,
-		FrequencyPenalty: 0.0,
-		PresencePenalty:  0.6,
 		User:             openAIUser,
+		Model:            viper.GetString("openAI_text_model"),
+		MaxTokens:        viper.GetInt("openAI_text_maxTokens"),
+		Temperature:      viper.GetFloat64("openAI_text_temperature"),
+		TopP:             viper.GetFloat64("openAI_text_topP"),
+		FrequencyPenalty: viper.GetFloat64("openAI_text_frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openAI_text_presencePenalty"),
 	}
 	if verbose {
 		trace()
 		fmt.Println(oaiRequest)
 	}
-	openAI_PostJson(oaiRequest, &oaiResponse, openai_endpoint+"completions")
+	openAI_PostJson(oaiRequest, &oaiResponse, viper.GetString("openAI_endpoint")+"completions")
 	return oaiResponse
 }
 
 func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
-
 	// Marshal the JSON Request Body
 	requestBodyJson, err := json.Marshal(requestJson)
 	catchErr(err)
@@ -178,12 +178,10 @@ func openAI_PostJson(requestJson, responseJson interface{}, endpoint string) {
 		trace()
 		fmt.Println(string(requestBodyJson))
 	}
-
 	// Format HTTP Response and Set Headers
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(requestBodyJson))
 	catchErr(err)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
-
 	httpMakeRequest(req, responseJson)
 }

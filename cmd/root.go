@@ -12,16 +12,17 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var verbose bool
-var APP_VERSION = "v0.0.0"
+var APP_VERSION = "v0.1.0"
 var prompt,
 	openAIUser,
 	ponderID,
+	configFile,
 	OPENAI_API_KEY,
 	PRINTIFY_API_KEY,
 	DISCORD_API_KEY,
@@ -43,7 +44,6 @@ var rootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) {
-
 	// },
 }
 
@@ -57,26 +57,30 @@ func Execute() {
 }
 
 func init() {
+
+	cobra.OnInitialize(viperConfig)
+
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "$HOME/.ponder/config", "config file")
 	rootCmd.MarkFlagRequired("prompt")
 
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
 	if OPENAI_API_KEY == "" {
-		fmt.Println("OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
+		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
 	}
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
 	if PRINTIFY_API_KEY == "" {
-		fmt.Println("PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
+		fmt.Println("⚠️ PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
 	}
 	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
 	if DISCORD_API_KEY == "" {
-		fmt.Println("DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
+		fmt.Println("⚠️ DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
 	}
 	DISCORD_PUB_KEY = os.Getenv("DISCORD_PUB_KEY")
 	if DISCORD_PUB_KEY == "" {
-		fmt.Println("DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
+		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
 	}
 
 	// Create a unique user for OpenAI
@@ -84,6 +88,47 @@ func init() {
 	h.Write([]byte(OPENAI_API_KEY))
 	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
 	openAIUser = ponderID + "user"
+}
+
+func viperConfig() {
+	// use spf13/viper to read config file
+	// viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
+	// viper.SetConfigName("config")        // name of config file (without extension)
+	// viper.AddConfigPath(".")             // optionally look for config in the working directory
+	viper.SetConfigFile(configFile)
+	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	if verbose {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+
+	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
+
+	viper.SetDefault("openAI_image_size", "1024x1024")
+	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
+
+	viper.SetDefault("openAI_chat_topP", "0.9")
+	viper.SetDefault("openAI_chat_frequencyPenalty", "0.0")
+	viper.SetDefault("openAI_chat_presencePenalty", "0.6")
+	viper.SetDefault("openAI_chat_temperature", "0")
+	viper.SetDefault("openAI_chat_maxTokens", "999")
+	viper.SetDefault("openAI_chat_model", "gpt-3.5-turbo")
+
+	viper.SetDefault("openAI_text_topP", "0.9")
+	viper.SetDefault("openAI_text_frequencyPenalty", "0.0")
+	viper.SetDefault("openAI_text_presencePenalty", "0.6")
+	viper.SetDefault("openAI_text_temperature", "0")
+	viper.SetDefault("openAI_text_maxTokens", "999")
+	viper.SetDefault("openAI_text_model", "text-davinci-003")
+
+	viper.SetDefault("discord_message_context_count", "15")
+
+	if err := viper.ReadInConfig(); err != nil {
+		if err != nil {
+			// Config file not found; ignore error if desired
+			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
+		}
+	}
+
 }
 
 func trace() {
@@ -96,28 +141,22 @@ func trace() {
 
 func catchErr(err error) {
 	if err != nil {
-		// trace()
 		fmt.Println("💔", err)
-		os.Exit(1)
+		// os.Exit(1)
 	}
 }
 
 func formatPrompt(prompt string) string {
-	prompt = strings.ReplaceAll(prompt, " ", "_")
-	prompt = strings.ReplaceAll(prompt, "/", "-")
-	prompt = strings.ReplaceAll(prompt, ",", "")
-	return prompt
+	// Replace any characters that are not letters, numbers, or underscores with dashes
+	return regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(prompt, "-")
 }
 
 func fileNameFromURL(urlStr string) string {
 	u, err := url.Parse(urlStr)
 	catchErr(err)
-
 	// Get the last path component of the URL
 	filename := filepath.Base(u.Path)
-
 	// Replace any characters that are not letters, numbers, or underscores with dashes
 	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
-
 	return filename
 }

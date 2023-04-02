@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
 var discord *discordgo.Session
@@ -97,10 +98,10 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	channelName := discordGetChannelName(m.ChannelID)
+	// channelName := discordGetChannelName(m.ChannelID)
 
 	// Respond to messages in the #ponder channel
-	if channelName == "ponder" || m.GuildID == "" {
+	if m.GuildID == "" {
 		discordOpenAIResponse(s, m, false)
 		return
 	}
@@ -120,10 +121,10 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	discord.ChannelTyping(m.ChannelID)
 	openaiMessages := []OPENAI_Message{{
 		Role:    "system",
-		Content: discord_SystemMessage,
+		Content: viper.GetString("discord_bot_systemMessage"),
 	}}
 
-	discordMessages, err := discord.ChannelMessages(m.ChannelID, 9, "", "", "")
+	discordMessages, err := discord.ChannelMessages(m.ChannelID, viper.GetInt("discord_message_context_count"), "", "", "")
 	catchErr(err)
 	discordMessages = discordReverseMessageOrder(discordMessages)
 
@@ -145,11 +146,11 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	s.ChannelMessageSend(m.ChannelID, oaiResponse)
 }
 
-func discordGetChannelName(channelID string) string {
-	channel, err := discord.Channel(channelID)
-	catchErr(err)
-	return channel.Name
-}
+// func discordGetChannelName(channelID string) string {
+// 	channel, err := discord.Channel(channelID)
+// 	catchErr(err)
+// 	return channel.Name
+// }
 
 func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
 	channels, err := s.GuildChannels(guildID)

@@ -65,19 +65,19 @@ func init() {
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
 	if OPENAI_API_KEY == "" {
-		fmt.Println("OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
+		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set")
 	}
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
 	if PRINTIFY_API_KEY == "" {
-		fmt.Println("PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
+		fmt.Println("⚠️ PRINTIFY_API_KEY environment variable is not set")
 	}
 	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
 	if DISCORD_API_KEY == "" {
-		fmt.Println("DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
+		fmt.Println("⚠️ DISCORD_API_KEY environment variable is not set")
 	}
 	DISCORD_PUB_KEY = os.Getenv("DISCORD_PUB_KEY")
 	if DISCORD_PUB_KEY == "" {
-		fmt.Println("DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
+		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set")
 	}
 
 	// Create a unique user for OpenAI
@@ -102,8 +102,7 @@ func viperConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
-			fmt.Println("No config file found, continuing without config file")
-		} else {
+			fmt.Println("No config file found		} else {
 			catchErr(err)
 		}
 	}

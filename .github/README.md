@@ -44,7 +44,7 @@ AI is indeed amazing. It has the potential to revolutionize many industries, fro
 
 ## A small chat
 ```bash
-ponder chat --loop
+ponder chat --convo
 ```
 #### Example Ouput
 ```bash

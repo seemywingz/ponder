@@ -96,13 +96,28 @@ func viperConfig() {
 	viper.AddConfigPath(".")             // optionally look for config in the working directory
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1")
+
 	viper.SetDefault("openAI_image_size", "1024x1024")
-	viper.SetDefault("openAI_image_downloadPath", "HOME")
+	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
+
+	viper.SetDefault("openAI_chat_topP", "0.9")
+	viper.SetDefault("openAI_chat_frequencyPenalty", "0.0")
+	viper.SetDefault("openAI_chat_presencePenalty", "0.6")
+	viper.SetDefault("openAI_chat_temperature", "0")
+	viper.SetDefault("openAI_chat_maxTokens", "999")
+	viper.SetDefault("openAI_chat_mode", "gpt-3.5-turbo")
+
+	viper.SetDefault("openAI_text_topP", "0.9")
+	viper.SetDefault("openAI_text_frequencyPenalty", "0.0")
+	viper.SetDefault("openAI_text_presencePenalty", "0.6")
+	viper.SetDefault("openAI_text_temperature", "0")
+	viper.SetDefault("openAI_text_maxTokens", "999")
+	viper.SetDefault("openAI_text_mode", "text-davinci-003")
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
-			fmt.Println("No config file found, continuing without config file")
+			fmt.Println("No config file found, continuing with defaults")
 		} else {
 			catchErr(err)
 		}

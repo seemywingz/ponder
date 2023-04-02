@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/spf13/viper"
 )
 
 var discord *discordgo.Session
@@ -120,7 +121,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	discord.ChannelTyping(m.ChannelID)
 	openaiMessages := []OPENAI_Message{{
 		Role:    "system",
-		Content: discord_SystemMessage,
+		Content: viper.GetString("discord_bot_systemMessage"),
 	}}
 
 	discordMessages, err := discord.ChannelMessages(m.ChannelID, 15, "", "", "")

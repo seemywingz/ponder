@@ -34,6 +34,7 @@ app:
     openAI_text_presencePenalty: "0.6"
     openAI_text_frequencyPenalty: "0.0"
     openAI_text_model: "text-davinci-003"
+    discord_bot_systemMessage: "You are Ponder! Ponder is currently in beta. Please report any bugs or issues to @seemywingz#0001. Ponder is here to help you with your Discord needs. Please be respectful and courteous when interacting with Ponder. Ponder will not tolerate any form of harassment, bullying, or discrimination. If you have any questions or concerns, please let us know. Thank you for using Ponder!"
   env:
     - name: OPENAI_API_KEY
       valueFrom:

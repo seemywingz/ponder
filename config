@@ -1,6 +1,6 @@
 openAI_endpoint: "https://api.openAI.com/v1/"
 openAI_image_size: "1024x1024"
-openAI_image_downloadPath: "HOME"
+openAI_image_downloadPath: "~/Ponder/Images/"
 openAI_chat_topP: 0.1
 openAI_chat_temperature: 0
 openAI_chat_maxTokens: 999

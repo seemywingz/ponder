@@ -96,6 +96,10 @@ func viperConfig() {
 	viper.SetConfigType("yaml")          // REQUIRED if the config file does not have the extension in the name
 	viper.AddConfigPath(".")             // optionally look for config in the working directory
 
+	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1")
+	viper.SetDefault("openAI_image_size", "1024x1024")
+	viper.SetDefault("openAI_image_downloadPath", "HOME")
+
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired

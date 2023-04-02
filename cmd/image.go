@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,19 +50,21 @@ func createImage(prompt, imageFile string) {
 		fmt.Println("🌐 Image URL: " + url)
 
 		if download { // Download image to local directory if download flag is set
-			promptPath := formatPrompt(prompt)
+			promptFormatted := formatPrompt(prompt)
 			filePath := viper.GetString("openAI_image_downloadPath")
-			if filePath == "HOME" { // If no path is specified, use the user's home directory
-				currentUser, err := user.Current()
-				catchErr(err)
-				filePath = currentUser.HomeDir + "/Ponder/Images/" + promptPath
+			currentUser, err := user.Current()
+			homeDir := currentUser.HomeDir
+			catchErr(err)
+			if filePath == `~` || strings.HasPrefix(filePath, "~") { // Replace ~ with home directory
+				filePath = strings.Replace(filePath, "~", homeDir, 1)
 			}
-			fileName := strconv.Itoa(imgNum) + ".jpg"
+
+			fileName := promptFormatted + strconv.Itoa(imgNum) + ".jpg"
 			fullFilePath := filepath.Join(filePath, fileName)
 			// Create the directory (if it doesn't exist)
-			err := os.MkdirAll(filePath, os.ModePerm)
+			err = os.MkdirAll(filePath, os.ModePerm)
 			catchErr(err)
-			fmt.Printf("💾 Downloading Image...")
+			fmt.Printf("💾 Downloading Image:")
 			url = httpDownloadFile(url, fullFilePath)
 			fmt.Printf(" \"%s\"\n", url)
 		}

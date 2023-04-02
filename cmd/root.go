@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"runtime"
 	"strconv"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -121,28 +120,22 @@ func trace() {
 
 func catchErr(err error) {
 	if err != nil {
-		// trace()
 		fmt.Println("💔", err)
 		os.Exit(1)
 	}
 }
 
 func formatPrompt(prompt string) string {
-	prompt = strings.ReplaceAll(prompt, " ", "_")
-	prompt = strings.ReplaceAll(prompt, "/", "-")
-	prompt = strings.ReplaceAll(prompt, ",", "")
-	return prompt
+	// Replace any characters that are not letters, numbers, or underscores with dashes
+	return regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(prompt, "-")
 }
 
 func fileNameFromURL(urlStr string) string {
 	u, err := url.Parse(urlStr)
 	catchErr(err)
-
 	// Get the last path component of the URL
 	filename := filepath.Base(u.Path)
-
 	// Replace any characters that are not letters, numbers, or underscores with dashes
 	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
-
 	return filename
 }

@@ -36,7 +36,7 @@ var imageCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.Flags().BoolVarP(&download, "download", "d", false, "Download image(s) to local directory")
-	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in browser")
+	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in system default viewer")
 	imageCmd.Flags().IntVarP(&n, "n", "n", 1, "Number of images to generate")
 	imageCmd.Flags().StringVarP(&file, "file", "f", "", "Image file to edit")
 }

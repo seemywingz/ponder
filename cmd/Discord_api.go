@@ -124,7 +124,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 		Content: viper.GetString("discord_bot_systemMessage"),
 	}}
 
-	discordMessages, err := discord.ChannelMessages(m.ChannelID, 15, "", "", "")
+	discordMessages, err := discord.ChannelMessages(m.ChannelID, viper.GetInt("discord_message_context_count"), "", "", "")
 	catchErr(err)
 	discordMessages = discordReverseMessageOrder(discordMessages)
 

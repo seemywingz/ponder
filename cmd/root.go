@@ -62,7 +62,7 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "$HOME/.ponder/config", "config file (default is $HOME/.ponder/config")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "$HOME/.ponder/config", "config file")
 	rootCmd.MarkFlagRequired("prompt")
 
 	// Check for Required Environment Variables
@@ -119,6 +119,8 @@ func viperConfig() {
 	viper.SetDefault("openAI_text_temperature", "0")
 	viper.SetDefault("openAI_text_maxTokens", "999")
 	viper.SetDefault("openAI_text_model", "text-davinci-003")
+
+	viper.SetDefault("discord_message_context_count", "15")
 
 	if err := viper.ReadInConfig(); err != nil {
 		if err != nil {

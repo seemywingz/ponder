@@ -30,7 +30,7 @@ func initDiscord() {
 	deregisterCommands()
 
 	log.Println("Ponder Discord Bot is now running...")
-	select {}
+	select {} // Block forever to prevent the program from terminating.
 }
 
 func setStatusOnline() {

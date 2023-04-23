@@ -145,7 +145,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	openAIUser = ponderID + m.Author.Username
 	oaiResponse, err := openai.ChatCompletion(openaiMessages)
 	catchErr(err)
-	s.ChannelMessageSend(m.ChannelID, oaiResponse)
+	s.ChannelMessageSend(m.ChannelID, oaiResponse.Choices[0].Message.Content)
 }
 
 // func discordGetChannelName(channelID string) string {

@@ -60,9 +60,9 @@ func chatCompletion(prompt string) string {
 	catchErr(err)
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
-		Content: oaiResponse,
+		Content: oaiResponse.Choices[0].Message.Content,
 	})
-	return oaiResponse
+	return oaiResponse.Choices[0].Message.Content
 }
 
 func textCompletion(prompt string) {

@@ -5,13 +5,11 @@ package cmd
 
 import (
 	"fmt"
-	"hash/fnv"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
@@ -83,12 +81,6 @@ func init() {
 	if DISCORD_PUB_KEY == "" {
 		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
 	}
-
-	// Create a unique user for OpenAI
-	h := fnv.New32a()
-	h.Write([]byte(OPENAI_API_KEY))
-	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
-	openAIUser = ponderID + "user"
 }
 
 func viperConfig() {
@@ -131,7 +123,6 @@ func viperConfig() {
 	}
 
 	openai = goai.NewClient(OPENAI_API_KEY, verbose)
-
 }
 
 func trace() {

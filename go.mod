@@ -6,7 +6,9 @@ replace github.com/seemywingz/goai => /Users/kevin.jayne/.go/src/github.com/seem
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
+	github.com/seemywingz/goai v0.0.0-20230423010546-b80487bcfcd8
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/viper v1.15.0
 )
 
 require (
@@ -17,12 +19,10 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
-	github.com/seemywingz/goai v0.0.0-20230423010546-b80487bcfcd8 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.15.0 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/sys v0.3.0 // indirect

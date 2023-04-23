@@ -20,7 +20,6 @@ var APP_VERSION = "v0.1.0"
 var verbose bool
 var openai *goai.Client
 var prompt,
-	ponderID,
 	configFile,
 	OPENAI_API_KEY,
 	PRINTIFY_API_KEY,
@@ -123,6 +122,7 @@ func viperConfig() {
 	}
 
 	openai = goai.NewClient(OPENAI_API_KEY, verbose)
+
 }
 
 func trace() {

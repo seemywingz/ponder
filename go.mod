@@ -6,7 +6,7 @@ replace github.com/seemywingz/goai => /Users/kevin.jayne/.go/src/github.com/seem
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
-	github.com/seemywingz/goai v0.0.0-20230423010546-b80487bcfcd8
+	github.com/seemywingz/goai v0.0.0-20230423020518-eee83b520703
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 )

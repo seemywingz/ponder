@@ -22,7 +22,6 @@ var APP_VERSION = "v0.1.0"
 var verbose bool
 var openai *goai.Client
 var prompt,
-	openAIUser,
 	ponderID,
 	configFile,
 	OPENAI_API_KEY,

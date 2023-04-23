@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/seemywingz/goai"
 	"github.com/spf13/viper"
 )
 
@@ -119,7 +120,7 @@ func handleMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, mention bool) {
 	discord.ChannelTyping(m.ChannelID)
-	openaiMessages := []OPENAI_Message{{
+	openaiMessages := []goai.Message{{
 		Role:    "system",
 		Content: viper.GetString("discord_bot_systemMessage"),
 	}}
@@ -133,7 +134,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 		if message.Author.ID == discord.State.User.ID {
 			role = "assistant"
 		}
-		newMessage := OPENAI_Message{
+		newMessage := goai.Message{
 			Role:    role,
 			Content: message.Content,
 		}
@@ -142,7 +143,8 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 
 	// Send the messages to OpenAI
 	openAIUser = ponderID + m.Author.Username
-	oaiResponse := openai_ChatCompletion(openaiMessages)
+	oaiResponse, err := openai.ChatCompletion(openaiMessages)
+	catchErr(err)
 	s.ChannelMessageSend(m.ChannelID, oaiResponse)
 }
 

@@ -13,12 +13,14 @@ import (
 	"runtime"
 	"strconv"
 
+	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var verbose bool
 var APP_VERSION = "v0.1.0"
+var verbose bool
+var openai *goai.Client
 var prompt,
 	openAIUser,
 	ponderID,
@@ -128,6 +130,8 @@ func viperConfig() {
 			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
 		}
 	}
+
+	openai = goai.NewClient(OPENAI_API_KEY, verbose)
 
 }
 

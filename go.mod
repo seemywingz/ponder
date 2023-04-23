@@ -2,6 +2,8 @@ module github.com/seemywingz/ponder
 
 go 1.20
 
+replace github.com/seemywingz/goai => /Users/kevin.jayne/.go/src/github.com/seemywingz/goai
+
 require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/spf13/cobra v1.6.1
@@ -15,6 +17,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
+	github.com/seemywingz/goai v0.0.0-20230423010546-b80487bcfcd8 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

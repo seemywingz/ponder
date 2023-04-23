@@ -43,7 +43,7 @@ func init() {
 
 func createImage(prompt, imageFile string) {
 	fmt.Println("🖼  Creating Image...")
-	res := openAI_ImageGen(prompt, imageFile, n)
+	res := openai.ImageGen(prompt, imageFile, n)
 
 	for imgNum, data := range res.Data {
 		url := data.URL

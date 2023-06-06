@@ -87,11 +87,6 @@ func viperConfig() {
 	// viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
 	// viper.SetConfigName("config")        // name of config file (without extension)
 	// viper.AddConfigPath(".")             // optionally look for config in the working directory
-	viper.SetConfigFile(configFile)
-	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
-	if verbose {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
 
@@ -113,6 +108,12 @@ func viperConfig() {
 	viper.SetDefault("openAI_text_model", "text-davinci-003")
 
 	viper.SetDefault("discord_message_context_count", "15")
+
+	viper.SetConfigFile(configFile)
+	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	if verbose {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
 
 	if err := viper.ReadInConfig(); err != nil {
 		if err != nil {

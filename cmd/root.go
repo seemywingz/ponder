@@ -5,23 +5,21 @@ package cmd
 
 import (
 	"fmt"
-	"hash/fnv"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"strconv"
 
+	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var verbose bool
 var APP_VERSION = "v0.1.0"
+var verbose bool
+var openai *goai.Client
 var prompt,
-	openAIUser,
-	ponderID,
 	configFile,
 	OPENAI_API_KEY,
 	PRINTIFY_API_KEY,
@@ -82,12 +80,6 @@ func init() {
 	if DISCORD_PUB_KEY == "" {
 		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
 	}
-
-	// Create a unique user for OpenAI
-	h := fnv.New32a()
-	h.Write([]byte(OPENAI_API_KEY))
-	ponderID = "ponder-" + strconv.Itoa(int(h.Sum32())) + "-"
-	openAIUser = ponderID + "user"
 }
 
 func viperConfig() {
@@ -95,11 +87,6 @@ func viperConfig() {
 	// viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
 	// viper.SetConfigName("config")        // name of config file (without extension)
 	// viper.AddConfigPath(".")             // optionally look for config in the working directory
-	viper.SetConfigFile(configFile)
-	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
-	if verbose {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
 
@@ -122,12 +109,20 @@ func viperConfig() {
 
 	viper.SetDefault("discord_message_context_count", "15")
 
+	viper.SetConfigFile(configFile)
+	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+	if verbose {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+
 	if err := viper.ReadInConfig(); err != nil {
 		if err != nil {
 			// Config file not found; ignore error if desired
 			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
 		}
 	}
+
+	openai = goai.NewClient(OPENAI_API_KEY, verbose)
 
 }
 

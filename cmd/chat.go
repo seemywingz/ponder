@@ -11,12 +11,13 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 )
 
 var convo bool
 var sayText bool
-var ponderMessages = []OPENAI_Message{{
+var ponderMessages = []goai.Message{{
 	Role:    "system",
 	Content: ponder_SystemMessage,
 }}
@@ -49,23 +50,25 @@ var chatCmd = &cobra.Command{
 }
 
 func chatCompletion(prompt string) string {
-	ponderMessages = append(ponderMessages, OPENAI_Message{
+	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "user",
 		Content: prompt,
 	})
 
 	// Send the messages to OpenAI
-	oaiResponse := openai_ChatCompletion(ponderMessages)
-	ponderMessages = append(ponderMessages, OPENAI_Message{
+	oaiResponse, err := openai.ChatCompletion(ponderMessages)
+	catchErr(err)
+	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
-		Content: oaiResponse,
+		Content: oaiResponse.Choices[0].Message.Content,
 	})
-	return oaiResponse
+	return oaiResponse.Choices[0].Message.Content
 }
 
 func textCompletion(prompt string) {
 
-	oaiResponse := openAI_TextCompletion(prompt)
+	oaiResponse, err := openai.TextCompletion(prompt)
+	catchErr(err)
 
 	for _, v := range oaiResponse.Choices {
 		text := v.Text

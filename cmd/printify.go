@@ -16,7 +16,7 @@ var printifyCmd = &cobra.Command{
 	Short: "Interact with the Printify API",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		generatImageAndPost()
+		generateImageAndPost()
 	},
 }
 
@@ -25,11 +25,11 @@ func init() {
 	printifyCmd.Flags().IntVarP(&n, "num-generated", "n", 1, "Number of images to generate")
 }
 
-func generatImageAndPost() {
+func generateImageAndPost() {
 
 	// Generate Image
 	fmt.Println("🖼  Generating Image(s)...")
-	res := openAI_ImageGen(prompt, "", n)
+	res := openai.ImageGen(prompt, "", n)
 
 	for imgNum, data := range res.Data {
 		url := data.URL

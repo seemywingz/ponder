@@ -29,7 +29,7 @@ app:
     openAI_chat_maxTokens: "999"
     openAI_chat_presencePenalty: "0.6"
     openAI_chat_frequencyPenalty: "0.0"
-    openAI_chat_model: "gpt-3.5-turbo"
+    openAI_chat_model: "gpt-4"
     openAI_text_topP: "0.1"
     openAI_text_temperature: "0"
     openAI_text_maxTokens: "999"

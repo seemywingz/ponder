@@ -80,6 +80,15 @@ func registerCommands() {
 	}
 	_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
 	catchErr(err)
+
+	fmt.Println("Registering Slash Commands...")
+	// /chat command
+	upscale := &discordgo.ApplicationCommand{
+		Name:        "upscale",
+		Description: "upscaling 2x saved images!",
+	}
+	_, upscale_err := discord.ApplicationCommandCreate(discord.State.User.ID, "", upscale)
+	catchErr(upscale_err)
 }
 
 func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -87,6 +96,8 @@ func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.ApplicationCommandData().Name {
 	case "scrape":
 		discordScrapeImages(s, i)
+	case "upscale":
+		discordUpscaleImages(s, i)
 	default: // Handle unknown slash commands
 		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
 	}
@@ -187,6 +198,30 @@ func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}
 	}
 
+}
+
+func discordUpscaleImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	discord.ChannelTyping(i.ChannelID)
+	// Get the interaction channel ID
+	channelID := i.ChannelID
+	messages, err := discord.ChannelMessages(channelID, 100, "", "", "")
+	catchErr(err)
+	discordFollowUp("Upscaling saved-images and saying them in upscaled-images channel...", s, i)
+
+	upscaledImagesChannelID := discordGetChannelID(s, i.GuildID, "upscaled-images")
+
+	for _, v := range messages {
+		if len(v.Attachments) > 0 {
+			//Grab images and upscale them 2x
+			url := v.Attachments[0].URL
+			if strings.Contains(v.Content, "Upscaled") {
+				//This should return a new image path
+				newImage := UpscaleImage(url, 2)
+				s.ChannelMessageSend(upscaledImagesChannelID, newImage)
+
+			}
+		}
+	}
 }
 
 func discordInitialResponse(content string, s *discordgo.Session, i *discordgo.InteractionCreate) {

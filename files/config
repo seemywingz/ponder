@@ -8,14 +8,14 @@ openAI_chat_temperature: 0
 openAI_chat_maxTokens: 999
 openAI_chat_presencePenalty: 0.6
 openAI_chat_frequencyPenalty: 0.0
-openAI_chat_model: "gpt-3.5-turbo"
+openAI_chat_model: "gpt-4"
 
 openAI_text_topP: 0.1
 openAI_text_temperature: 0
 openAI_text_maxTokens: 999
 openAI_text_presencePenalty: 0.6
 openAI_text_frequencyPenalty: 0.0
-openAI_text_model: "text-davinci-003"
+openAI_text_model: "gpt-4-32k"
 
 discord_message_context_count: 15
 discord_bot_systemMessage: "You are Ponder. Ponder is here to help you with your Discord needs. Please be respectful and courteous when interacting with Ponder. Ponder will not tolerate any form of harassment, bullying, or discrimination. If you have any questions or concerns, please let us know. Thank you for using Ponder!"

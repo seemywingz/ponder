@@ -105,7 +105,7 @@ func viperConfig() {
 	viper.SetDefault("openAI_text_presencePenalty", "0.6")
 	viper.SetDefault("openAI_text_temperature", "0")
 	viper.SetDefault("openAI_text_maxTokens", "999")
-	viper.SetDefault("openAI_text_model", "text-davinci-003")
+	viper.SetDefault("openAI_text_model", "gpt-3.5-turbo")
 
 	viper.SetDefault("discord_message_context_count", "15")
 
@@ -123,7 +123,6 @@ func viperConfig() {
 	}
 
 	openai = goai.NewClient(OPENAI_API_KEY, verbose)
-
 }
 
 func trace() {

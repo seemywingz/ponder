@@ -40,27 +40,29 @@ In this intricate RPG world, your character's abilities are meticulously bound b
 Spells and weapon skills can only be employed if your character has undergone proper training or learning to acquire them.
 For instance, if your character hasn't previously learned a fire spell, attempting to cast one would be futile and yield no effect. 
 Similarly, wielding an unfamiliar weapon type without prior training would result in awkward and ineffective strikes.
-You cannot take any action that isn't being asked of you. 
-For example, if you choice is two paths, you cannot create a third path unless it's relevant to the current story. 
-You must choose from the options presented to you.
+Your Character cannot take any action that isn't logical in the current situation. 
+For example, if your character is in front the woods, it cannot jump into the sea from there.
 
-You are a young adventurer who is just starting out on your journey. 
-You have no money, no weapons, and no armor. 
-You are wearing a simple tunic with defense 1 and trousers with defense 1. 
-You have a small pouch of coins, but not enough to buy anything useful.
+Your Character is an adventurer who is just starting out on a journey. 
+Your Character has no money, no weapons, and no armor. 
+Your Character is wearing a simple tunic with defense 0.5 and trousers with defense 0.5. 
+You have a small pouch of coins with 3 gold, 6 silver and 9 copper coins in it.
 
-MP represents your magical power and recovers over time.
-HP represents your health and can be restored by drinking potions or resting. if your HP reaches 0, you will die.
-Strength represents your physical strength and affects your ability to wield weapons and armor it also increases your HP by 2 per level.
-Defense represents your ability to defend yourself from attacks and is affected by your armor.
-Dexterity represents your ability to dodge attacks and perform acrobatic feats and use ranged weapons.
-Intellect represents your ability to cast spells and use magic and increases your MP by .5 per level. 
-Hunger represents how hungry you are and affects your ability to perform strenuous tasks and is increased by strenuous tasks. 
-	hunger increases by 0.01 every action and decreases only when you eat food. if your hunger reaches 100, you will die.
+The outcome of all your actions is determined by the rules of this realm.
+The rules of this realm are as follows:
+MP represents Your Character's magical power and recovers over time.
+HP represents Your Character's health and can be restored by drinking potions or resting. if your HP reaches 0, you will die.
+Strength represents Your Character's physical strength and affects Your Character's ability to wield weapons and armor it also increases Your Character's HP by 2 per point.
+Defense represents Your Character's ability to defend itself from attacks and is affected by Your Character's armor.
+Dexterity represents Your Character's ability to dodge attacks and perform acrobatic feats and use ranged weapons.
+Intellect represents Your Character's ability to cast spells and use magic and increases Your Character's MP by .5 per level. 
+Hunger represents how hungry Your Character is and affects Your Character's ability to perform strenuous tasks and is increased by strenuous tasks. 
+Hunger will increases by 0.01 every strenuous action taken and decreases only when you eat food. if Your Character's hunger reaches 100, Your Character will die.
+You will always increase hunger with every interaction.
 
 It's important to remember that every choice you make holds consequences. 
-Your decisions will directly shape the flow of your adventure, affecting both your immediate challenges and the unveiling of hidden secrets.
-Proceed wisely, for your path is filled with challenges and secrets yet to be unveiled. 
+Your Character's decisions will directly shape the flow of Your Character's adventure, affecting both Your Character's immediate challenges and the unveiling of hidden secrets.
+Proceed wisely, for Your Character's path is filled with challenges and secrets yet to be unveiled. 
 The key to success lies not only in your strategic thinking but also in your adherence to the rules and limitations set by this realm.
 May your journey be both thrilling and strategic as you navigate this richly detailed realm!
 
@@ -152,7 +154,7 @@ func getPlayerInput(player *Character) string {
 }
 
 func startAdventure() {
-	narratorSay("What is your name?")
+	narratorSay("Please type your name.")
 	playerName, err := getUserInput()
 	catchErr(err)
 
@@ -166,6 +168,7 @@ func startAdventure() {
 		Defense:     1,
 		Dexterity:   1,
 		Intellect:   1,
+		Hunger:      0,
 	}
 
 	narratorSay("Welcome " + player.Name + ", to the world of adventure! Describe your character, be as detailed as you like.")

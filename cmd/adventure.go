@@ -153,6 +153,14 @@ func getPlayerInput(player *Character) string {
 	return playerInput
 }
 
+func totalMessageCharacters() int {
+	totalCharacters := 0
+	for _, message := range adventureMessages {
+		totalCharacters += len(message.Content)
+	}
+	return totalCharacters
+}
+
 func startAdventure() {
 	narratorSay("Please type your name.")
 	playerName, err := getUserInput()
@@ -190,6 +198,11 @@ func startAdventure() {
 	// adventureImage(startMessage, startMessage)
 
 	for {
+
+		if totalMessageCharacters() > 4096 {
+			adventureMessages = append(adventureMessages[:2], adventureMessages[3:]...)
+		}
+
 		playerInput := getPlayerInput(&player)
 		adventureResponse := adventureChat(playerInput)
 		narratorSay(adventureResponse)

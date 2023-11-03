@@ -5,7 +5,7 @@ openAI_image_downloadPath: "~/Ponder/Images/"
 
 openAI_topP: 0.1
 openAI_temperature: 0
-openAI_maxTokens: 369
+openAI_maxTokens: 999
 openAI_presencePenalty: 0.6
 openAI_frequencyPenalty: 0.0
 openAI_chat_model: "gpt-4"

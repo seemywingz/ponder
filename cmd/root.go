@@ -123,7 +123,7 @@ func viperConfig() {
 		API_KEY:          OPENAI_API_KEY,
 		Verbose:          verbose,
 		ImageSize:        viper.GetString("openAI_image_size"),
-    User: goai.HashAPIKey(OPENAI_API_KEY),
+		User:             goai.HashAPIKey(OPENAI_API_KEY),
 		TopP:             viper.GetFloat64("openAI_topP"),
 		ChatModel:        viper.GetString("openAI_chat_model"),
 		TextModel:        viper.GetString("openAI_text_model"),

@@ -5,11 +5,13 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"time"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
@@ -18,7 +20,7 @@ import (
 
 var APP_VERSION = "v0.1.0"
 var verbose bool
-var openai *goai.Client
+var ai *goai.Client
 var prompt,
 	configFile,
 	OPENAI_API_KEY,
@@ -93,18 +95,12 @@ func viperConfig() {
 	viper.SetDefault("openAI_image_size", "1024x1024")
 	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
 
-	viper.SetDefault("openAI_chat_topP", "0.9")
-	viper.SetDefault("openAI_chat_frequencyPenalty", "0.0")
-	viper.SetDefault("openAI_chat_presencePenalty", "0.6")
-	viper.SetDefault("openAI_chat_temperature", "0")
-	viper.SetDefault("openAI_chat_maxTokens", "999")
+	viper.SetDefault("openAI_topP", "0.9")
+	viper.SetDefault("openAI_frequencyPenalty", "0.0")
+	viper.SetDefault("openAI_presencePenalty", "0.6")
+	viper.SetDefault("openAI_temperature", "0")
+	viper.SetDefault("openAI_maxTokens", "999")
 	viper.SetDefault("openAI_chat_model", "gpt-3.5-turbo")
-
-	viper.SetDefault("openAI_text_topP", "0.9")
-	viper.SetDefault("openAI_text_frequencyPenalty", "0.0")
-	viper.SetDefault("openAI_text_presencePenalty", "0.6")
-	viper.SetDefault("openAI_text_temperature", "0")
-	viper.SetDefault("openAI_text_maxTokens", "999")
 	viper.SetDefault("openAI_text_model", "text-davinci-003")
 
 	viper.SetDefault("discord_message_context_count", "15")
@@ -122,8 +118,23 @@ func viperConfig() {
 		}
 	}
 
-	openai = goai.NewClient(OPENAI_API_KEY, verbose)
-
+	ai = &goai.Client{
+		Endpoint:         viper.GetString("openAI_endpoint"),
+		API_KEY:          OPENAI_API_KEY,
+		Verbose:          verbose,
+		ImageSize:        viper.GetString("openAI_image_size"),
+    User: goai.HashAPIKey(OPENAI_API_KEY),
+		TopP:             viper.GetFloat64("openAI_topP"),
+		ChatModel:        viper.GetString("openAI_chat_model"),
+		TextModel:        viper.GetString("openAI_text_model"),
+		MaxTokens:        viper.GetInt("openAI_maxTokens"),
+		Temperature:      viper.GetFloat64("openAI_temperature"),
+		FrequencyPenalty: viper.GetFloat64("openAI_frequencyPenalty"),
+		PresencePenalty:  viper.GetFloat64("openAI_presencePenalty"),
+		HTTPClient: &http.Client{
+			Timeout: 60 * time.Second,
+		},
+	}
 }
 
 func trace() {

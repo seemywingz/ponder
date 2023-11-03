@@ -2,7 +2,7 @@ module github.com/seemywingz/ponder
 
 go 1.20
 
-// replace github.com/seemywingz/goai => /Users/kevin.jayne/.go/src/github.com/seemywingz/goai
+replace github.com/seemywingz/goai => /Users/kjj/git/goai
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1

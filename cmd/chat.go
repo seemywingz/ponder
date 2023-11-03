@@ -43,6 +43,7 @@ var chatCmd = &cobra.Command{
 				fmt.Println("\nPonder:\n", chatCompletion(prompt))
 			}
 		} else {
+			fmt.Println("Performing text completion...")
 			textCompletion(prompt)
 		}
 
@@ -56,7 +57,7 @@ func chatCompletion(prompt string) string {
 	})
 
 	// Send the messages to OpenAI
-	oaiResponse, err := openai.ChatCompletion(ponderMessages)
+	oaiResponse, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
@@ -67,7 +68,7 @@ func chatCompletion(prompt string) string {
 
 func textCompletion(prompt string) {
 
-	oaiResponse, err := openai.TextCompletion(prompt)
+	oaiResponse, err := ai.TextCompletion(prompt)
 	catchErr(err)
 
 	for _, v := range oaiResponse.Choices {
@@ -88,7 +89,7 @@ func getUserInput() (string, error) {
 		trace()
 		return "", err
 	}
-	// remove the delimeter from the string
+	// remove the delimiter from the string
 	input = strings.TrimSuffix(input, "\n")
 	if verbose {
 		trace()

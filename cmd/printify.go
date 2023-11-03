@@ -29,7 +29,7 @@ func generateImageAndPost() {
 
 	// Generate Image
 	fmt.Println("🖼  Generating Image(s)...")
-	res := openai.ImageGen(prompt, "", n)
+	res := ai.ImageGen(prompt, "", n)
 
 	for imgNum, data := range res.Data {
 		url := data.URL

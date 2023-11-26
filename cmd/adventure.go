@@ -89,7 +89,7 @@ func adventureChat(prompt string) string {
 		Role:    "user",
 		Content: prompt,
 	})
-	oaiResponse, err := openai.ChatCompletion(adventureMessages)
+	oaiResponse, err := ai.ChatCompletion(adventureMessages)
 	catchErr(err)
 	adventureMessages = append(adventureMessages, goai.Message{
 		Role:    "assistant",
@@ -100,7 +100,7 @@ func adventureChat(prompt string) string {
 
 func adventureImage(prompt, imageFile string) {
 	fmt.Println("🖼  Creating Image...")
-	res := openai.ImageGen(prompt, "", 1)
+	res := ai.ImageGen(prompt, "", 1)
 
 	url := res.Data[0].URL
 	// fmt.Println("🌐 Image URL: " + url)

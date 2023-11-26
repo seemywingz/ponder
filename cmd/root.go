@@ -37,7 +37,7 @@ var rootCmd = &cobra.Command{
 	GitHub: https://github.com/seemywingz/ponder
 	App Version: ` + APP_VERSION + `
 
-  Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
+  Ponder uses OpenAI's API to generate text responses to user input.
   You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
   Or whatever else you can think of...
 	`,
@@ -62,7 +62,7 @@ func init() {
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "$HOME/.ponder/config", "config file")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.MarkFlagRequired("prompt")
 
 	// Check for Required Environment Variables
@@ -86,9 +86,6 @@ func init() {
 
 func viperConfig() {
 	// use spf13/viper to read config file
-	// viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
-	// viper.SetConfigName("config")        // name of config file (without extension)
-	// viper.AddConfigPath(".")             // optionally look for config in the working directory
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
 
@@ -100,21 +97,33 @@ func viperConfig() {
 	viper.SetDefault("openAI_presencePenalty", "0.6")
 	viper.SetDefault("openAI_temperature", "0")
 	viper.SetDefault("openAI_maxTokens", "999")
-	viper.SetDefault("openAI_chat_model", "gpt-3.5-turbo")
+	viper.SetDefault("openAI_chat_model", "gpt-4")
+	viper.SetDefault("openAI_image_model", "dall-e-3")
 	viper.SetDefault("openAI_text_model", "text-davinci-003")
 
 	viper.SetDefault("discord_message_context_count", "15")
 
-	viper.SetConfigFile(configFile)
-	viper.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
-	if verbose {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	viper.SetConfigName("config")        // name of config file (without extension)
+	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension
+	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
+	viper.AddConfigPath("./files")       // look for config in the working directory /files
+	viper.AddConfigPath(".")             // look for config in the working directory
+
+	if configFile != "" {
+		viper.SetConfigFile(configFile)
+		if verbose {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
 		if err != nil {
 			// Config file not found; ignore error if desired
 			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
+		}
+	} else {
+		if verbose {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
 		}
 	}
 
@@ -127,6 +136,7 @@ func viperConfig() {
 		TopP:             viper.GetFloat64("openAI_topP"),
 		ChatModel:        viper.GetString("openAI_chat_model"),
 		TextModel:        viper.GetString("openAI_text_model"),
+		ImageModel:       viper.GetString("openAI_image_model"),
 		MaxTokens:        viper.GetInt("openAI_maxTokens"),
 		Temperature:      viper.GetFloat64("openAI_temperature"),
 		FrequencyPenalty: viper.GetFloat64("openAI_frequencyPenalty"),

@@ -174,5 +174,9 @@ func fileNameFromURL(urlStr string) string {
 	filename := filepath.Base(u.Path)
 	// Replace any characters that are not letters, numbers, or underscores with dashes
 	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
+	// Limit the filename to 255 characters
+	if len(filename) >= 255 {
+		filename = filename[:255]
+	}
 	return filename
 }

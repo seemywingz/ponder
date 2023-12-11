@@ -40,7 +40,6 @@ var chatCmd = &cobra.Command{
 				fmt.Println("\nPonder:\n", chatCompletion(prompt))
 			}
 		} else {
-			fmt.Println("Performing text completion...")
 			textCompletion(prompt)
 		}
 	},

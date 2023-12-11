@@ -64,6 +64,10 @@ func chatCompletion(prompt string) string {
 
 func textCompletion(prompt string) {
 
+	if perform {
+		prompt = command_SystemMessage + "\n here is the prompt:\n" + prompt
+	}
+
 	oaiResponse, err := ai.TextCompletion(prompt)
 	catchErr(err)
 
@@ -77,16 +81,19 @@ func textCompletion(prompt string) {
 
 	if perform {
 		command := strings.Split(oaiResponse.Choices[0].Text, " ")
-		cliCommand(command[0], command[1:]...)
+		// fmt.Println("Running command: ", strings.ReplaceAll(command[0], "\n", ""), command[1:])
+		cliCommand(strings.ReplaceAll(command[0], "\n", ""), command[1:]...)
 	}
 
 }
 
 func cliCommand(command string, args ...string) {
 	cli := exec.Command(command, args...)
-	err := cli.Start()
+	output, err := cli.Output()
 	if err != nil {
 		fmt.Println(err)
+	} else {
+		fmt.Println(string(output))
 	}
 }
 

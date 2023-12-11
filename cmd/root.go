@@ -60,7 +60,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
+	rootCmd.PersistentFlags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
 	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
 	rootCmd.Flags().BoolVarP(&perform, "perform", "x", false, "Attempt to perform the response as cli command")
 

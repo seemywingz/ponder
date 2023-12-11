@@ -66,7 +66,10 @@ Proceed wisely, for Your Character's path is filled with challenges and secrets 
 The key to success lies not only in your strategic thinking but also in your adherence to the rules and limitations set by this realm.
 May your journey be both thrilling and strategic as you navigate this richly detailed realm!
 
+only provide the stats if asked or the character leveled up.
 `
+
+var generateImages = false
 var adventureMessages = []goai.Message{}
 
 // adventureCmd represents the adventure command
@@ -81,7 +84,7 @@ var adventureCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(adventureCmd)
-	adventureCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
+	adventureCmd.Flags().BoolVarP(&generateImages, "images", "i", false, "Generate Images")
 }
 
 func adventureChat(prompt string) string {
@@ -98,7 +101,7 @@ func adventureChat(prompt string) string {
 	return oaiResponse.Choices[0].Message.Content
 }
 
-func adventureImage(prompt, imageFile string) {
+func adventureImage(prompt string) {
 	fmt.Println("🖼  Creating Image...")
 	res := ai.ImageGen(prompt, "", 1)
 
@@ -195,7 +198,9 @@ func startAdventure() {
 
 	startMessage := adventureChat("My name is " + player.Name + " start adventure")
 	narratorSay(startMessage)
-	// adventureImage(startMessage, startMessage)
+	if generateImages {
+		adventureImage(startMessage)
+	}
 
 	for {
 
@@ -206,6 +211,8 @@ func startAdventure() {
 		playerInput := getPlayerInput(&player)
 		adventureResponse := adventureChat(playerInput)
 		narratorSay(adventureResponse)
-		// adventureImage(adventureResponse, adventureResponse)
+		if generateImages {
+			adventureImage(adventureResponse)
+		}
 	}
 }

@@ -24,8 +24,6 @@ var ponderMessages = []goai.Message{{
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
-	chatCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
-	chatCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
 }
 
 // chatCmd represents the chat command
@@ -34,7 +32,6 @@ var chatCmd = &cobra.Command{
 	Short: "Open ended chat with OpenAI",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		if convo {
 			for {
 				fmt.Println("\nYou: ")
@@ -46,7 +43,6 @@ var chatCmd = &cobra.Command{
 			fmt.Println("Performing text completion...")
 			textCompletion(prompt)
 		}
-
 	},
 }
 
@@ -79,6 +75,19 @@ func textCompletion(prompt string) {
 		fmt.Println(text[2:])
 	}
 
+	if perform {
+		command := strings.Split(oaiResponse.Choices[0].Text, " ")
+		cliCommand(command[0], command[1:]...)
+	}
+
+}
+
+func cliCommand(command string, args ...string) {
+	cli := exec.Command(command, args...)
+	err := cli.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func getUserInput() (string, error) {

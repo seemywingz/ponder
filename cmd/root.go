@@ -6,11 +6,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
-	"path/filepath"
-	"regexp"
-	"runtime"
 	"time"
 
 	"github.com/seemywingz/goai"
@@ -20,6 +16,7 @@ import (
 
 var APP_VERSION = "v0.1.0"
 var verbose bool
+var perform bool
 var ai *goai.Client
 var prompt,
 	configFile,
@@ -41,10 +38,9 @@ var rootCmd = &cobra.Command{
   You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
   Or whatever else you can think of...
 	`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-	// },
+	Run: func(cmd *cobra.Command, args []string) {
+		chatCmd.Run(cmd, args)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -60,10 +56,13 @@ func init() {
 
 	cobra.OnInitialize(viperConfig)
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.MarkFlagRequired("prompt")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
+	rootCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	rootCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
+	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
+	rootCmd.Flags().BoolVarP(&perform, "perform", "x", false, "Attempt to perform the response as cli command")
 
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
@@ -145,38 +144,4 @@ func viperConfig() {
 			Timeout: 60 * time.Second,
 		},
 	}
-}
-
-func trace() {
-	pc := make([]uintptr, 10) // at least 1 entry needed
-	runtime.Callers(2, pc)
-	f := runtime.FuncForPC(pc[0])
-	file, line := f.FileLine(pc[0])
-	fmt.Printf("%s:%d\n%s\n", file, line, f.Name())
-}
-
-func catchErr(err error) {
-	if err != nil {
-		fmt.Println("💔", err)
-		// os.Exit(1)
-	}
-}
-
-func formatPrompt(prompt string) string {
-	// Replace any characters that are not letters, numbers, or underscores with dashes
-	return regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(prompt, "-")
-}
-
-func fileNameFromURL(urlStr string) string {
-	u, err := url.Parse(urlStr)
-	catchErr(err)
-	// Get the last path component of the URL
-	filename := filepath.Base(u.Path)
-	// Replace any characters that are not letters, numbers, or underscores with dashes
-	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
-	// Limit the filename to 255 characters
-	if len(filename) >= 255 {
-		filename = filename[:255]
-	}
-	return filename
 }

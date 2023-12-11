@@ -72,14 +72,23 @@ func deregisterCommands() {
 }
 
 func registerCommands() {
+
 	fmt.Println("Registering Slash Commands...")
-	// /chat command
-	command := &discordgo.ApplicationCommand{
-		Name:        "scrape",
-		Description: "Scrape Discord channel for Upscaled Midjourney Images!",
+	commands := []*discordgo.ApplicationCommand{
+		{
+			Name:        "scrape",
+			Description: "Scrape Discord channel for Upscaled Midjourney Images!",
+		},
+		{
+			Name:        "ponder-image",
+			Description: "Use DALL-E 3 to generate an Image!",
+		},
 	}
-	_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
-	catchErr(err)
+
+	for _, command := range commands {
+		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
+		catchErr(err)
+	}
 }
 
 func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -87,6 +96,8 @@ func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.ApplicationCommandData().Name {
 	case "scrape":
 		discordScrapeImages(s, i)
+	case "ponder-image":
+		discordPonderImage(s, i)
 	default: // Handle unknown slash commands
 		log.Printf("Unknown Ponder Command: %s", i.ApplicationCommandData().Name)
 	}
@@ -148,12 +159,6 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	s.ChannelMessageSend(m.ChannelID, oaiResponse.Choices[0].Message.Content)
 }
 
-// func discordGetChannelName(channelID string) string {
-// 	channel, err := discord.Channel(channelID)
-// 	catchErr(err)
-// 	return channel.Name
-// }
-
 func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
 	channels, err := s.GuildChannels(guildID)
 	catchErr(err)
@@ -167,10 +172,19 @@ func discordGetChannelID(s *discordgo.Session, guildID string, channelName strin
 	return ""
 }
 
+func discordPonderImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	channelID := i.ChannelID
+	discord.ChannelTyping(channelID)
+	messages, err := discord.ChannelMessages(channelID, 1, "", "", "")
+	catchErr(err)
+
+	discordFollowUp("Using DALL-E 3 to generate an image..."+messages[0].Content, s, i)
+}
+
 func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	discord.ChannelTyping(i.ChannelID)
 	// Get the interaction channel ID
 	channelID := i.ChannelID
+	discord.ChannelTyping(channelID)
 	messages, err := discord.ChannelMessages(channelID, 100, "", "", "")
 	catchErr(err)
 	discordFollowUp("Scraping Discord Channel for ALL Image URLs and sending them to #saved-images.\nAll `Upscaled` Midjourney Images will be sent to Printify as well...", s, i)

@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var removeCMDIds string
+
 // discordCmd represents the discord command
 var discordCmd = &cobra.Command{
 	Use:   "discord-bot",
@@ -19,4 +21,5 @@ var discordCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(discordCmd)
+	discordCmd.Flags().StringVarP(&removeCMDIds, "deregister-commands", "D", "", "A comma separated list of command IDs to deregister")
 }

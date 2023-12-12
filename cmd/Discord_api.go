@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -29,12 +28,12 @@ func initDiscord() {
 	registerCommands()
 	deregisterCommands()
 
-	log.Println("Ponder Discord Bot is now running...")
+	log.Println("🤖 Ponder Discord Bot is Running...")
 	select {} // Block forever to prevent the program from terminating.
 }
 
 func setStatusOnline() {
-	fmt.Println("Setting Status to Online...")
+	log.Println("🛜  Setting Status to Online...")
 	// Set status to online with active activity
 	err := discord.UpdateStatusComplex(discordgo.UpdateStatusData{
 		Status: "online",
@@ -50,49 +49,56 @@ func setStatusOnline() {
 }
 
 func registerHandlers() {
-	fmt.Println("Registering Handlers...")
-	// A handler function for the "interactionCreate" event
+	log.Println("💾 Registering Handlers...")
 	discord.AddHandler(handleCommands)
-	// Add a handler function for the "messageCreate" event
 	discord.AddHandler(handleMessages)
 }
 
 func deregisterCommands() {
-	fmt.Println("Deregistering Slash Commands...")
-	// Set the ID of the slash command to deregister
-	slashCommandIDs := []string{}
 
-	for _, slashCommandID := range slashCommandIDs {
-		err := discord.ApplicationCommandDelete(discord.State.User.ID, "", slashCommandID)
-		if err != nil {
-			fmt.Println("Error deleting slash command: ", err)
-			return
+	if removeCMDIds != "" {
+		slashCommandIDs := strings.Split(removeCMDIds, ",")
+		for _, slashCommandID := range slashCommandIDs {
+			log.Println("➖ Removing Command: ", slashCommandID)
+			err := discord.ApplicationCommandDelete(discord.State.User.ID, "", slashCommandID)
+			if err != nil {
+				log.Println("Error deleting slash command: ", err)
+				return
+			}
 		}
 	}
 }
 
 func registerCommands() {
 
-	fmt.Println("Registering Slash Commands...")
 	commands := []*discordgo.ApplicationCommand{
 		{
 			Name:        "scrape",
-			Description: "Scrape Discord channel for Upscaled Midjourney Images!",
+			Description: "Scrape Discord channel for Upscaled Midjourney Images",
 		},
 		{
 			Name:        "ponder-image",
-			Description: "Use DALL-E 3 to generate an Image!",
+			Description: "Use DALL-E 3 to generate an Image",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "prompt",
+					Description: "Prompt for Image Generation",
+					Required:    true,
+				},
+			},
 		},
 	}
 
 	for _, command := range commands {
+		log.Println("➕ Adding Command: /"+command.Name, "-", command.Description)
 		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", command)
 		catchErr(err)
 	}
 }
 
 func handleCommands(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	discordInitialResponse("Thinking...", s, i)
+	discordInitialResponse("Pondering...", s, i)
 	switch i.ApplicationCommandData().Name {
 	case "scrape":
 		discordScrapeImages(s, i)
@@ -159,26 +165,23 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	s.ChannelMessageSend(m.ChannelID, oaiResponse.Choices[0].Message.Content)
 }
 
-func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
-	channels, err := s.GuildChannels(guildID)
-	catchErr(err)
-
-	for _, channel := range channels {
-		if channel.Name == channelName {
-			return channel.ID
-		}
-	}
-
-	return ""
-}
-
 func discordPonderImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	channelID := i.ChannelID
 	discord.ChannelTyping(channelID)
-	messages, err := discord.ChannelMessages(channelID, 1, "", "", "")
-	catchErr(err)
+	commandData := i.ApplicationCommandData()
 
-	discordFollowUp("Using DALL-E 3 to generate an image..."+messages[0].Content, s, i)
+	// Check if there are options and retrieve the prompt
+	if len(commandData.Options) > 0 {
+		promptOption := commandData.Options[0]
+		prompt := promptOption.StringValue() // Assuming the option is a string
+
+		discordFollowUp("Using DALL-E 3 to generate an image: "+prompt, s, i)
+		res := ai.ImageGen(prompt, "", 1)
+		s.ChannelMessageSend(channelID, res.Data[0].URL)
+	} else {
+		discordFollowUp("Please Provide a Prompt for Image Generation", s, i)
+	}
+
 }
 
 func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -213,6 +216,19 @@ func discordInitialResponse(content string, s *discordgo.Session, i *discordgo.I
 	}
 	err := s.InteractionRespond(i.Interaction, response)
 	catchErr(err)
+}
+
+func discordGetChannelID(s *discordgo.Session, guildID string, channelName string) string {
+	channels, err := s.GuildChannels(guildID)
+	catchErr(err)
+
+	for _, channel := range channels {
+		if channel.Name == channelName {
+			return channel.ID
+		}
+	}
+
+	return ""
 }
 
 func discordFollowUp(message string, s *discordgo.Session, i *discordgo.InteractionCreate) {

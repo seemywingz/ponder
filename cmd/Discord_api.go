@@ -173,8 +173,7 @@ func discordPonderImage(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// Check if there are options and retrieve the prompt
 	if len(commandData.Options) > 0 {
 		promptOption := commandData.Options[0]
-		prompt := promptOption.StringValue() // Assuming the option is a string
-
+		prompt := promptOption.StringValue()
 		discordFollowUp("Using DALL-E 3 to generate an image: "+prompt, s, i)
 		res := ai.ImageGen(prompt, "", 1)
 		s.ChannelMessageSend(channelID, res.Data[0].URL)

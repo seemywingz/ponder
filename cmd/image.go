@@ -21,15 +21,12 @@ var open, download bool
 var file string
 var n int
 
-// imageCmd represents the image command
 var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "Generate an image from a prompt",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		createImage(prompt, file)
-
 	},
 }
 
@@ -43,7 +40,7 @@ func init() {
 
 func createImage(prompt, imageFile string) {
 	fmt.Println("🖼  Creating Image...")
-	res := openai.ImageGen(prompt, imageFile, n)
+	res := ai.ImageGen(prompt, imageFile, n)
 
 	for imgNum, data := range res.Data {
 		url := data.URL

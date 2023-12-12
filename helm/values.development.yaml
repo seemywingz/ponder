@@ -1,6 +1,5 @@
-# Default values for ponder.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# Default values for ponder development.
+# helm upgrade --install ponder ./helm --values ./helm/values.development.yaml
 
 replicaCount: 1
 
@@ -21,23 +20,24 @@ app:
     - ./config
     - -v
   configData:
-    openAI_endpoint: "https://api.openai.com/v1/"
+    openAI_endpoint: "https://api.openAI.com/v1/"
+    openAI_image_downloadPath: "~/Ponder/Images/"
     openAI_image_size: "1024x1024"
-    openAI_image_downloadPath: "~/Ponder/Images"
-    openAI_chat_topP: "0.1"
-    openAI_chat_temperature: "0"
-    openAI_chat_maxTokens: "999"
-    openAI_chat_presencePenalty: "0.6"
-    openAI_chat_frequencyPenalty: "0.0"
+    openAI_image_model: "dall-e-3"
+    openAI_topP: 0.1
+    openAI_temperature: 0
+    openAI_maxTokens: 999
+    openAI_presencePenalty: 0.6
+    openAI_frequencyPenalty: 0.0
     openAI_chat_model: "gpt-4"
-    openAI_text_topP: "0.1"
-    openAI_text_temperature: "0"
-    openAI_text_maxTokens: "999"
-    openAI_text_presencePenalty: "0.6"
-    openAI_text_frequencyPenalty: "0.0"
     openAI_text_model: "text-davinci-003"
-    discord_message_context_count: "15"
-    discord_bot_systemMessage: "You are Ponder! Ponder is currently in beta. Please report any bugs or issues to @seemywingz#0001. Ponder is here to help you with your Discord needs. Please be respectful and courteous when interacting with Ponder. Ponder will not tolerate any form of harassment, bullying, or discrimination. If you have any questions or concerns, please let us know. Thank you for using Ponder!"
+    discord_message_context_count: 15
+    discord_bot_systemMessage: |
+      You are Ponder. 
+      Ponder is here to help you with your Discord needs. 
+      Please be respectful and courteous when interacting with Ponder. 
+      Ponder will not tolerate any form of harassment, bullying, or discrimination. 
+      If you have any questions or concerns, please let us know. Thank you for using Ponder!
   env:
     - name: OPENAI_API_KEY
       valueFrom:

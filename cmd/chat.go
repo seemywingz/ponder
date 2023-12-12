@@ -24,8 +24,6 @@ var ponderMessages = []goai.Message{{
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
-	chatCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
-	chatCmd.Flags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
 }
 
 // chatCmd represents the chat command
@@ -34,7 +32,6 @@ var chatCmd = &cobra.Command{
 	Short: "Open ended chat with OpenAI",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		if convo {
 			for {
 				fmt.Println("\nYou: ")
@@ -45,7 +42,6 @@ var chatCmd = &cobra.Command{
 		} else {
 			textCompletion(prompt)
 		}
-
 	},
 }
 
@@ -56,7 +52,7 @@ func chatCompletion(prompt string) string {
 	})
 
 	// Send the messages to OpenAI
-	oaiResponse, err := openai.ChatCompletion(ponderMessages)
+	oaiResponse, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
@@ -67,7 +63,11 @@ func chatCompletion(prompt string) string {
 
 func textCompletion(prompt string) {
 
-	oaiResponse, err := openai.TextCompletion(prompt)
+	if perform {
+		prompt = command_SystemMessage + "\n here is the prompt:\n" + prompt
+	}
+
+	oaiResponse, err := ai.TextCompletion(prompt)
 	catchErr(err)
 
 	for _, v := range oaiResponse.Choices {
@@ -78,6 +78,22 @@ func textCompletion(prompt string) {
 		fmt.Println(text[2:])
 	}
 
+	if perform {
+		command := strings.Split(oaiResponse.Choices[0].Text, " ")
+		// fmt.Println("Running command: ", strings.ReplaceAll(command[0], "\n", ""), command[1:])
+		cliCommand(strings.ReplaceAll(command[0], "\n", ""), command[1:]...)
+	}
+
+}
+
+func cliCommand(command string, args ...string) {
+	cli := exec.Command(command, args...)
+	output, err := cli.Output()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(string(output))
+	}
 }
 
 func getUserInput() (string, error) {
@@ -88,7 +104,7 @@ func getUserInput() (string, error) {
 		trace()
 		return "", err
 	}
-	// remove the delimeter from the string
+	// remove the delimiter from the string
 	input = strings.TrimSuffix(input, "\n")
 	if verbose {
 		trace()

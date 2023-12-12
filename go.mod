@@ -1,13 +1,13 @@
 module github.com/seemywingz/ponder
 
-go 1.20
+go 1.21
 
-// replace github.com/seemywingz/goai => /Users/kevin.jayne/.go/src/github.com/seemywingz/goai
+// replace github.com/seemywingz/goai => /Users/kjj/git/goai
 
 require (
 	github.com/bwmarrin/discordgo v0.27.1
-	github.com/seemywingz/goai v0.0.0-20230423020518-eee83b520703
-	github.com/spf13/cobra v1.6.1
+	github.com/seemywingz/goai v0.0.0-20231126180305-d3f04a0b4746
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.15.0
 )
 

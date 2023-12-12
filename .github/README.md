@@ -30,12 +30,12 @@ DISCORD_PUB_KEY={YOUR DISCORD BOT PUB KEY}
 ## Ponder a single thought
 ### CLI
 ```bash
-ponder chat --prompt "AI is Amazing"
+ponder --prompt "AI is Amazing"
 ```
 ### Docker
 #### Running ponder in docker is exactly the same, but you have to provide the env vars when running
 ```bash
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY  ghcr.io/seemywingz/ponder:latest chat --prompt "Ai is Amazing"
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY  ghcr.io/seemywingz/ponder:latest --prompt "Ai is Amazing"
 ```
 #### Example Output
 ```bash
@@ -44,7 +44,7 @@ AI is indeed amazing. It has the potential to revolutionize many industries, fro
 
 ## A small chat
 ```bash
-ponder chat --convo
+ponder --convo
 ```
 #### Example Ouput
 ```bash
@@ -63,28 +63,30 @@ Thank you for your kind words!
 
 ## Image Generation
 ```bash
-ponder image -p "watercolor of a corgie"
+ponder image -p "a ferocious cat with wings and fire"
 ```
 #### Example Ouput
 ```bash
 🖼  Creating Image...
-🌐 Image URL: https://oaidalleapiprodscus.blob.core.windows.net/private/org-RCMQxIXre0Olhs0AvLVp672o/user-F1wdcIVNf2VrRqBRD0JWUczI/img-AWku5cm91XAv32jj27XWXZBE.png?st=2023-03-05T05%3A19%3A33Z&se=2023-03-05T07%3A19%3A33Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-05T01%3A25%3A44Z&ske=2023-03-06T01%3A25%3A44Z&sks=b&skv=2021-08-06&sig=xs9vSD0nA0mkxyulHEKABn5cbWH%2B6YOpab25yTAU/nc%3D
+🌐 Image URL: https://oaidalleapiprodscus.blob.core.windows.net/private/org-RCMQxIXre0Olhs0AvLVp672o/user-F1wdcIVNf2VrRqBRD0JWUczI/img-B4gaFhJQFl25authc5zMdw3T.png?st=2023-12-12T19%3A42%3A45Z&se=2023-12-12T21%3A42%3A45Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-12-12T05%3A22%3A04Z&ske=2023-12-13T05%3A22%3A04Z&sks=b&skv=2021-08-06&sig=RteaU2hpHlz5VElxgxdwUahGHoQmy6SEAVdpsjDbt%2Bg%3D
 ```
 
 ### You can always refer to the `--help` menu as well.
 ```yaml
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.1.0
+        App Version: v0.3.0
 
-  Ponder uses OpenAI's GPT-3.5-Turbo API to generate text responses to user input.
+  Ponder uses OpenAI's API to generate text responses to user input.
   You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
   Or whatever else you can think of...
 
 Usage:
+  ponder [flags]
   ponder [command]
 
 Available Commands:
+  adventure   lets you dive into a captivating text adventure
   chat        Open ended chat with OpenAI
   completion  Generate the autocompletion script for the specified shell
   discord-bot Discord Chat Bot Integration
@@ -93,9 +95,12 @@ Available Commands:
   printify    Interact with the Printify API
 
 Flags:
-      --config string   config file (default "$HOME/.ponder/config")
+      --config string   config file
+  -c, --convo           Conversational Style chat
   -h, --help            help for ponder
+  -x, --perform         Attempt to perform the response as cli command
   -p, --prompt string   Prompt AI generation
+  -s, --say             Say text out loud (MacOS only)
   -v, --verbose         verbose output
 
 Use "ponder [command] --help" for more information about a command.

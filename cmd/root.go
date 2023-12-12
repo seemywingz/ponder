@@ -14,7 +14,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var APP_VERSION = "v0.1.0"
 var verbose bool
 var perform bool
 var ai *goai.Client

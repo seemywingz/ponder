@@ -125,7 +125,7 @@ func viperConfig() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if err != nil {
-			// Config file not found; ignore error if desired
+			// Config file not found
 			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
 		}
 	} else {

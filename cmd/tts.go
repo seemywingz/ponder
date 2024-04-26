@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Kevin Jayne <kevin.jayne@icloud.com>
 */
 package cmd
 

@@ -91,8 +91,6 @@ func viperConfig() {
 	viper.SetDefault("openAI_image_size", "1024x1024")
 	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
 
-	viper.SetDefault("openAI_chat_model", "gpt-4")
-
 	viper.SetDefault("openAI_tts_model", "tts-1")
 	viper.SetDefault("openAI_tts_voice", "onyx")
 	viper.SetDefault("openAI_tts_speed", "1")
@@ -101,6 +99,9 @@ func viperConfig() {
 	viper.SetDefault("openAI_voice", "onyx")
 	viper.SetDefault("openAI_speed", "1")
 	viper.SetDefault("openAI_responseFormat", "mp3")
+
+	viper.SetDefault("openAI_chat_model", "gpt-4")
+	viper.SetDefault("openAI_chat_systemMessage", "You are a helpful assistant.")
 
 	viper.SetDefault("openAI_topP", "0.9")
 	viper.SetDefault("openAI_frequencyPenalty", "0.0")
@@ -132,6 +133,11 @@ func viperConfig() {
 			fmt.Println("Using config file:", viper.ConfigFileUsed())
 		}
 	}
+
+	ponderMessages = []goai.Message{{
+		Role:    "system",
+		Content: viper.GetString("openAI_chat_systemMessage"),
+	}}
 
 	ai = &goai.Client{
 		Endpoint:         viper.GetString("openAI_endpoint"),

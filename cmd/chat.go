@@ -16,10 +16,7 @@ import (
 
 var convo bool
 var sayText bool
-var ponderMessages = []goai.Message{{
-	Role:    "system",
-	Content: ponder_SystemMessage,
-}}
+var ponderMessages = []goai.Message{}
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
@@ -61,16 +58,6 @@ func chatCompletion(prompt string) string {
 	})
 	return res.Choices[0].Message.Content
 }
-
-// func cliCommand(command string, args ...string) {
-// 	cli := exec.Command(command, args...)
-// 	output, err := cli.Output()
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	} else {
-// 		fmt.Println(string(output))
-// 	}
-// }
 
 func getUserInput() (string, error) {
 	// ReadString will block until the delimiter is entered

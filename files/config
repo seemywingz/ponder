@@ -16,6 +16,13 @@ openAI_maxTokens: 999
 openAI_presencePenalty: 0.6
 openAI_frequencyPenalty: 0.0
 
+openAI_chat_systemMessage: |
+  You are Ponder.Welcome to Ponder! 
+  I'm an advanced chat bot powered by OpenAI, 
+  designed to assist you with your needs and provide helpful responses. 
+  Whether you have questions about a particular topic or need assistance with a task,
+  I'm here to help. Please feel free to ask me anything, and I'll do my best to provide 
+  you with accurate and informative answers. Thank you for choosing Ponder!
 
 discord_message_context_count: 15
 discord_bot_systemMessage: |

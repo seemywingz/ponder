@@ -65,19 +65,19 @@ func init() {
 
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
-	if OPENAI_API_KEY == "" {
+	if OPENAI_API_KEY == "" && verbose {
 		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
 	}
 	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
-	if PRINTIFY_API_KEY == "" {
+	if PRINTIFY_API_KEY == "" && verbose {
 		fmt.Println("⚠️ PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
 	}
 	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
-	if DISCORD_API_KEY == "" {
+	if DISCORD_API_KEY == "" && verbose {
 		fmt.Println("⚠️ DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
 	}
 	DISCORD_PUB_KEY = os.Getenv("DISCORD_PUB_KEY")
-	if DISCORD_PUB_KEY == "" {
+	if DISCORD_PUB_KEY == "" && verbose {
 		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
 	}
 }
@@ -133,8 +133,8 @@ func viperConfig() {
 		User:             goai.HashAPIKey(OPENAI_API_KEY),
 		TopP:             viper.GetFloat64("openAI_topP"),
 		ChatModel:        viper.GetString("openAI_chat_model"),
-		TextModel:        viper.GetString("openAI_text_model"),
 		ImageModel:       viper.GetString("openAI_image_model"),
+		TTSModel:         viper.GetString("openAI_tts_model"),
 		MaxTokens:        viper.GetInt("openAI_maxTokens"),
 		Temperature:      viper.GetFloat64("openAI_temperature"),
 		FrequencyPenalty: viper.GetFloat64("openAI_frequencyPenalty"),

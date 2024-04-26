@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 
 	"github.com/seemywingz/goai"
@@ -40,7 +39,7 @@ var chatCmd = &cobra.Command{
 				fmt.Println("\nPonder:\n", chatCompletion(prompt))
 			}
 		} else {
-			textCompletion(prompt)
+			fmt.Println(chatCompletion(prompt))
 		}
 	},
 }
@@ -51,6 +50,8 @@ func chatCompletion(prompt string) string {
 		Content: prompt,
 	})
 
+	fmt.Println("Pondering...")
+
 	// Send the messages to OpenAI
 	oaiResponse, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)
@@ -59,31 +60,6 @@ func chatCompletion(prompt string) string {
 		Content: oaiResponse.Choices[0].Message.Content,
 	})
 	return oaiResponse.Choices[0].Message.Content
-}
-
-func textCompletion(prompt string) {
-
-	if perform {
-		prompt = command_SystemMessage + "\n here is the prompt:\n" + prompt
-	}
-
-	oaiResponse, err := ai.TextCompletion(prompt)
-	catchErr(err)
-
-	for _, v := range oaiResponse.Choices {
-		text := v.Text
-		if runtime.GOOS == "darwin" && sayText {
-			say(text)
-		}
-		fmt.Println(text[2:])
-	}
-
-	if perform {
-		command := strings.Split(oaiResponse.Choices[0].Text, " ")
-		// fmt.Println("Running command: ", strings.ReplaceAll(command[0], "\n", ""), command[1:])
-		cliCommand(strings.ReplaceAll(command[0], "\n", ""), command[1:]...)
-	}
-
 }
 
 func cliCommand(command string, args ...string) {

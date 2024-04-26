@@ -18,7 +18,7 @@ import (
 )
 
 var open, download bool
-var file string
+var imageFile string
 var n int
 
 var imageCmd = &cobra.Command{
@@ -26,7 +26,7 @@ var imageCmd = &cobra.Command{
 	Short: "Generate an image from a prompt",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		createImage(prompt, file)
+		createImage(prompt, imageFile)
 	},
 }
 
@@ -35,7 +35,7 @@ func init() {
 	imageCmd.Flags().BoolVarP(&download, "download", "d", false, "Download image(s) to local directory")
 	imageCmd.Flags().BoolVarP(&open, "open", "o", false, "Open image in system default viewer")
 	imageCmd.Flags().IntVarP(&n, "n", "n", 1, "Number of images to generate")
-	imageCmd.Flags().StringVarP(&file, "file", "f", "", "Image file to edit")
+	imageCmd.Flags().StringVarP(&imageFile, "file", "f", "", "Image file to edit")
 }
 
 func createImage(prompt, imageFile string) {

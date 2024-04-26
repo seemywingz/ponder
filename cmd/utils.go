@@ -3,15 +3,27 @@ package cmd
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"path/filepath"
 	"regexp"
 	"runtime"
 )
 
-func catchErr(err error) {
+func catchErr(err error, level ...string) {
 	if err != nil {
-		fmt.Println("💔", err)
-		// os.Exit(1)
+		// Default level is "warn" if none is provided
+		lvl := "warn"
+		if len(level) > 0 {
+			lvl = level[0] // Use the provided level
+		}
+
+		switch lvl {
+		case "warn":
+			fmt.Println("💔 Warning:", err)
+		case "fatal":
+			fmt.Println("💀 Fatal:", err)
+			os.Exit(1)
+		}
 	}
 }
 

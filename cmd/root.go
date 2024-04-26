@@ -87,18 +87,26 @@ func viperConfig() {
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
 
+	viper.SetDefault("openAI_image_model", "dall-e-3")
 	viper.SetDefault("openAI_image_size", "1024x1024")
 	viper.SetDefault("openAI_image_downloadPath", "~/Ponder/Images/")
+
+	viper.SetDefault("openAI_chat_model", "gpt-4")
+
+	viper.SetDefault("openAI_tts_model", "tts-1")
+	viper.SetDefault("openAI_tts_voice", "onyx")
+	viper.SetDefault("openAI_tts_speed", "1")
+	viper.SetDefault("openAI_tts_responseFormat", "mp3")
+
+	viper.SetDefault("openAI_voice", "onyx")
+	viper.SetDefault("openAI_speed", "1")
+	viper.SetDefault("openAI_responseFormat", "mp3")
 
 	viper.SetDefault("openAI_topP", "0.9")
 	viper.SetDefault("openAI_frequencyPenalty", "0.0")
 	viper.SetDefault("openAI_presencePenalty", "0.6")
 	viper.SetDefault("openAI_temperature", "0")
 	viper.SetDefault("openAI_maxTokens", "999")
-	viper.SetDefault("openAI_chat_model", "gpt-4")
-	viper.SetDefault("openAI_image_model", "dall-e-3")
-	viper.SetDefault("openAI_text_model", "text-davinci-003")
-
 	viper.SetDefault("discord_message_context_count", "15")
 
 	viper.SetConfigName("config")        // name of config file (without extension)
@@ -135,6 +143,9 @@ func viperConfig() {
 		ChatModel:        viper.GetString("openAI_chat_model"),
 		ImageModel:       viper.GetString("openAI_image_model"),
 		TTSModel:         viper.GetString("openAI_tts_model"),
+		Voice:            viper.GetString("openAI_tts_voice"),
+		Speed:            viper.GetFloat64("openAI_tts_speed"),
+		ResponseFormat:   viper.GetString("openAI_tts_responseFormat"),
 		MaxTokens:        viper.GetInt("openAI_maxTokens"),
 		Temperature:      viper.GetFloat64("openAI_temperature"),
 		FrequencyPenalty: viper.GetFloat64("openAI_frequencyPenalty"),

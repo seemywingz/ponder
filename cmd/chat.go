@@ -53,24 +53,24 @@ func chatCompletion(prompt string) string {
 	fmt.Println("Pondering...")
 
 	// Send the messages to OpenAI
-	oaiResponse, err := ai.ChatCompletion(ponderMessages)
+	res, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
-		Content: oaiResponse.Choices[0].Message.Content,
+		Content: res.Choices[0].Message.Content,
 	})
-	return oaiResponse.Choices[0].Message.Content
+	return res.Choices[0].Message.Content
 }
 
-func cliCommand(command string, args ...string) {
-	cli := exec.Command(command, args...)
-	output, err := cli.Output()
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(string(output))
-	}
-}
+// func cliCommand(command string, args ...string) {
+// 	cli := exec.Command(command, args...)
+// 	output, err := cli.Output()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	} else {
+// 		fmt.Println(string(output))
+// 	}
+// }
 
 func getUserInput() (string, error) {
 	// ReadString will block until the delimiter is entered

@@ -5,7 +5,6 @@ go 1.21
 replace github.com/seemywingz/goai => /Users/kjj/git/goai
 
 require (
-	github.com/bwmarrin/discordgo v0.27.1
 	github.com/faiface/beep v1.1.0
 	github.com/seemywingz/goai v0.0.0-20231126180305-d3f04a0b4746
 	github.com/spf13/cobra v1.8.0
@@ -14,7 +13,6 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
 	github.com/hajimehoshi/oto v1.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -32,7 +30,6 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/exp/shiny v0.0.0-20240416160154-fe59bbe5cc7f // indirect
 	golang.org/x/image v0.15.0 // indirect

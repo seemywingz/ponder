@@ -17,12 +17,10 @@ import (
 var verbose bool
 var perform bool
 var ai *goai.Client
+var APP_VERSION = "v0.1.0"
 var prompt,
 	configFile,
-	OPENAI_API_KEY,
-	PRINTIFY_API_KEY,
-	DISCORD_API_KEY,
-	DISCORD_PUB_KEY string
+	OPENAI_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -68,18 +66,6 @@ func init() {
 	if OPENAI_API_KEY == "" && verbose {
 		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
 	}
-	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
-	if PRINTIFY_API_KEY == "" && verbose {
-		fmt.Println("⚠️ PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
-	}
-	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
-	if DISCORD_API_KEY == "" && verbose {
-		fmt.Println("⚠️ DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
-	}
-	DISCORD_PUB_KEY = os.Getenv("DISCORD_PUB_KEY")
-	if DISCORD_PUB_KEY == "" && verbose {
-		fmt.Println("⚠️ DISCORD_PUB_KEY environment variable is not set, continuing without Discord Public Key")
-	}
 }
 
 func viperConfig() {
@@ -108,7 +94,6 @@ func viperConfig() {
 	viper.SetDefault("openAI_presencePenalty", "0.6")
 	viper.SetDefault("openAI_temperature", "0")
 	viper.SetDefault("openAI_maxTokens", "999")
-	viper.SetDefault("discord_message_context_count", "15")
 
 	viper.SetConfigName("config")        // name of config file (without extension)
 	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension

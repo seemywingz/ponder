@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/faiface/beep v1.1.0
-	github.com/seemywingz/goai v0.0.0-20240426180803-a52446e61daf
+	github.com/seemywingz/goai v0.0.0-20240428060229-cce9aefb4824
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 )

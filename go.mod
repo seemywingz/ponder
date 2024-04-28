@@ -2,11 +2,9 @@ module github.com/seemywingz/ponder
 
 go 1.21
 
-// replace github.com/seemywingz/goai => /Users/kjj/git/goai
-
 require (
 	github.com/faiface/beep v1.1.0
-	github.com/seemywingz/goai v0.0.0-20231126180305-d3f04a0b4746
+	github.com/seemywingz/goai v0.0.0-20240426180803-a52446e61daf
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 )

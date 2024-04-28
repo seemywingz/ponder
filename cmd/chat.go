@@ -46,8 +46,6 @@ func chatCompletion(prompt string) string {
 		Content: prompt,
 	})
 
-	fmt.Println("Pondering...")
-
 	// Send the messages to OpenAI
 	res, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)

@@ -95,9 +95,9 @@ func viperConfig() {
 	viper.SetDefault("openAI_temperature", "0")
 	viper.SetDefault("openAI_maxTokens", "999")
 
-	viper.SetConfigName("config")        // name of config file (without extension)
+	viper.SetConfigName("ponder")        // name of config file (without extension)
 	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension
-	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
+	viper.AddConfigPath("$HOME/.config") // call multiple times to add many search paths
 	viper.AddConfigPath("./files")       // look for config in the working directory /files
 	viper.AddConfigPath(".")             // look for config in the working directory
 

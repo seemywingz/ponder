@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/seemywingz/goai"
@@ -74,12 +73,4 @@ func getUserInput() (string, error) {
 		fmt.Println(input)
 	}
 	return input, nil
-}
-
-func say(phrase string) {
-	say := exec.Command(`say`, phrase)
-	err := say.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
 }

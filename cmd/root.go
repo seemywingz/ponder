@@ -109,10 +109,7 @@ func viperConfig() {
 	}
 
 	if err := viper.ReadInConfig(); err != nil {
-		if err != nil {
-			// Config file not found
-			fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
-		}
+		fmt.Println("⚠️  Error Opening Config File:", err.Error(), "- Using Defaults")
 	} else {
 		if verbose {
 			fmt.Println("Using config file:", viper.ConfigFileUsed())

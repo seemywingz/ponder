@@ -2,7 +2,7 @@ module github.com/seemywingz/ponder
 
 go 1.21
 
-replace github.com/seemywingz/goai => /Users/kjj/git/goai
+// replace github.com/seemywingz/goai => /Users/kjj/git/goai
 
 require (
 	github.com/faiface/beep v1.1.0

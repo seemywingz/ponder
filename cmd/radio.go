@@ -4,21 +4,15 @@ Copyright © 2024 Kevin Jayne <kevin.jayne@icloud.com>
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
-
-	"periph.io/x/conn/v3/gpio"
-	"periph.io/x/conn/v3/gpio/gpioreg"
-	"periph.io/x/host/v3"
 )
 
-var ptt int = -1
-var pttPin gpio.PinIO = nil
+var pttPinNum int = -1
+var ptt *PTT
 
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
@@ -34,30 +28,13 @@ var radioCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(radioCmd)
 
-	radioCmd.Flags().IntVar(&ptt, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
-}
-
-func setPTT(level gpio.Level) {
-	if pttPin != nil {
-		pttPin.Out(level)
-	}
+	radioCmd.Flags().IntVar(&pttPinNum, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
 }
 
 func radio() {
 
-	// Load all the drivers:
-	_, err := host.Init()
-	catchErr(err, "fatal")
-
-	if ptt >= 0 {
-		if verbose {
-			fmt.Print("Setting up GPIO" + strconv.Itoa(ptt) + " for Push To Talk (PTT)")
-		}
-		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
-		if pttPin == nil {
-			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
-		}
-		pttPin.Out(gpio.Low)
+	if pttPinNum >= 0 {
+		ptt = new(PTT)
 	}
 
 	ponderMessages = append(ponderMessages, goai.Message{
@@ -70,9 +47,9 @@ func radio() {
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
 
-	setPTT(gpio.High)
+	ptt.On()
 	playAudio(ttsAudio)
-	setPTT(gpio.Low)
+	ptt.Off()
 
 	tick := time.Tick(1 * time.Second)
 	quit := make(chan bool)

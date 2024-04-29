@@ -62,16 +62,17 @@ func init() {
 	rootCmd.Flags().BoolVarP(&perform, "perform", "x", false, "Attempt to perform the response as cli command")
 
 	// Check for Required Environment Variables
-	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
-	if OPENAI_API_KEY == "" && verbose {
-		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
-	}
+	// OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
+	// if OPENAI_API_KEY == "" && verbose {
+	// 	fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
+	// }
 }
 
 func viperConfig() {
 	// use spf13/viper to read config file
 
 	viper.SetDefault("openAI_endpoint", "https://api.openai.com/v1/")
+	viper.SetDefault("openAI_api_key", "")
 
 	viper.SetDefault("openAI_image_model", "dall-e-3")
 	viper.SetDefault("openAI_image_size", "1024x1024")

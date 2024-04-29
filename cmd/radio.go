@@ -5,8 +5,11 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
+	"time"
 
+	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 
 	"periph.io/x/conn/v3/gpio"
@@ -32,6 +35,18 @@ func init() {
 	rootCmd.AddCommand(radioCmd)
 
 	radioCmd.Flags().IntVar(&ptt, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
+
+	// Load all the drivers:
+	_, err := host.Init()
+	catchErr(err, "fatal")
+
+	if ptt >= 0 {
+		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
+		if pttPin == nil {
+			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
+		}
+		pttPin.Out(gpio.Low)
+	}
 }
 
 func togglePTT() {
@@ -45,22 +60,33 @@ func togglePTT() {
 }
 
 func radio() {
-	// Load all the drivers:
-	_, err := host.Init()
-	catchErr(err, "fatal")
-
-	if ptt >= 0 {
-		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
-		if pttPin == nil {
-			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
-		}
-		pttPin.Out(gpio.Low)
-	}
-	ttsText := "Say hello and introduce yourself."
-	ttsAudio, err := ai.TTS(ttsText)
+	ponderMessages = append(ponderMessages, goai.Message{
+		Role:    "user",
+		Content: "Say Hello and introduce yourself.",
+	})
+	ttsText, err := ai.ChatCompletion(ponderMessages)
+	catchErr(err, "warn")
+	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
 	togglePTT()
 	playAudio(ttsAudio)
 	togglePTT()
 
+	tick := time.Tick(1 * time.Second)
+	quit := make(chan bool)
+
+	go func() {
+		time.Sleep(10 * time.Second)
+		quit <- true
+	}()
+
+	for {
+		select {
+		case <-tick:
+			fmt.Println("Tick")
+		case <-quit:
+			fmt.Println("Quit")
+			return
+		}
+	}
 }

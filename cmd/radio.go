@@ -35,18 +35,6 @@ func init() {
 	rootCmd.AddCommand(radioCmd)
 
 	radioCmd.Flags().IntVar(&ptt, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
-
-	// Load all the drivers:
-	_, err := host.Init()
-	catchErr(err, "fatal")
-
-	if ptt >= 0 {
-		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
-		if pttPin == nil {
-			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
-		}
-		pttPin.Out(gpio.Low)
-	}
 }
 
 func togglePTT() {
@@ -60,14 +48,29 @@ func togglePTT() {
 }
 
 func radio() {
+
+	// Load all the drivers:
+	_, err := host.Init()
+	catchErr(err, "fatal")
+
+	if ptt >= 0 {
+		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
+		if pttPin == nil {
+			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
+		}
+		pttPin.Out(gpio.Low)
+	}
+
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "user",
 		Content: "Say Hello and introduce yourself.",
 	})
+
 	ttsText, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err, "warn")
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
+
 	pttPin.Out(gpio.High)
 	playAudio(ttsAudio)
 	pttPin.Out(gpio.Low)

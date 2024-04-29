@@ -37,13 +37,9 @@ func init() {
 	radioCmd.Flags().IntVar(&ptt, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
 }
 
-func togglePTT() {
+func setPTT(level gpio.Level) {
 	if pttPin != nil {
-		if pttPin.Read() == gpio.Low {
-			pttPin.Out(gpio.High)
-		} else {
-			pttPin.Out(gpio.Low)
-		}
+		pttPin.Out(level)
 	}
 }
 
@@ -66,7 +62,7 @@ func radio() {
 
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "user",
-		Content: "Say Hello and introduce yourself.",
+		Content: "Say Hello and introduce yourself. Share some radio knowledge.",
 	})
 
 	ttsText, err := ai.ChatCompletion(ponderMessages)
@@ -74,9 +70,9 @@ func radio() {
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
 
-	togglePTT()
+	setPTT(gpio.High)
 	playAudio(ttsAudio)
-	togglePTT()
+	setPTT(gpio.Low)
 
 	tick := time.Tick(1 * time.Second)
 	quit := make(chan bool)

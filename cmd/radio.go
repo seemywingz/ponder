@@ -54,6 +54,7 @@ func radio() {
 	catchErr(err, "fatal")
 
 	if ptt >= 0 {
+		fmt.Print("Setting up GPIO" + strconv.Itoa(ptt) + " for Push To Talk (PTT)")
 		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
 		if pttPin == nil {
 			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
@@ -86,7 +87,6 @@ func radio() {
 	for {
 		select {
 		case <-tick:
-			pttPin.Out(gpio.Low)
 			fmt.Println("Tick")
 		case <-quit:
 			fmt.Println("Quit")

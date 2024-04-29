@@ -8,7 +8,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/periph/conn/gpio"
 	"periph.io/x/periph/conn/gpio/gpioreg"
 	"periph.io/x/periph/host"

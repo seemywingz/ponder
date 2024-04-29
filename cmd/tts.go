@@ -54,7 +54,10 @@ func tts() {
 
 // playAudio plays audio from a byte slice.
 func playAudio(audioContent []byte) {
-	fmt.Println("🔊 Playing audio...")
+	if verbose {
+		fmt.Println("🔊 Playing audio...")
+	}
+
 	// Create an io.Reader from the byte slice
 	reader := bytes.NewReader(audioContent)
 

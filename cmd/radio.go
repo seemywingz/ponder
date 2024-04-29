@@ -72,7 +72,7 @@ func radio() {
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
 
-	// pttPin.Out(gpio.High)
+	pttPin.Out(gpio.High)
 	pttPin.Out(gpio.Low)
 	playAudio(ttsAudio)
 

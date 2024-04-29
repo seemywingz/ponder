@@ -8,12 +8,15 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
+	"periph.io/x/conn/v3/gpio"
 )
 
 var pttPinNum int = -1
+var spkPinNum int = -1
 
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
@@ -29,17 +32,25 @@ var radioCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(radioCmd)
 
-	radioCmd.Flags().IntVar(&pttPinNum, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
+	radioCmd.Flags().IntVarP(&pttPinNum, "ptt", "p", -1, "GPIO pin for PTT")
+	radioCmd.Flags().IntVarP(&spkPinNum, "speaker", "s", -1, "GPIO pin for Speaker")
 }
 
 func radio() {
 
-	var ptt *PTT
+	var ptt *GPIOPin
+	var spk *GPIOPin
 	var err error
 
 	if pttPinNum >= 0 {
-		ptt, err = NewPTT(pttPinNum)
+		ptt, err = NewGPIOPin(pttPinNum)
 		catchErr(err, "warn")
+	}
+
+	if spkPinNum >= 0 {
+		spk, err = NewGPIOPin(spkPinNum)
+		catchErr(err, "warn")
+		spk.SetInput()
 	}
 
 	cleanup := make(chan bool)
@@ -52,10 +63,21 @@ func radio() {
 	}()
 
 	go func() {
-		<-cleanup
-		ptt.Off()
-		fmt.Println("Cleanup complete. Exiting now.")
-		os.Exit(0)
+		for {
+			select {
+			case <-cleanup:
+				ptt.Off()
+				fmt.Println("Ponder Radio Exiting now.")
+				os.Exit(0)
+			default:
+				if spk != nil {
+					if spk.Read() == gpio.High {
+						fmt.Println("Data received on speaker pin")
+					}
+					time.Sleep(time.Millisecond * 100) // Adjust polling rate as necessary
+				}
+			}
+		}
 	}()
 
 	ponderMessages = append(ponderMessages, goai.Message{

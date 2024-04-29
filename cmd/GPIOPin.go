@@ -10,12 +10,12 @@ import (
 	"periph.io/x/host/v3"
 )
 
-type PTT struct {
+type GPIOPin struct {
 	Pin gpio.PinIO
 }
 
-// NewPTT creates a new PTT instance for the specified GPIO pin number.
-func NewPTT(pinNum int) (*PTT, error) {
+// NewGPIOPin creates a new PTT instance for the specified GPIO pin number.
+func NewGPIOPin(pinNum int) (*GPIOPin, error) {
 	_, err := host.Init()
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize host: %w", err)
@@ -27,20 +27,28 @@ func NewPTT(pinNum int) (*PTT, error) {
 	}
 	pin.Out(gpio.Low)
 
-	return &PTT{Pin: pin}, nil
+	return &GPIOPin{Pin: pin}, nil
 }
 
-func (p *PTT) Set(level gpio.Level) {
+func (p *GPIOPin) Set(level gpio.Level) {
 	p.Pin.Out(level)
 }
 
-func (p *PTT) On() {
+func (p *GPIOPin) On() {
 	p.Pin.Out(gpio.High)
 	// sleep for 300ms to ensure the PTT is fully engaged
 	// before transmitting audio
 	time.Sleep(270 * time.Millisecond)
 }
 
-func (p *PTT) Off() {
+func (p *GPIOPin) Off() {
 	p.Pin.Out(gpio.Low)
+}
+
+func (p *GPIOPin) Read() gpio.Level {
+	return p.Pin.Read()
+}
+
+func (p *GPIOPin) SetInput() {
+	p.Pin.In(gpio.PullUp, gpio.NoEdge)
 }

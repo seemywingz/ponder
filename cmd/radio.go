@@ -5,16 +5,17 @@ package cmd
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/host"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/host/v3"
 )
 
 var ptt int = -1
-var pttPin gpio.PinIO
+var pttPin gpio.PinIO = nil
 
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
@@ -37,15 +38,21 @@ func init() {
 	catchErr(err, "fatal")
 
 	if ptt >= 0 {
-		pttPin := gpioreg.ByName(string(ptt))
+		pttPin = gpioreg.ByName(strconv.Itoa(ptt))
 		if pttPin == nil {
-			catchErr(errors.New("Failed to get GPIO"+string(ptt)), "fatal")
+			catchErr(errors.New("Failed to get GPIO"+strconv.Itoa(ptt)), "fatal")
 		}
-		pttPin.Out(gpio.OUT_LOW)
+		pttPin.Out(gpio.Low)
 	}
 
 }
 
 func radio() {
-	ai.TTS("Say hello and introduce yourself.")
+
+	ttsRes, err := ai.TTS("Say hello and introduce yourself.")
+	catchErr(err, "warn")
+	if pttPin != nil {
+		pttPin.Out(gpio.High)
+	}
+	playAudio(ttsRes)
 }

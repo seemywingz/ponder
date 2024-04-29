@@ -56,21 +56,12 @@ func radio() {
 	playAudio(ttsAudio)
 	ptt.Off()
 
-	// Create a channel to receive signals
+	// Signal handling setup
 	sigs := make(chan os.Signal, 1)
-	// Create a channel to signal to finish
-	done := make(chan bool, 1)
-
-	// Notify sigs channel on SIGINT or SIGTERM
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	// Goroutine to handle received signals
-	go func() {
-		sig := <-sigs
-		fmt.Println("\nReceived signal:", sig)
-		ptt.Off()
-		done <- true
-	}()
-
-	<-done
+	// Wait for a signal
+	sig := <-sigs
+	fmt.Println("\nReceived signal:", sig)
+	ptt.Off()
 }

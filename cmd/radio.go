@@ -86,6 +86,7 @@ func radio() {
 	for {
 		select {
 		case <-tick:
+			pttPin.Out(gpio.Low)
 			fmt.Println("Tick")
 		case <-quit:
 			fmt.Println("Quit")

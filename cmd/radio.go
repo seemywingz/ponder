@@ -12,7 +12,6 @@ import (
 )
 
 var pttPinNum int = -1
-var ptt *PTT
 
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
@@ -33,8 +32,12 @@ func init() {
 
 func radio() {
 
+	var ptt *PTT
+	var err error
+
 	if pttPinNum >= 0 {
-		ptt = new(PTT)
+		ptt, err = NewPTT(pttPinNum)
+		catchErr(err, "fatal")
 	}
 
 	ponderMessages = append(ponderMessages, goai.Message{

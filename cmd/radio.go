@@ -32,8 +32,8 @@ var radioCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(radioCmd)
 
-	radioCmd.Flags().IntVarP(&pttPinNum, "ptt", "p", -1, "GPIO pin for PTT")
-	radioCmd.Flags().IntVarP(&spkPinNum, "speaker", "s", -1, "GPIO pin for Speaker")
+	radioCmd.Flags().IntVar(&pttPinNum, "ptt", -1, "GPIO pin for PTT")
+	radioCmd.Flags().IntVar(&spkPinNum, "spk", -1, "GPIO pin for Speaker")
 }
 
 func radio() {

@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"

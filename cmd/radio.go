@@ -1,13 +1,21 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Kevin Jayne <kevin.jayne@icloud.com>
 */
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/spf13/cobra"
+
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
+	"periph.io/x/periph/host"
 )
+
+var ptt int = -1
+var pttPin gpio.PinIO
 
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
@@ -22,8 +30,23 @@ var radioCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(radioCmd)
+
+	radioCmd.Flags().IntVarP(&ptt, "ptt", "p", -1, "GPIO pin for Push To Talk (PTT) control")
+
+	// Load all the drivers:
+	_, err := host.Init()
+	catchErr(err, "fatal")
+
+	if ptt >= 0 {
+		pttPin := gpioreg.ByName(string(ptt))
+		if pttPin == nil {
+			catchErr(errors.New("Failed to get GPIO"+string(ptt)), "fatal")
+		}
+		pttPin.Out(gpio.OUT_LOW)
+	}
+
 }
 
 func radio() {
-	fmt.Println("radio called")
+	ai.TTS("Say hello and introduce yourself.")
 }

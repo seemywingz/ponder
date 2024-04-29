@@ -49,5 +49,5 @@ func (p *GPIOPin) Read() gpio.Level {
 }
 
 func (p *GPIOPin) SetInput() {
-	p.Pin.In(gpio.PullDown, gpio.NoEdge)
+	p.Pin.In(gpio.PullNoChange, gpio.NoEdge)
 }

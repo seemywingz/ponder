@@ -14,10 +14,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-var verbose bool
-var perform bool
-var ai *goai.Client
+var ponderMessages = []goai.Message{}
 var APP_VERSION = "v0.1.0"
+var ai *goai.Client
+
+var verbose,
+	convo,
+	say bool
+
 var prompt,
 	configFile,
 	OPENAI_API_KEY string
@@ -32,8 +36,7 @@ var rootCmd = &cobra.Command{
 	App Version: ` + APP_VERSION + `
 
   Ponder uses OpenAI's API to generate text responses to user input.
-  You can use Ponder as a Discord chat bot or to generate images using the DALL-E API.
-  Or whatever else you can think of...
+  Or whatever else you can think of. 🤔
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		chatCmd.Run(cmd, args)
@@ -57,9 +60,9 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&sayText, "say", "s", false, "Say text out loud (MacOS only)")
-	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt AI generation")
-	rootCmd.Flags().BoolVarP(&perform, "perform", "x", false, "Attempt to perform the response as cli command")
+	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt for AI generation")
+	rootCmd.PersistentFlags().BoolVarP(&say, "say", "s", false, "Say the response out loud using TTS")
+	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, echo, fable, onyx, nova, and shimmer")
 
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")

@@ -9,13 +9,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/pterm/pterm"
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 )
-
-var convo bool
-var sayText bool
-var ponderMessages = []goai.Message{}
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
@@ -27,17 +24,39 @@ var chatCmd = &cobra.Command{
 	Short: "Open ended chat with OpenAI",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		var err error
 		if convo {
 			for {
-				fmt.Println("\nYou: ")
-				prompt, err := getUserInput()
-				catchErr(err)
-				fmt.Println("\nPonder:\n", chatCompletion(prompt))
+				response, audio := chatResponse(prompt)
+				fmt.Println("\nPonder:\n  " + response + "\n")
+				if say {
+					playAudio(audio)
+				}
+				fmt.Print("You:\n  ")
+				prompt, err = getUserInput()
+				catchErr(err, "warn")
 			}
 		} else {
-			fmt.Println(chatCompletion(prompt))
+			response, audio := chatResponse(prompt)
+			fmt.Println(response)
+			if say {
+				playAudio(audio)
+			}
 		}
 	},
+}
+
+func chatResponse(prompt string) (string, []byte) {
+	var audio []byte
+	var response string
+	spinner, _ := pterm.DefaultSpinner.Start("Pondering...")
+	spinner.RemoveWhenDone = true
+	response = chatCompletion(prompt)
+	if say {
+		audio = tts(response)
+	}
+	spinner.Stop()
+	return response, audio
 }
 
 func chatCompletion(prompt string) string {

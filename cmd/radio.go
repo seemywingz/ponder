@@ -53,6 +53,20 @@ func radio() {
 		spk.SetInput()
 	}
 
+	ponderMessages = append(ponderMessages, goai.Message{
+		Role:    "user",
+		Content: "Say Hello and introduce yourself. Share some radio knowledge.",
+	})
+
+	ttsText, err := ai.ChatCompletion(ponderMessages)
+	catchErr(err, "warn")
+	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
+	catchErr(err, "warn")
+
+	ptt.On()
+	playAudio(ttsAudio)
+	ptt.Off()
+
 	cleanup := make(chan bool)
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGSTOP, syscall.SIGKILL)
@@ -79,20 +93,6 @@ func radio() {
 			}
 		}
 	}()
-
-	ponderMessages = append(ponderMessages, goai.Message{
-		Role:    "user",
-		Content: "Say Hello and introduce yourself. Share some radio knowledge.",
-	})
-
-	ttsText, err := ai.ChatCompletion(ponderMessages)
-	catchErr(err, "warn")
-	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
-	catchErr(err, "warn")
-
-	ptt.On()
-	playAudio(ttsAudio)
-	ptt.Off()
 
 	<-cleanup // Wait for cleanup signal before exiting normally
 }

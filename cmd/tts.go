@@ -27,19 +27,21 @@ var ttsCmd = &cobra.Command{
 	You can use the TTS API to generate audio from text.
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		tts()
+		audio := tts(prompt)
+		if audio != nil {
+			playAudio(audio)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(ttsCmd)
 	ttsCmd.Flags().StringVarP(&audioFile, "file", "f", "", "File to save audio to")
-	ttsCmd.Flags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, echo, fable, onyx, nova, and shimmer")
 }
 
-func tts() {
+func tts(text string) []byte {
 	ai.Voice = voice
-	audioData, err := ai.TTS(prompt)
+	audioData, err := ai.TTS(text)
 	catchErr(err, "fatal")
 	if audioFile != "" {
 		file, err := os.Create(audioFile)
@@ -47,9 +49,9 @@ func tts() {
 		defer file.Close()
 		_, err = io.Copy(file, bytes.NewReader(audioData))
 		catchErr(err)
-	} else {
-		playAudio(audioData)
+		return nil
 	}
+	return audioData
 }
 
 // playAudio plays audio from a byte slice.

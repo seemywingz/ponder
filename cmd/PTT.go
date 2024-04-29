@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
@@ -35,6 +36,9 @@ func (p *PTT) Set(level gpio.Level) {
 
 func (p *PTT) On() {
 	p.Pin.Out(gpio.High)
+	// sleep for 300ms to ensure the PTT is fully engaged
+	// before transmitting audio
+	time.Sleep(90 * time.Millisecond)
 }
 
 func (p *PTT) Off() {

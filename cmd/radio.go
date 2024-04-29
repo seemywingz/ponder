@@ -6,6 +6,8 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
@@ -56,6 +58,8 @@ func radio() {
 
 	// Create a channel to receive signals
 	sigs := make(chan os.Signal, 1)
+	// Notify sigs channel on SIGINT or SIGTERM
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	// Create a channel to signal to finish
 	done := make(chan bool, 1)
 

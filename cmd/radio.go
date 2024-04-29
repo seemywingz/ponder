@@ -32,7 +32,9 @@ func init() {
 	rootCmd.AddCommand(radioCmd)
 
 	radioCmd.Flags().IntVarP(&ptt, "ptt", "p", -1, "GPIO pin for Push To Talk (PTT) control")
+}
 
+func radio() {
 	// Load all the drivers:
 	_, err := host.Init()
 	catchErr(err, "fatal")
@@ -44,11 +46,6 @@ func init() {
 		}
 		pttPin.Out(gpio.Low)
 	}
-
-}
-
-func radio() {
-
 	ttsRes, err := ai.TTS("Say hello and introduce yourself.")
 	catchErr(err, "warn")
 	if pttPin != nil {

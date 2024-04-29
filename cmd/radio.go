@@ -68,9 +68,9 @@ func radio() {
 	catchErr(err, "warn")
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
-	togglePTT()
+	pttPin.Out(gpio.High)
 	playAudio(ttsAudio)
-	togglePTT()
+	pttPin.Out(gpio.Low)
 
 	tick := time.Tick(1 * time.Second)
 	quit := make(chan bool)

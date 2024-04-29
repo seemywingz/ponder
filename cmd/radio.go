@@ -42,17 +42,17 @@ func radio() {
 		catchErr(err, "warn")
 	}
 
-	cleanupChan := make(chan bool)
+	cleanup := make(chan bool)
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGSTOP, syscall.SIGKILL)
 
 	go func() {
 		<-sigs
-		cleanupChan <- true
+		cleanup <- true
 	}()
 
 	go func() {
-		<-cleanupChan
+		<-cleanup
 		ptt.Off()
 		fmt.Println("Cleanup complete. Exiting now.")
 		os.Exit(0)
@@ -72,6 +72,5 @@ func radio() {
 	playAudio(ttsAudio)
 	ptt.Off()
 
-	// If the program reaches here without interruption, we should wait for an interrupt
-	<-cleanupChan // Wait for cleanup signal before exiting normally
+	<-cleanup // Wait for cleanup signal before exiting normally
 }

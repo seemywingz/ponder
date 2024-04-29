@@ -44,11 +44,10 @@ func radio() {
 
 	cleanupChan := make(chan bool)
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGSTOP, syscall.SIGKILL)
 
 	go func() {
 		<-sigs
-		fmt.Println("\nCtrl+C pressed. Stopping...")
 		cleanupChan <- true
 	}()
 

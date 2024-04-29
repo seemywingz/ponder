@@ -31,7 +31,7 @@ var radioCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(radioCmd)
 
-	radioCmd.Flags().IntVarP(&ptt, "ptt", "p", -1, "GPIO pin for Push To Talk (PTT) control")
+	radioCmd.Flags().IntVar(&ptt, "ptt", -1, "GPIO pin for Push To Talk (PTT)")
 }
 
 func radio() {

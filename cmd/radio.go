@@ -73,8 +73,8 @@ func radio() {
 	catchErr(err, "warn")
 
 	pttPin.Out(gpio.High)
-	pttPin.Out(gpio.Low)
 	playAudio(ttsAudio)
+	pttPin.Out(gpio.Low)
 
 	tick := time.Tick(1 * time.Second)
 	quit := make(chan bool)

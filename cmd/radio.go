@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/seemywingz/goai"
@@ -54,21 +55,18 @@ func radio() {
 	playAudio(ttsAudio)
 	ptt.Off()
 
-	tick := time.Tick(1 * time.Second)
-	quit := make(chan bool)
+	// Create a channel to receive signals
+	sigs := make(chan os.Signal, 1)
+	// Create a channel to signal to finish
+	done := make(chan bool, 1)
 
+	// Goroutine to handle received signals
 	go func() {
-		time.Sleep(10 * time.Second)
-		quit <- true
+		sig := <-sigs
+		fmt.Println("\nReceived signal:", sig)
+		ptt.Off()
+		done <- true
 	}()
 
-	for {
-		select {
-		case <-tick:
-			fmt.Println("Tick")
-		case <-quit:
-			fmt.Println("Quit")
-			return
-		}
-	}
+	<-done
 }

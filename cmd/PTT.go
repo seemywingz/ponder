@@ -38,7 +38,7 @@ func (p *PTT) On() {
 	p.Pin.Out(gpio.High)
 	// sleep for 300ms to ensure the PTT is fully engaged
 	// before transmitting audio
-	time.Sleep(90 * time.Millisecond)
+	time.Sleep(270 * time.Millisecond)
 }
 
 func (p *PTT) Off() {

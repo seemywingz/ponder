@@ -39,8 +39,25 @@ func radio() {
 
 	if pttPinNum >= 0 {
 		ptt, err = NewPTT(pttPinNum)
-		catchErr(err, "fatal")
+		catchErr(err, "warn")
 	}
+
+	cleanupChan := make(chan bool)
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigs
+		fmt.Println("\nCtrl+C pressed. Stopping...")
+		cleanupChan <- true
+	}()
+
+	go func() {
+		<-cleanupChan
+		ptt.Off()
+		fmt.Println("Cleanup complete. Exiting now.")
+		os.Exit(0)
+	}()
 
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "user",
@@ -56,12 +73,6 @@ func radio() {
 	playAudio(ttsAudio)
 	ptt.Off()
 
-	// Signal handling setup
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
-	// Wait for a signal
-	sig := <-sigs
-	fmt.Println("\nReceived signal:", sig)
-	ptt.Off()
+	// If the program reaches here without interruption, we should wait for an interrupt
+	<-cleanupChan // Wait for cleanup signal before exiting normally
 }

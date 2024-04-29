@@ -18,6 +18,10 @@ import (
 var pttPinNum int = -1
 var spkPinNum int = -1
 
+var ptt, spk *GPIOPin
+
+var err error
+
 // radioCmd represents the radio command
 var radioCmd = &cobra.Command{
 	Use:   "radio",
@@ -36,11 +40,14 @@ func init() {
 	radioCmd.Flags().IntVar(&spkPinNum, "spk", -1, "GPIO pin for Speaker")
 }
 
-func radio() {
+func tx(audio []byte) {
 
-	var ptt *GPIOPin
-	var spk *GPIOPin
-	var err error
+	ptt.On()
+	playAudio(audio)
+	ptt.Off()
+}
+
+func radio() {
 
 	if pttPinNum >= 0 {
 		ptt, err = NewGPIOPin(pttPinNum)
@@ -63,9 +70,7 @@ func radio() {
 	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
 	catchErr(err, "warn")
 
-	ptt.On()
-	playAudio(ttsAudio)
-	ptt.Off()
+	tx(ttsAudio)
 
 	cleanup := make(chan bool)
 	sigs := make(chan os.Signal, 1)

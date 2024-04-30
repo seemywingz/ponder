@@ -61,11 +61,6 @@ func radio() {
 		spk.SetInput()
 	}
 
-	// ponderMessages = append(ponderMessages, goai.Message{
-	// 	Role:    "user",
-	// 	Content: "Say Hello and introduce yourself.",
-	// })
-
 	ttsText := chatCompletion("Say Hello and introduce yourself.")
 	ttsAudio, err := ai.TTS(ttsText)
 	catchErr(err, "warn")
@@ -81,7 +76,7 @@ func radio() {
 	}()
 
 	lastSpeakerState := gpio.Low
-	debounceDuration := time.Millisecond * 90
+	debounceDuration := time.Millisecond * 100
 
 	go func() {
 		for {

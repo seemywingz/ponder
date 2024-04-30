@@ -92,7 +92,10 @@ func radio() {
 						fmt.Println("Data receiving started")
 					} else if currentSpeakerState == gpio.Low {
 						fmt.Println("Data receiving ended")
+						ptt.On()
+						time.Sleep(300 * time.Millisecond)
 						playMP3File("/home/admin/.ponder/audio/bell.mp3")
+						ptt.Off()
 						ttsText := chatCompletion("Provide a question and answer from the HAM radio technician's manual.")
 						ttsAudio, err := ai.TTS(ttsText)
 						catchErr(err, "warn")

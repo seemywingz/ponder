@@ -69,6 +69,11 @@ func radio() {
 		spk.SetInput()
 	}
 
+	notify()
+	ttsText := chatCompletion("Say Hello and introduce yourself.")
+	ttsAudio := tts(ttsText)
+	tx(ttsAudio)
+
 	cleanup := make(chan bool)
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGSTOP, syscall.SIGKILL)
@@ -106,11 +111,6 @@ func radio() {
 			}
 		}
 	}()
-
-	notify()
-	ttsText := chatCompletion("Say Hello and introduce yourself.")
-	ttsAudio := tts(ttsText)
-	tx(ttsAudio)
 
 	<-cleanup // Wait for cleanup signal before exiting normally
 }

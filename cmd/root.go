@@ -98,6 +98,8 @@ func viperConfig() {
 	viper.SetDefault("openAI_temperature", "0")
 	viper.SetDefault("openAI_maxTokens", "999")
 
+	viper.SetDefault("radio_notificationSound", "~/.ponder/audio/notify.mp3")
+
 	viper.SetConfigName("config")        // name of config file (without extension)
 	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension
 	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"periph.io/x/conn/v3/gpio"
 )
 
@@ -62,8 +63,7 @@ func radio() {
 	}
 
 	ttsText := chatCompletion("Say Hello and introduce yourself.")
-	ttsAudio, err := ai.TTS(ttsText)
-	catchErr(err, "warn")
+	ttsAudio := tts(ttsText)
 	tx(ttsAudio)
 
 	cleanup := make(chan bool)
@@ -94,11 +94,10 @@ func radio() {
 						fmt.Println("Data receiving ended")
 						ptt.On()
 						time.Sleep(300 * time.Millisecond)
-						playMP3File("/home/admin/.ponder/audio/notify.mp3")
+						playMP3File(viper.GetString("radio_notificationSound"))
 						ptt.Off()
 						ttsText := chatCompletion("Provide a question and answer from the HAM radio technician's manual.")
-						ttsAudio, err := ai.TTS(ttsText)
-						catchErr(err, "warn")
+						ttsAudio = tts(ttsText)
 						tx(ttsAudio)
 					}
 					lastSpeakerState = currentSpeakerState

@@ -78,11 +78,6 @@ func radio() {
 		cleanup <- true
 	}()
 
-	notify()
-	ttsText := chatCompletion("Say Hello and introduce yourself.")
-	ttsAudio := tts(ttsText)
-	tx(ttsAudio)
-
 	lastSpeakerState := gpio.Low
 	debounceDuration := time.Millisecond * 100
 
@@ -102,7 +97,7 @@ func radio() {
 						fmt.Println("Data receiving ended")
 						notify()
 						ttsText := chatCompletion("Provide a question and answer from the HAM radio technician's manual.")
-						ttsAudio = tts(ttsText)
+						ttsAudio := tts(ttsText)
 						tx(ttsAudio)
 					}
 					lastSpeakerState = currentSpeakerState
@@ -111,6 +106,11 @@ func radio() {
 			}
 		}
 	}()
+
+	notify()
+	ttsText := chatCompletion("Say Hello and introduce yourself.")
+	ttsAudio := tts(ttsText)
+	tx(ttsAudio)
 
 	<-cleanup // Wait for cleanup signal before exiting normally
 }

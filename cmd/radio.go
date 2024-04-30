@@ -81,7 +81,7 @@ func radio() {
 	}()
 
 	lastSpeakerState := gpio.Low
-	debounceDuration := time.Millisecond * 30
+	debounceDuration := time.Millisecond * 90
 
 	go func() {
 		for {

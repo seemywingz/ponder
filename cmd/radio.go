@@ -95,7 +95,7 @@ func radio() {
 					if spk.Read() == gpio.High {
 						fmt.Println("Data received on speaker pin")
 					}
-					// time.Sleep(time.Millisecond * 100) // Adjust polling rate as necessary
+					time.Sleep(time.Millisecond * 300) // Adjust polling rate as necessary
 				}
 			}
 		}

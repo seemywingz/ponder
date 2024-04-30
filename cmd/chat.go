@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pterm/pterm"
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 )

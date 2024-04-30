@@ -10,7 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 	"periph.io/x/conn/v3/gpio"
 )

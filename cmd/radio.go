@@ -49,6 +49,13 @@ func tx(audio []byte) {
 	ptt.Off()
 }
 
+func notify() {
+	ptt.On()
+	time.Sleep(300 * time.Millisecond)
+	playMP3File(viper.GetString("radio_notificationSound"))
+	ptt.Off()
+}
+
 func radio() {
 
 	if pttPinNum >= 0 {
@@ -62,6 +69,7 @@ func radio() {
 		spk.SetInput()
 	}
 
+	notify()
 	ttsText := chatCompletion("Say Hello and introduce yourself.")
 	ttsAudio := tts(ttsText)
 	tx(ttsAudio)
@@ -92,10 +100,7 @@ func radio() {
 						fmt.Println("Data receiving started")
 					} else if currentSpeakerState == gpio.Low {
 						fmt.Println("Data receiving ended")
-						ptt.On()
-						time.Sleep(300 * time.Millisecond)
-						playMP3File(viper.GetString("radio_notificationSound"))
-						ptt.Off()
+						notify()
 						ttsText := chatCompletion("Provide a question and answer from the HAM radio technician's manual.")
 						ttsAudio = tts(ttsText)
 						tx(ttsAudio)

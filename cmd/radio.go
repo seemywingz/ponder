@@ -43,6 +43,8 @@ func init() {
 func tx(audio []byte) {
 
 	ptt.On()
+	// wait for the PTT to engage
+	time.Sleep(270 * time.Millisecond)
 	playAudio(audio)
 	ptt.Off()
 }

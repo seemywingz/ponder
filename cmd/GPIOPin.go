@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
@@ -36,8 +35,6 @@ func (p *GPIOPin) Set(level gpio.Level) {
 
 func (p *GPIOPin) On() {
 	p.Pin.Out(gpio.High)
-	// sleep for 300ms to ensure the PTT is fully engaged
-	time.Sleep(270 * time.Millisecond)
 }
 
 func (p *GPIOPin) Off() {
@@ -49,5 +46,5 @@ func (p *GPIOPin) Read() gpio.Level {
 }
 
 func (p *GPIOPin) SetInput() {
-	p.Pin.In(gpio.PullNoChange, gpio.NoEdge)
+	p.Pin.In(gpio.PullDown, gpio.NoEdge)
 }

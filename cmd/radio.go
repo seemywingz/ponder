@@ -62,16 +62,14 @@ func radio() {
 		spk.SetInput()
 	}
 
-	ponderMessages = append(ponderMessages, goai.Message{
-		Role:    "user",
-		Content: "Say Hello and introduce yourself. Share some radio knowledge.",
-	})
+	// ponderMessages = append(ponderMessages, goai.Message{
+	// 	Role:    "user",
+	// 	Content: "Say Hello and introduce yourself.",
+	// })
 
-	ttsText, err := ai.ChatCompletion(ponderMessages)
+	ttsText := chatCompletion("Say Hello and introduce yourself.")
+	ttsAudio, err := ai.TTS(ttsText)
 	catchErr(err, "warn")
-	ttsAudio, err := ai.TTS(ttsText.Choices[0].Message.Content)
-	catchErr(err, "warn")
-
 	tx(ttsAudio)
 
 	cleanup := make(chan bool)
@@ -84,7 +82,7 @@ func radio() {
 	}()
 
 	lastSpeakerState := gpio.Low
-	debounceDuration := time.Millisecond * 50
+	debounceDuration := time.Millisecond * 30
 
 	go func() {
 		for {
@@ -100,10 +98,14 @@ func radio() {
 						fmt.Println("Data receiving started")
 					} else if currentSpeakerState == gpio.Low {
 						fmt.Println("Data receiving ended")
+						ttsText := chatCompletion("Provide a question and answer from the HAM radio technician's manual.")
+						ttsAudio, err := ai.TTS(ttsText)
+						catchErr(err, "warn")
+						tx(ttsAudio)
 					}
 					lastSpeakerState = currentSpeakerState
 				}
-				time.Sleep(time.Millisecond * 10) // Adjust polling rate as necessary
+				time.Sleep(time.Millisecond * 10) // polling interval
 			}
 		}
 	}()

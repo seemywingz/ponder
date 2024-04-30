@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
@@ -47,4 +48,14 @@ func (p *GPIOPin) Read() gpio.Level {
 
 func (p *GPIOPin) SetInput() {
 	p.Pin.In(gpio.PullDown, gpio.NoEdge)
+}
+
+func (p *GPIOPin) debouncePin(delay time.Duration) (gpio.Level, bool) {
+	initialState := p.Read()
+	time.Sleep(delay)
+	currentState := p.Read()
+	if currentState == initialState {
+		return currentState, true // Return the state and true if stable
+	}
+	return gpio.Low, false // Return false if not stable
 }

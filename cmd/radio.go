@@ -44,7 +44,7 @@ func tx(audio []byte) {
 
 	ptt.On()
 	// wait for the PTT to engage
-	time.Sleep(270 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 	playAudio(audio)
 	ptt.Off()
 }
@@ -83,6 +83,9 @@ func radio() {
 		cleanup <- true
 	}()
 
+	lastSpeakerState := gpio.Low
+	debounceDuration := time.Millisecond * 50
+
 	go func() {
 		for {
 			select {
@@ -91,12 +94,16 @@ func radio() {
 				fmt.Println("Ponder Radio Exiting now.")
 				os.Exit(0)
 			default:
-				if spk != nil {
-					if spk.Read() == gpio.High {
-						fmt.Println("Data received on speaker pin")
+				currentSpeakerState, stable := spk.debouncePin(debounceDuration)
+				if stable && currentSpeakerState != lastSpeakerState {
+					if currentSpeakerState == gpio.High {
+						fmt.Println("Data receiving started")
+					} else if currentSpeakerState == gpio.Low {
+						fmt.Println("Data receiving ended")
 					}
-					time.Sleep(time.Millisecond * 300) // Adjust polling rate as necessary
+					lastSpeakerState = currentSpeakerState
 				}
+				time.Sleep(time.Millisecond * 10) // Adjust polling rate as necessary
 			}
 		}
 	}()

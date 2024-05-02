@@ -12,7 +12,25 @@ import (
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
+	"github.com/pterm/pterm"
 )
+
+var moonFrames = []string{"🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "}
+var spinnerConfig = pterm.DefaultSpinner
+var spinner *pterm.SpinnerPrinter
+
+func startSpinner(frames []string, delay time.Duration) *pterm.SpinnerPrinter {
+	spinnerConfig.Delay = delay | 100*time.Millisecond
+	spinnerConfig.ShowTimer = false
+	spinnerConfig.RemoveWhenDone = true
+	if frames != nil {
+		spinner, _ = spinnerConfig.WithSequence(frames...).Start()
+	} else {
+		spinner, _ = spinnerConfig.Start()
+	}
+	catchErr(err, "warn")
+	return spinner
+}
 
 func catchErr(err error, level ...string) {
 	if err != nil {

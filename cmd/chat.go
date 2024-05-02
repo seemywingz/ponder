@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	
+
 	"github.com/pterm/pterm"
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
@@ -29,7 +29,7 @@ var chatCmd = &cobra.Command{
 			for {
 				response, audio := chatResponse(prompt)
 				fmt.Println("\nPonder:\n  " + response + "\n")
-				if say {
+				if narrate {
 					playAudio(audio)
 				}
 				fmt.Print("You:\n  ")
@@ -39,7 +39,7 @@ var chatCmd = &cobra.Command{
 		} else {
 			response, audio := chatResponse(prompt)
 			fmt.Println(response)
-			if say {
+			if narrate {
 				playAudio(audio)
 			}
 		}
@@ -52,7 +52,7 @@ func chatResponse(prompt string) (string, []byte) {
 	spinner, _ := pterm.DefaultSpinner.Start("Pondering...")
 	spinner.RemoveWhenDone = true
 	response = chatCompletion(prompt)
-	if say {
+	if narrate {
 		audio = tts(response)
 	}
 	spinner.Stop()

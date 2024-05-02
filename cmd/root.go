@@ -20,7 +20,7 @@ var ai *goai.Client
 
 var verbose,
 	convo,
-	say bool
+	narrate bool
 
 var prompt,
 	configFile,
@@ -38,8 +38,10 @@ var rootCmd = &cobra.Command{
   Ponder uses OpenAI's API to generate text responses to user input.
   Or whatever else you can think of. 🤔
 	`,
+	Args: cobra.ExactArgs(1), // Expect exactly one argument
 	Run: func(cmd *cobra.Command, args []string) {
-		chatCmd.Run(cmd, args)
+		prompt := args[0]                  // Use the first positional argument as the prompt
+		chatCmd.Run(cmd, []string{prompt}) // Assuming chatCmd can handle this
 	},
 }
 
@@ -60,8 +62,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVarP(&prompt, "prompt", "p", "", "Prompt for AI generation")
-	rootCmd.PersistentFlags().BoolVarP(&say, "say", "s", false, "Say the response out loud using TTS")
+	rootCmd.PersistentFlags().BoolVarP(&narrate, "narrate", "n", false, "Narrate the response using TTS and the default audio output")
 	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, echo, fable, onyx, nova, and shimmer")
 
 	// Check for Required Environment Variables

@@ -95,12 +95,6 @@ func prettyPrint(message string) {
 	cyan := color.New(color.FgCyan)
 	yellow := color.New(color.FgYellow)
 
-	// Helper function to reset color for each segment
-	printWithColor := func(text string, col *color.Color) {
-		col.Print(text)
-		white.Print("") // Reset color to default after every colored print
-	}
-
 	for _, line := range lines {
 		if strings.HasPrefix(strings.TrimSpace(line), "```") {
 			if inCodeBlock {
@@ -128,25 +122,13 @@ func prettyPrint(message string) {
 			// Process and reset colors
 			processedLine := line
 			processedLine = backtickRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
-				return cyan.Sprint(match)
+				return cyan.Sprint(strings.Trim(match, "`"))
 			})
 			processedLine = doubleQuoteRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
 				return yellow.Sprint(match)
 			})
-
-			// Print the processed line, resetting color for each part
-			fmt.Print("    ") // Print indentation in default color
-			for _, part := range strings.Fields(processedLine) {
-				if strings.HasPrefix(part, "`") && strings.HasSuffix(part, "`") {
-					printWithColor(part, cyan)
-				} else if strings.HasPrefix(part, "\"") && strings.HasSuffix(part, "\"") {
-					printWithColor(part, yellow)
-				} else {
-					printWithColor(part, white)
-				}
-				fmt.Print(" ") // Print spaces between words in default color
-			}
-			fmt.Println() // End the line with a newline in default color
+			white.Printf("    %s\n", processedLine) // Print with white color
+			color.Unset()                           // Reset the color after printing each line
 		}
 	}
 

@@ -169,7 +169,7 @@ func totalMessageCharacters() int {
 
 func startAdventure() {
 
-	spinner, _ = moonSpinner.Start()
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	narratorSay("Please type your name.")
 	fmt.Print("🗡️  Your Name: ")
 	playerName, err := getUserInput()
@@ -188,12 +188,12 @@ func startAdventure() {
 		Hunger:      0,
 	}
 
-	spinner, _ = moonSpinner.Start()
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	narratorSay("Welcome " + player.Name + ", to the world of adventure! Describe your character, be as detailed as you like.")
 	playerDescription := getPlayerInput(&player)
 	player.Description = playerDescription
 
-	spinner, _ = moonSpinner.Start()
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	playerString, err := json.Marshal(player)
 	catchErr(err)
 
@@ -217,7 +217,7 @@ func startAdventure() {
 		}
 
 		playerInput := getPlayerInput(&player)
-		spinner, _ = moonSpinner.Start()
+		spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 		adventureResponse := adventureChat(playerInput)
 		narratorSay(adventureResponse)
 		if generateImages {

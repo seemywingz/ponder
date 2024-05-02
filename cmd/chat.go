@@ -22,7 +22,9 @@ var chatCmd = &cobra.Command{
 	Use:   "chat",
 	Short: "Open ended chat with OpenAI",
 	Long:  ``,
+	Args:  cobra.ExactArgs(1), // Expect exactly one argument
 	Run: func(cmd *cobra.Command, args []string) {
+		prompt := args[0]
 		var err error
 		if convo {
 			for {

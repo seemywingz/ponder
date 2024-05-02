@@ -7,6 +7,7 @@ import (
 	"os"
 	"regexp"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/faiface/beep"
@@ -16,21 +17,7 @@ import (
 )
 
 var spinner *pterm.SpinnerPrinter
-var moonSpinner = &pterm.SpinnerPrinter{
-	Sequence:            []string{"🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "},
-	Style:               &pterm.ThemeDefault.SpinnerStyle,
-	Delay:               time.Millisecond * 200,
-	ShowTimer:           false,
-	TimerRoundingFactor: time.Second,
-	TimerStyle:          &pterm.ThemeDefault.TimerStyle,
-	MessageStyle:        &pterm.ThemeDefault.SpinnerTextStyle,
-	InfoPrinter:         &pterm.Info,
-	SuccessPrinter:      &pterm.Success,
-	FailPrinter:         &pterm.Error,
-	WarningPrinter:      &pterm.Warning,
-	RemoveWhenDone:      true,
-}
-
+var moonSequence = []string{"🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "}
 var ponderSpinner = &pterm.SpinnerPrinter{
 	Sequence:            []string{"▀ ", " ▀", " ▄", "▄ "},
 	Style:               &pterm.ThemeDefault.SpinnerStyle,
@@ -45,6 +32,39 @@ var ponderSpinner = &pterm.SpinnerPrinter{
 	WarningPrinter:      &pterm.Warning,
 	RemoveWhenDone:      true,
 	Text:                "Pondering...",
+}
+
+func expanding(emoji string, maxRadius int) []string {
+	totalLength := maxRadius*2 - 1          // Total fixed length for each line
+	sequence := make([]string, maxRadius*2) // Frames for expanding and contracting
+
+	// Generate expanding sequence
+	for i := 0; i < maxRadius; i++ {
+		spacesBefore := strings.Repeat(" ", maxRadius-i-1)
+		numEmojis := i + 1
+		emojis := strings.Repeat(emoji+" ", numEmojis)
+		spacesAfterCount := totalLength - len(spacesBefore) - len(emojis)
+		if spacesAfterCount < 0 {
+			spacesAfterCount = 0 // Ensure spacesAfterCount is never negative
+		}
+		spacesAfter := strings.Repeat(" ", spacesAfterCount)
+		sequence[i] = spacesBefore + emojis + spacesAfter
+	}
+
+	// Generate contracting sequence
+	for i := 0; i < maxRadius; i++ {
+		spacesBefore := strings.Repeat(" ", i+1)
+		numEmojis := maxRadius - i
+		emojis := strings.Repeat(emoji+" ", numEmojis)
+		spacesAfterCount := totalLength - len(spacesBefore) - len(emojis)
+		if spacesAfterCount < 0 {
+			spacesAfterCount = 0 // Prevent negative space count
+		}
+		spacesAfter := strings.Repeat(" ", spacesAfterCount)
+		sequence[maxRadius+i] = spacesBefore + emojis + spacesAfter
+	}
+
+	return sequence
 }
 
 func catchErr(err error, level ...string) {

@@ -103,9 +103,9 @@ func viperConfig() {
 
 	viper.SetConfigName("config")        // name of config file (without extension)
 	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension
-	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
-	viper.AddConfigPath("./files")       // look for config in the working directory /files
 	viper.AddConfigPath(".")             // look for config in the working directory
+	viper.AddConfigPath("./files")       // look for config in the working directory /files
+	viper.AddConfigPath("$HOME/.ponder") // call multiple times to add many search paths
 
 	if configFile != "" {
 		viper.SetConfigFile(configFile)

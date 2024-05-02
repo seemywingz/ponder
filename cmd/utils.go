@@ -95,6 +95,8 @@ func prettyPrint(message string) {
 	cyan := color.New(color.FgCyan)
 	yellow := color.New(color.FgYellow)
 
+	white.Println("")
+
 	for _, line := range lines {
 		if strings.HasPrefix(strings.TrimSpace(line), "```") {
 			if inCodeBlock {

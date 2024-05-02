@@ -91,6 +91,9 @@ func prettyPrint(message string) {
 	backtickRegex := regexp.MustCompile("`([^`]*)`")
 	doubleQuoteRegex := regexp.MustCompile(`"([^"]*)"`)
 
+	// Define a default color for regular text
+	defaultColor := color.New(color.FgHiWhite)
+
 	for _, line := range lines {
 		trimmedLine := strings.TrimSpace(line)
 		if strings.HasPrefix(trimmedLine, "```") {
@@ -116,20 +119,20 @@ func prettyPrint(message string) {
 		} else if inCodeBlock {
 			codeBuffer.WriteString(line + "\n") // Collect code lines
 		} else {
-			// Handle inline code
+			// Process inline code and double-quoted text
 			highlightedLine := backtickRegex.ReplaceAllStringFunc(line, func(match string) string {
 				code := match[1 : len(match)-1] // Remove backticks
 				highlighted := color.New(color.FgCyan).Sprint(code)
-				return highlighted
+				return "`" + highlighted + "`"
 			})
-			// Handle double-quoted text
 			highlightedLine = doubleQuoteRegex.ReplaceAllStringFunc(highlightedLine, func(match string) string {
 				quote := match[1 : len(match)-1] // Remove quotes
 				highlighted := color.New(color.FgYellow).Sprint(quote)
 				return "\"" + highlighted + "\""
 			})
-			// Print regular lines with indentation
-			color.New(color.FgHiWhite).Println("    " + highlightedLine)
+
+			// Print the line with the default color re-applied to each part
+			defaultColor.Printf("    %s\n", highlightedLine)
 		}
 	}
 

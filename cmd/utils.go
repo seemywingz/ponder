@@ -78,7 +78,6 @@ func prettyPrint(message string) {
 	var inCodeBlock bool
 	var currentLexer chroma.Lexer
 
-	// Define the output style for the code blocks
 	style := styles.Get("monokai")
 	if style == nil {
 		style = styles.Fallback
@@ -87,6 +86,10 @@ func prettyPrint(message string) {
 	if formatter == nil {
 		formatter = formatters.Fallback
 	}
+
+	// Regex to find inline code and double-quoted text
+	backtickRegex := regexp.MustCompile("`([^`]*)`")
+	doubleQuoteRegex := regexp.MustCompile(`"([^"]*)"`)
 
 	for _, line := range lines {
 		trimmedLine := strings.TrimSpace(line)
@@ -101,7 +104,7 @@ func prettyPrint(message string) {
 				codeBuffer.Reset()
 				inCodeBlock = false
 			} else {
-				// Starting a code block, determine the language
+				// Starting a code block
 				inCodeBlock = true
 				lang := strings.TrimPrefix(trimmedLine, "```")
 				currentLexer = lexers.Get(lang)
@@ -113,8 +116,20 @@ func prettyPrint(message string) {
 		} else if inCodeBlock {
 			codeBuffer.WriteString(line + "\n") // Collect code lines
 		} else {
+			// Handle inline code
+			highlightedLine := backtickRegex.ReplaceAllStringFunc(line, func(match string) string {
+				code := match[1 : len(match)-1] // Remove backticks
+				highlighted := color.New(color.FgCyan).Sprint(code)
+				return highlighted
+			})
+			// Handle double-quoted text
+			highlightedLine = doubleQuoteRegex.ReplaceAllStringFunc(highlightedLine, func(match string) string {
+				quote := match[1 : len(match)-1] // Remove quotes
+				highlighted := color.New(color.FgYellow).Sprint(quote)
+				return "\"" + highlighted + "\""
+			})
 			// Print regular lines with indentation
-			color.New(color.FgHiWhite).Println("    " + line)
+			color.New(color.FgHiWhite).Println("    " + highlightedLine)
 		}
 	}
 

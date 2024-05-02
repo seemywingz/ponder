@@ -38,10 +38,24 @@ var rootCmd = &cobra.Command{
   Ponder uses OpenAI's API to generate text responses to user input.
   Or whatever else you can think of. 🤔
 	`,
-	Args: cobra.ExactArgs(1), // Expect exactly one argument
+	Args: func(cmd *cobra.Command, args []string) error {
+		if convo && len(args) == 0 {
+			// When --convo is used, no args are required
+			return nil
+		}
+		// Otherwise, exactly one arg must be provided
+		if len(args) != 1 {
+			return fmt.Errorf("Prompt Required")
+		}
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		prompt := args[0]                  // Use the first positional argument as the prompt
-		chatCmd.Run(cmd, []string{prompt}) // Assuming chatCmd can handle this
+		var prompt string
+		if len(args) > 0 {
+			prompt = args[0] // Use the first positional argument as the prompt
+		}
+		// Assuming chatCmd can handle this
+		chatCmd.Run(cmd, []string{prompt})
 	},
 }
 
@@ -60,7 +74,7 @@ func init() {
 
 	rootCmd.MarkFlagRequired("prompt")
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
-	rootCmd.Flags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
+	rootCmd.PersistentFlags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&narrate, "narrate", "n", false, "Narrate the response using TTS and the default audio output")
 	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, echo, fable, onyx, nova, and shimmer")

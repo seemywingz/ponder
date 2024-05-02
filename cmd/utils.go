@@ -17,7 +17,6 @@ import (
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
-	"github.com/fatih/color"
 	"github.com/pterm/pterm"
 )
 
@@ -90,12 +89,9 @@ func prettyPrint(message string) {
 	// Regex to find inline code and double-quoted text
 	backtickRegex := regexp.MustCompile("`([^`]*)`")
 	doubleQuoteRegex := regexp.MustCompile(`"([^"]*)"`)
-
-	white := color.New(color.FgHiWhite)
-	cyan := color.New(color.FgCyan)
-	yellow := color.New(color.FgYellow)
-
-	white.Println("")
+	cyan := "\033[36m"   // Cyan color ANSI escape code
+	yellow := "\033[33m" // Yellow color ANSI escape code
+	reset := "\033[0m"   // Reset ANSI escape code
 
 	for _, line := range lines {
 		if strings.HasPrefix(strings.TrimSpace(line), "```") {
@@ -121,16 +117,15 @@ func prettyPrint(message string) {
 		} else if inCodeBlock {
 			codeBuffer.WriteString(line + "\n") // Collect code lines
 		} else {
-			// Process and reset colors
+			// Process and set colors
 			processedLine := line
 			processedLine = backtickRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
-				return cyan.Sprint(strings.Trim(match, "`"))
+				return cyan + strings.Trim(match, "`") + reset
 			})
 			processedLine = doubleQuoteRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
-				return yellow.Sprint(match)
+				return yellow + match + reset
 			})
-			white.Printf("    %s\n", processedLine) // Print with white color
-			color.Unset()                           // Reset the color after printing each line
+			fmt.Println("    " + processedLine) // Print with white color
 		}
 	}
 

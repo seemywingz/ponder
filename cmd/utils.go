@@ -15,21 +15,36 @@ import (
 	"github.com/pterm/pterm"
 )
 
-var moonFrames = []string{"🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "}
-var spinnerConfig = pterm.DefaultSpinner
 var spinner *pterm.SpinnerPrinter
+var moonSpinner = &pterm.SpinnerPrinter{
+	Sequence:            []string{"🌑 ", "🌒 ", "🌓 ", "🌔 ", "🌕 ", "🌖 ", "🌗 ", "🌘 "},
+	Style:               &pterm.ThemeDefault.SpinnerStyle,
+	Delay:               time.Millisecond * 200,
+	ShowTimer:           false,
+	TimerRoundingFactor: time.Second,
+	TimerStyle:          &pterm.ThemeDefault.TimerStyle,
+	MessageStyle:        &pterm.ThemeDefault.SpinnerTextStyle,
+	InfoPrinter:         &pterm.Info,
+	SuccessPrinter:      &pterm.Success,
+	FailPrinter:         &pterm.Error,
+	WarningPrinter:      &pterm.Warning,
+	RemoveWhenDone:      true,
+}
 
-func startSpinner(frames []string, delay time.Duration) *pterm.SpinnerPrinter {
-	spinnerConfig.Delay = delay | 100*time.Millisecond
-	spinnerConfig.ShowTimer = false
-	spinnerConfig.RemoveWhenDone = true
-	if frames != nil {
-		spinner, _ = spinnerConfig.WithSequence(frames...).Start()
-	} else {
-		spinner, _ = spinnerConfig.Start()
-	}
-	catchErr(err, "warn")
-	return spinner
+var ponderSpinner = &pterm.SpinnerPrinter{
+	Sequence:            []string{"▀ ", " ▀", " ▄", "▄ "},
+	Style:               &pterm.ThemeDefault.SpinnerStyle,
+	Delay:               time.Millisecond * 200,
+	ShowTimer:           false,
+	TimerRoundingFactor: time.Second,
+	TimerStyle:          &pterm.ThemeDefault.TimerStyle,
+	MessageStyle:        &pterm.ThemeDefault.SpinnerTextStyle,
+	InfoPrinter:         &pterm.Info,
+	SuccessPrinter:      &pterm.Success,
+	FailPrinter:         &pterm.Error,
+	WarningPrinter:      &pterm.Warning,
+	RemoveWhenDone:      true,
+	Text:                "Pondering...",
 }
 
 func catchErr(err error, level ...string) {

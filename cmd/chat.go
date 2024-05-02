@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pterm/pterm"
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 )
@@ -49,8 +48,7 @@ var chatCmd = &cobra.Command{
 func chatResponse(prompt string) (string, []byte) {
 	var audio []byte
 	var response string
-	spinner, _ := pterm.DefaultSpinner.Start("Pondering...")
-	spinner.RemoveWhenDone = true
+	spinner, _ = ponderSpinner.Start()
 	response = chatCompletion(prompt)
 	if narrate {
 		audio = tts(response)

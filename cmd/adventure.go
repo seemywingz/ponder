@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
@@ -170,7 +169,7 @@ func totalMessageCharacters() int {
 
 func startAdventure() {
 
-	startSpinner(moonFrames, 100*time.Millisecond)
+	spinner, _ = moonSpinner.Start()
 	narratorSay("Please type your name.")
 	fmt.Print("🗡️  Your Name: ")
 	playerName, err := getUserInput()
@@ -189,12 +188,12 @@ func startAdventure() {
 		Hunger:      0,
 	}
 
-	startSpinner(moonFrames, 100*time.Millisecond)
+	spinner, _ = moonSpinner.Start()
 	narratorSay("Welcome " + player.Name + ", to the world of adventure! Describe your character, be as detailed as you like.")
 	playerDescription := getPlayerInput(&player)
 	player.Description = playerDescription
 
-	startSpinner(moonFrames, 100*time.Millisecond)
+	spinner, _ = moonSpinner.Start()
 	playerString, err := json.Marshal(player)
 	catchErr(err)
 
@@ -218,6 +217,7 @@ func startAdventure() {
 		}
 
 		playerInput := getPlayerInput(&player)
+		spinner, _ = moonSpinner.Start()
 		adventureResponse := adventureChat(playerInput)
 		narratorSay(adventureResponse)
 		if generateImages {

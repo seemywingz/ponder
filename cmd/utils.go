@@ -10,9 +10,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alecthomas/chroma"
+	"github.com/alecthomas/chroma/formatters"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
+	"github.com/fatih/color"
 	"github.com/pterm/pterm"
 )
 
@@ -65,6 +70,62 @@ func expanding(emoji string, maxRadius int) []string {
 	}
 
 	return sequence
+}
+
+func prettyPrint(message string) {
+	lines := strings.Split(message, "\n")
+	var codeBuffer bytes.Buffer
+	var inCodeBlock bool
+	var currentLexer chroma.Lexer
+
+	// Define the output style for the code blocks
+	style := styles.Get("monokai")
+	if style == nil {
+		style = styles.Fallback
+	}
+	formatter := formatters.Get("terminal256")
+	if formatter == nil {
+		formatter = formatters.Fallback
+	}
+
+	for _, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmedLine, "```") {
+			if inCodeBlock {
+				// Ending a code block, apply syntax highlighting
+				iterator, err := currentLexer.Tokenise(nil, codeBuffer.String())
+				if err == nil {
+					formatter.Format(os.Stdout, style, iterator)
+				}
+				fmt.Println() // Ensure there's a newline after the code block
+				codeBuffer.Reset()
+				inCodeBlock = false
+			} else {
+				// Starting a code block, determine the language
+				inCodeBlock = true
+				lang := strings.TrimPrefix(trimmedLine, "```")
+				currentLexer = lexers.Get(lang)
+				if currentLexer == nil {
+					currentLexer = lexers.Fallback
+				}
+				continue // Skip the line with opening backticks
+			}
+		} else if inCodeBlock {
+			codeBuffer.WriteString(line + "\n") // Collect code lines
+		} else {
+			// Print regular lines with indentation
+			color.New(color.FgHiWhite).Println("    " + line)
+		}
+	}
+
+	// Flush the remaining content if still in a code block
+	if inCodeBlock {
+		iterator, err := currentLexer.Tokenise(nil, codeBuffer.String())
+		if err == nil {
+			formatter.Format(os.Stdout, style, iterator)
+		}
+		fmt.Println() // Ensure there's a newline after the code block
+	}
 }
 
 func catchErr(err error, level ...string) {

@@ -29,17 +29,19 @@ var chatCmd = &cobra.Command{
 		if convo {
 			for {
 				response, audio := chatResponse(prompt)
-				fmt.Println("\nPonder:\n  " + response + "\n")
+				fmt.Println("\nPonder:")
+				prettyPrint(response)
 				if narrate {
 					playAudio(audio)
 				}
-				fmt.Print("You:\n  ")
+				fmt.Print("\nYou:\n  ")
 				prompt, err = getUserInput()
 				catchErr(err, "warn")
 			}
 		} else {
 			response, audio := chatResponse(prompt)
-			fmt.Println(response)
+			// fmt.Println(response)
+			prettyPrint(response)
 			if narrate {
 				playAudio(audio)
 			}

@@ -40,7 +40,6 @@ var chatCmd = &cobra.Command{
 			}
 		} else {
 			response, audio := chatResponse(prompt)
-			fmt.Println(response)
 			prettyPrint(response)
 			if narrate {
 				playAudio(audio)

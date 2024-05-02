@@ -91,12 +91,18 @@ func prettyPrint(message string) {
 	backtickRegex := regexp.MustCompile("`([^`]*)`")
 	doubleQuoteRegex := regexp.MustCompile(`"([^"]*)"`)
 
-	// Define a default color for regular text
-	defaultColor := color.New(color.FgHiWhite)
+	white := color.New(color.FgHiWhite)
+	cyan := color.New(color.FgCyan)
+	yellow := color.New(color.FgYellow)
+
+	// Helper function to reset color for each segment
+	printWithColor := func(text string, col *color.Color) {
+		col.Print(text)
+		white.Print("") // Reset color to default after every colored print
+	}
 
 	for _, line := range lines {
-		trimmedLine := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmedLine, "```") {
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
 			if inCodeBlock {
 				// Ending a code block, apply syntax highlighting
 				iterator, err := currentLexer.Tokenise(nil, codeBuffer.String())
@@ -109,7 +115,7 @@ func prettyPrint(message string) {
 			} else {
 				// Starting a code block
 				inCodeBlock = true
-				lang := strings.TrimPrefix(trimmedLine, "```")
+				lang := strings.TrimPrefix(strings.TrimSpace(line), "```")
 				currentLexer = lexers.Get(lang)
 				if currentLexer == nil {
 					currentLexer = lexers.Fallback
@@ -119,20 +125,28 @@ func prettyPrint(message string) {
 		} else if inCodeBlock {
 			codeBuffer.WriteString(line + "\n") // Collect code lines
 		} else {
-			// Process inline code and double-quoted text
-			highlightedLine := backtickRegex.ReplaceAllStringFunc(line, func(match string) string {
-				code := match[1 : len(match)-1] // Remove backticks
-				highlighted := color.New(color.FgCyan).Sprint(code)
-				return "`" + highlighted + "`"
+			// Process and reset colors
+			processedLine := line
+			processedLine = backtickRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
+				return cyan.Sprint(match)
 			})
-			highlightedLine = doubleQuoteRegex.ReplaceAllStringFunc(highlightedLine, func(match string) string {
-				quote := match[1 : len(match)-1] // Remove quotes
-				highlighted := color.New(color.FgYellow).Sprint(quote)
-				return "\"" + highlighted + "\""
+			processedLine = doubleQuoteRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
+				return yellow.Sprint(match)
 			})
 
-			// Print the line with the default color re-applied to each part
-			defaultColor.Printf("    %s\n", highlightedLine)
+			// Print the processed line, resetting color for each part
+			fmt.Print("    ") // Print indentation in default color
+			for _, part := range strings.Fields(processedLine) {
+				if strings.HasPrefix(part, "`") && strings.HasSuffix(part, "`") {
+					printWithColor(part, cyan)
+				} else if strings.HasPrefix(part, "\"") && strings.HasSuffix(part, "\"") {
+					printWithColor(part, yellow)
+				} else {
+					printWithColor(part, white)
+				}
+				fmt.Print(" ") // Print spaces between words in default color
+			}
+			fmt.Println() // End the line with a newline in default color
 		}
 	}
 

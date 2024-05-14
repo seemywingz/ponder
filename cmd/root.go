@@ -24,7 +24,9 @@ var verbose,
 
 var prompt,
 	configFile,
-	OPENAI_API_KEY string
+	OPENAI_API_KEY,
+	DISCORD_API_KEY,
+	PRINTIFY_API_KEY string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -84,6 +86,16 @@ func init() {
 	if OPENAI_API_KEY == "" && verbose {
 		fmt.Println("⚠️ OPENAI_API_KEY environment variable is not set, continuing without OpenAI API Key")
 	}
+
+	DISCORD_API_KEY = os.Getenv("DISCORD_API_KEY")
+	if DISCORD_API_KEY == "" && verbose {
+		fmt.Println("⚠️ DISCORD_API_KEY environment variable is not set, continuing without Discord API Key")
+	}
+
+	PRINTIFY_API_KEY = os.Getenv("PRINTIFY_API_KEY")
+	if PRINTIFY_API_KEY == "" && verbose {
+		fmt.Println("⚠️ PRINTIFY_API_KEY environment variable is not set, continuing without Printify API Key")
+	}
 }
 
 func viperConfig() {
@@ -114,6 +126,8 @@ func viperConfig() {
 	viper.SetDefault("openAI_maxTokens", "999")
 
 	viper.SetDefault("radio_notificationSound", "~/.ponder/audio/notify.mp3")
+
+	viper.SetDefault("printify_endpoint", "https://api.printify.com/v1/")
 
 	viper.SetConfigName("config")        // name of config file (without extension)
 	viper.SetConfigType("yaml")          // REQUIRED the config file does not have an extension

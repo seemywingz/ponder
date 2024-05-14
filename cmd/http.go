@@ -1,13 +1,69 @@
 package cmd
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"time"
 )
+
+// Create HTTP Client
+var httpClient = &http.Client{
+	Timeout: time.Second * 60,
+}
+
+func httpMakeRequest(request *http.Request, responseJson interface{}) {
+
+	// Make the HTTP Request
+	resp, err := httpClient.Do(request)
+	catchErr(err)
+
+	// Read the JSON Response Body
+	jsonString, err := io.ReadAll(resp.Body)
+	catchErr(err)
+
+	// Check for HTTP Errors
+	httpCatchErr(resp, jsonString)
+	if verbose {
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("🌐 HTTP Response", b)
+	}
+
+	// Unmarshal the JSON Response Body into provided responseJson
+	err = json.Unmarshal([]byte(jsonString), &responseJson)
+	catchErr(err)
+	if verbose {
+		trace()
+		fmt.Println("🌐 HTTP Response String", string(jsonString))
+		fmt.Println("🌐 HTTP Response JSON", responseJson)
+	}
+	// Close the HTTP Response Body
+	defer resp.Body.Close()
+}
+
+func httpCatchErr(resp *http.Response, jsonString []byte) {
+	// Check for HTTP Response Errors
+	if resp.StatusCode != 200 {
+		catchErr(errors.New("API Error: " + strconv.Itoa(resp.StatusCode) + "\n" + string(jsonString)))
+	}
+}
+
+// func httpDumpRequest(r *http.Request) {
+// 	// Dump the HTTP Request
+// 	dump, err := httputil.DumpRequest(r, true)
+// 	catchErr(err)
+// 	fmt.Println("🌐 HTTP Request", string(dump))
+// }
 
 // download file from url and save to local directory
 func httpDownloadFile(url string, filePath string) string {

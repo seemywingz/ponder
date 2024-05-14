@@ -141,6 +141,20 @@ func syntaxHighlight(message string) {
 	}
 }
 
+func fileNameFromURL(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	catchErr(err)
+	// Get the last path component of the URL
+	filename := filepath.Base(u.Path)
+	// Replace any characters that are not letters, numbers, or underscores with dashes
+	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
+	// Limit the filename to 255 characters
+	if len(filename) >= 255 {
+		filename = filename[:255]
+	}
+	return filename
+}
+
 func catchErr(err error, level ...string) {
 	if err != nil {
 		// Default level is "warn" if none is provided
@@ -162,20 +176,6 @@ func catchErr(err error, level ...string) {
 func formatPrompt(prompt string) string {
 	// Replace any characters that are not letters, numbers, or underscores with dashes
 	return regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(prompt, "-")
-}
-
-func fileNameFromURL(urlStr string) string {
-	u, err := url.Parse(urlStr)
-	catchErr(err)
-	// Get the last path component of the URL
-	filename := filepath.Base(u.Path)
-	// Replace any characters that are not letters, numbers, or underscores with dashes
-	filename = regexp.MustCompile(`[^a-zA-Z0-9_]+`).ReplaceAllString(filename, "-")
-	// Limit the filename to 255 characters
-	if len(filename) >= 255 {
-		filename = filename[:255]
-	}
-	return filename
 }
 
 func trace() {

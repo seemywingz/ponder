@@ -40,3 +40,5 @@ discord_bot_systemMessage: |
   Please be respectful and courteous when interacting with Ponder. 
   Ponder will not tolerate any form of harassment, bullying, or discrimination. 
   If you have any questions or concerns, please let us know. Thank you for using Ponder!
+
+printify_endpoint: "https://api.printify.com/v1"

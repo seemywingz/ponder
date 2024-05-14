@@ -30,7 +30,7 @@ var chatCmd = &cobra.Command{
 			for {
 				response, audio := chatResponse(prompt)
 				fmt.Println("\nPonder:")
-				prettyPrint(response)
+				syntaxHighlight(response)
 				if narrate {
 					playAudio(audio)
 				}
@@ -40,7 +40,7 @@ var chatCmd = &cobra.Command{
 			}
 		} else {
 			response, audio := chatResponse(prompt)
-			prettyPrint(response)
+			syntaxHighlight(response)
 			if narrate {
 				playAudio(audio)
 			}

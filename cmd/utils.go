@@ -71,7 +71,7 @@ func expanding(emoji string, maxRadius int) []string {
 	return sequence
 }
 
-func prettyPrint(message string) {
+func syntaxHighlight(message string) {
 	lines := strings.Split(message, "\n")
 	var codeBuffer bytes.Buffer
 	var inCodeBlock bool

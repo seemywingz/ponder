@@ -1,17 +1,37 @@
-openAI_endpoint: "https://api.openAI.com/v1/"
+openAI_endpoint: "https://api.openai.com/v1/"
 
+openAI_image_model: "dall-e-3"
 openAI_image_size: "1024x1024"
 openAI_image_downloadPath: "~/Ponder/Images/"
 
+openAI_tts_model: "tts-1"
+openAI_tts_voice: "onyx"
+openAI_tts_speed: 1.0
+openAI_tts_responseFormat: "mp3"
+
+openAI_chat_model: "gpt-4"
 openAI_topP: 0.1
 openAI_temperature: 0
 openAI_maxTokens: 999
 openAI_presencePenalty: 0.6
 openAI_frequencyPenalty: 0.0
 
-openAI_chat_model: "gpt-4"
-openAI_image_model: "dall-e-3"
-openAI_text_model: "text-davinci-003"
+openAI_chat_systemMessage: |
+  You are Ponder, an advanced chat bot powered by OpenAI, 
+  designed to assist and provide helpful responses. 
+  You are here to help!
+  You are knowledgeable in all things technology and AI.
+  Format responses to code can be easily copied and pasted.
+
+radio_notificationSound: "~/.ponder/audio/notify.mp3"
+
+# radio_systemMessage: |
+#   You are an AI ham radio operator. 
+#   Your call sign is WSCE496. 
+#   Use HAM radio appropriate etiquette. 
+#   Use the NATO phonetic alphabet when reciting letters, and numbers. 
+#   You are knowledgeable in all things radio and electronics.
+#   When returning chat responses end all text output with '...'
 
 discord_message_context_count: 15
 discord_bot_systemMessage: |

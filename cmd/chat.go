@@ -7,20 +7,11 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
 	"strings"
 
 	"github.com/seemywingz/goai"
 	"github.com/spf13/cobra"
 )
-
-var convo bool
-var sayText bool
-var ponderMessages = []goai.Message{{
-	Role:    "system",
-	Content: ponder_SystemMessage,
-}}
 
 func init() {
 	rootCmd.AddCommand(chatCmd)
@@ -31,18 +22,42 @@ var chatCmd = &cobra.Command{
 	Use:   "chat",
 	Short: "Open ended chat with OpenAI",
 	Long:  ``,
+	Args:  cobra.ExactArgs(1), // Expect exactly one argument
 	Run: func(cmd *cobra.Command, args []string) {
+		prompt := args[0]
+		var err error
 		if convo {
 			for {
-				fmt.Println("\nYou: ")
-				prompt, err := getUserInput()
-				catchErr(err)
-				fmt.Println("\nPonder:\n", chatCompletion(prompt))
+				response, audio := chatResponse(prompt)
+				fmt.Println("\nPonder:")
+				syntaxHighlight(response)
+				if narrate {
+					playAudio(audio)
+				}
+				fmt.Print("\nYou:\n  ")
+				prompt, err = getUserInput()
+				catchErr(err, "warn")
 			}
 		} else {
-			textCompletion(prompt)
+			response, audio := chatResponse(prompt)
+			syntaxHighlight(response)
+			if narrate {
+				playAudio(audio)
+			}
 		}
 	},
+}
+
+func chatResponse(prompt string) (string, []byte) {
+	var audio []byte
+	var response string
+	spinner, _ = ponderSpinner.Start()
+	response = chatCompletion(prompt)
+	if narrate {
+		audio = tts(response)
+	}
+	spinner.Stop()
+	return response, audio
 }
 
 func chatCompletion(prompt string) string {
@@ -52,48 +67,13 @@ func chatCompletion(prompt string) string {
 	})
 
 	// Send the messages to OpenAI
-	oaiResponse, err := ai.ChatCompletion(ponderMessages)
+	res, err := ai.ChatCompletion(ponderMessages)
 	catchErr(err)
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
-		Content: oaiResponse.Choices[0].Message.Content,
+		Content: res.Choices[0].Message.Content,
 	})
-	return oaiResponse.Choices[0].Message.Content
-}
-
-func textCompletion(prompt string) {
-
-	if perform {
-		prompt = command_SystemMessage + "\n here is the prompt:\n" + prompt
-	}
-
-	oaiResponse, err := ai.TextCompletion(prompt)
-	catchErr(err)
-
-	for _, v := range oaiResponse.Choices {
-		text := v.Text
-		if runtime.GOOS == "darwin" && sayText {
-			say(text)
-		}
-		fmt.Println(text[2:])
-	}
-
-	if perform {
-		command := strings.Split(oaiResponse.Choices[0].Text, " ")
-		// fmt.Println("Running command: ", strings.ReplaceAll(command[0], "\n", ""), command[1:])
-		cliCommand(strings.ReplaceAll(command[0], "\n", ""), command[1:]...)
-	}
-
-}
-
-func cliCommand(command string, args ...string) {
-	cli := exec.Command(command, args...)
-	output, err := cli.Output()
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(string(output))
-	}
+	return res.Choices[0].Message.Content
 }
 
 func getUserInput() (string, error) {
@@ -111,12 +91,4 @@ func getUserInput() (string, error) {
 		fmt.Println(input)
 	}
 	return input, nil
-}
-
-func say(phrase string) {
-	say := exec.Command(`say`, phrase)
-	err := say.Start()
-	if err != nil {
-		fmt.Println(err)
-	}
 }

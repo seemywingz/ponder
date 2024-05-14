@@ -143,14 +143,17 @@ func adventureImage(prompt string) {
 }
 
 func narratorSay(text string) {
-	fmt.Println("\n🗣️ : ", text)
-	if sayText {
-		say(text)
+	if narrate {
+		audioData := tts(text)
+		spinner.Stop()
+		fmt.Println("🗣️  Narrator: ", text)
+		playAudio(audioData)
 	}
+	spinner.Stop()
 }
 
 func getPlayerInput(player *Character) string {
-	fmt.Print("\n🗡️ " + player.Name + "🛡️ : ")
+	fmt.Print("\n🗡️  " + player.Name + "🛡️ : ")
 	playerInput, err := getUserInput()
 	catchErr(err)
 	return playerInput
@@ -165,7 +168,10 @@ func totalMessageCharacters() int {
 }
 
 func startAdventure() {
+
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	narratorSay("Please type your name.")
+	fmt.Print("🗡️  Your Name: ")
 	playerName, err := getUserInput()
 	catchErr(err)
 
@@ -182,10 +188,12 @@ func startAdventure() {
 		Hunger:      0,
 	}
 
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	narratorSay("Welcome " + player.Name + ", to the world of adventure! Describe your character, be as detailed as you like.")
 	playerDescription := getPlayerInput(&player)
 	player.Description = playerDescription
 
+	spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 	playerString, err := json.Marshal(player)
 	catchErr(err)
 
@@ -209,6 +217,7 @@ func startAdventure() {
 		}
 
 		playerInput := getPlayerInput(&player)
+		spinner, _ = ponderSpinner.WithSequence(moonSequence...).Start()
 		adventureResponse := adventureChat(playerInput)
 		narratorSay(adventureResponse)
 		if generateImages {

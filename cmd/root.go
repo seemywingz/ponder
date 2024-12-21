@@ -15,7 +15,7 @@ import (
 )
 
 var ponderMessages = []goai.Message{}
-var APP_VERSION = "v0.4.0"
+var APP_VERSION = "v0.4.1"
 var ai *goai.Client
 
 var verbose,

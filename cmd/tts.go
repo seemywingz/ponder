@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 
@@ -26,10 +25,11 @@ var ttsCmd = &cobra.Command{
 		return checkArgs(args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		audio := tts(prompt)
-		if audio != nil {
-			playAudio(audio)
-		}
+		tts(prompt)
+		// audio := tts(prompt)
+		// if audio != nil {
+		// 	playAudio(audio)
+		// }
 	},
 }
 
@@ -40,7 +40,6 @@ func init() {
 
 func tts(text string) []byte {
 	ai.Voice = voice
-	fmt.Println("Generating audio...", text)
 	audioData, err := ai.TTS(text)
 	catchErr(err, "fatal")
 	if audioFile != "" {

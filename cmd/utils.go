@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -16,9 +15,6 @@ import (
 	"github.com/alecthomas/chroma/formatters"
 	"github.com/alecthomas/chroma/lexers"
 	"github.com/alecthomas/chroma/styles"
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/mp3"
-	"github.com/faiface/beep/speaker"
 	"github.com/pterm/pterm"
 )
 
@@ -187,32 +183,32 @@ func trace() {
 }
 
 // playAudio plays audio from a byte slice.
-func playAudio(audioContent []byte) {
-	if verbose {
-		fmt.Println("🔊 Playing audio...")
-	}
+// func playAudio(audioContent []byte) {
+// 	if verbose {
+// 		fmt.Println("🔊 Playing audio...")
+// 	}
 
-	// Create an io.Reader from the byte slice
-	reader := bytes.NewReader(audioContent)
+// 	// Create an io.Reader from the byte slice
+// 	reader := bytes.NewReader(audioContent)
 
-	// Wrap the reader in a NopCloser to make it an io.ReadCloser.
-	readCloser := io.NopCloser(reader)
+// 	// Wrap the reader in a NopCloser to make it an io.ReadCloser.
+// 	readCloser := io.NopCloser(reader)
 
-	// Decode the MP3 stream.
-	streamer, format, err := mp3.Decode(readCloser)
-	catchErr(err)
-	defer streamer.Close()
+// 	// Decode the MP3 stream.
+// 	streamer, format, err := mp3.Decode(readCloser)
+// 	catchErr(err)
+// 	defer streamer.Close()
 
-	// Initialize the speaker with the sample rate of the audio and a buffer size.
-	err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	catchErr(err)
+// 	// Initialize the speaker with the sample rate of the audio and a buffer size.
+// 	err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+// 	catchErr(err)
 
-	// Play the decoded audio.
-	done := make(chan bool)
-	speaker.Play(beep.Seq(streamer, beep.Callback(func() {
-		done <- true
-	})))
+// 	// Play the decoded audio.
+// 	done := make(chan bool)
+// 	speaker.Play(beep.Seq(streamer, beep.Callback(func() {
+// 		done <- true
+// 	})))
 
-	// Wait for the audio to finish playing.
-	<-done
-}
+// 	// Wait for the audio to finish playing.
+// 	<-done
+// }

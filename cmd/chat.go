@@ -30,22 +30,24 @@ var chatCmd = &cobra.Command{
 		var err error
 		if convo {
 			for {
-				response, audio := chatResponse(prompt)
+				response, _ := chatResponse(prompt)
+				// response, audio := chatResponse(prompt)
 				fmt.Println("\nPonder:")
 				syntaxHighlight(response)
-				if narrate {
-					playAudio(audio)
-				}
+				// if narrate {
+				// 	playAudio(audio)
+				// }
 				fmt.Print("\nYou:\n  ")
 				prompt, err = getUserInput()
 				catchErr(err, "warn")
 			}
 		} else {
-			response, audio := chatResponse(prompt)
+			response, _ := chatResponse(prompt)
+			// response, audio := chatResponse(prompt)
 			syntaxHighlight(response)
-			if narrate {
-				playAudio(audio)
-			}
+			// if narrate {
+			// 	playAudio(audio)
+			// }
 		}
 	},
 }

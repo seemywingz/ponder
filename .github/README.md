@@ -23,8 +23,6 @@ OPENAI_API_KEY={YOUR OPENAI API KEY}
 DISCORD_API_KEY={YOUR DISCORD BOT API KEY}
 ```
 
-
-
 ## Ponder a single thought
 ### CLI
 ```bash
@@ -34,6 +32,10 @@ ponder "What is AI"
 #### Running ponder in docker is exactly the same, but you have to provide the env vars when running
 ```bash
 docker run -e OPENAI_API_KEY=$OPENAI_API_KEY  ghcr.io/seemywingz/ponder:latest "What is AI"
+```
+or
+```bash
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -e DISCORD_API_KEY=$DISCORD_API_KEY ghcr.io/seemywingz/ponder:latest discord-bot
 ```
 #### Example Output
 ```bash
@@ -71,7 +73,7 @@ ponder image "a ferocious cat with wings and fire"
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.4.0
+        App Version: v0.4.1
 
   Ponder uses OpenAI's API to generate text responses to user input.
   Or whatever else you can think of. 🤔

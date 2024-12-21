@@ -216,27 +216,3 @@ func playAudio(audioContent []byte) {
 	// Wait for the audio to finish playing.
 	<-done
 }
-
-func playMP3File(file string) {
-	if verbose {
-		fmt.Println("🔊 Playing audio file:", file)
-	}
-
-	f, err := os.Open(file)
-	catchErr(err)
-	defer f.Close()
-
-	streamer, format, err := mp3.Decode(f)
-	catchErr(err)
-	defer streamer.Close()
-
-	err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-	catchErr(err)
-
-	done := make(chan bool)
-	speaker.Play(beep.Seq(streamer, beep.Callback(func() {
-		done <- true
-	})))
-
-	<-done
-}

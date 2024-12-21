@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 
@@ -40,7 +39,6 @@ func init() {
 
 func tts(text string) []byte {
 	ai.Voice = voice
-	fmt.Println("Generating audio...", text)
 	audioData, err := ai.TTS(text)
 	catchErr(err, "fatal")
 	if audioFile != "" {

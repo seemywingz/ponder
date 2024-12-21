@@ -3,6 +3,7 @@ ENV APP_NAME=ponder
 ENV WORKDIR=/app
 WORKDIR $WORKDIR
 COPY . .
+RUN apk add --no-cache build-base pkgconfig alsa-lib-dev
 RUN go mod download
 RUN go build -o /$APP_NAME
 

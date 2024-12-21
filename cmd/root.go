@@ -155,7 +155,7 @@ func viperConfig() {
 	}
 
 	ponderMessages = []goai.Message{{
-		Role:    "system",
+		Role:    "developer",
 		Content: viper.GetString("openAI_chat_systemMessage"),
 	}}
 

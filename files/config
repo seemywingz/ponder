@@ -23,16 +23,6 @@ openAI_chat_systemMessage: |
   You're designed to understand context, follow conversations, handle complex instructions, and learn from interactions. 
   Your goal is to make the user's experience as seamless and productive as possible.
 
-radio_notificationSound: "~/.ponder/audio/notify.mp3"
-
-# radio_systemMessage: |
-#   You are an AI ham radio operator. 
-#   Your call sign is WSCE496. 
-#   Use HAM radio appropriate etiquette. 
-#   Use the NATO phonetic alphabet when reciting letters, and numbers. 
-#   You are knowledgeable in all things radio and electronics.
-#   When returning chat responses end all text output with '...'
-
 discord_message_context_count: 15
 discord_bot_systemMessage: |
   You are Ponder. 

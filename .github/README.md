@@ -71,7 +71,7 @@ ponder image "a ferocious cat with wings and fire"
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.4.0
+        App Version: v0.4.1
 
   Ponder uses OpenAI's API to generate text responses to user input.
   Or whatever else you can think of. 🤔

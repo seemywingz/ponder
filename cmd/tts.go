@@ -25,10 +25,11 @@ var ttsCmd = &cobra.Command{
 		return checkArgs(args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		audio := tts(prompt)
-		if audio != nil {
-			playAudio(audio)
-		}
+		tts(prompt)
+		// audio := tts(prompt)
+		// if audio != nil {
+		// 	playAudio(audio)
+		// }
 	},
 }
 

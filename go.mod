@@ -10,8 +10,6 @@ require (
 	github.com/seemywingz/goai v0.0.0-20240428060229-cce9aefb4824
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	periph.io/x/conn/v3 v3.7.1
-	periph.io/x/host/v3 v3.8.2
 )
 
 require (

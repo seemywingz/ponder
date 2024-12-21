@@ -153,6 +153,7 @@ func discordOpenAIResponse(s *discordgo.Session, m *discordgo.MessageCreate, men
 	}
 
 	// Send the messages to OpenAI
+	ai.User = "discord" + s.State.User.Username
 	oaiResponse, err := ai.ChatCompletion(openaiMessages)
 	catchErr(err)
 	s.ChannelMessageSend(m.ChannelID, oaiResponse.Choices[0].Message.Content)

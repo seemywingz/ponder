@@ -21,7 +21,6 @@ Visit your [API Keys](https://platform.openai.com/account/api-keys) page to retr
 ```bash
 OPENAI_API_KEY={YOUR OPENAI API KEY}
 DISCORD_API_KEY={YOUR DISCORD BOT API KEY}
-DISCORD_PUB_KEY={YOUR DISCORD BOT PUB KEY}
 ```
 
 

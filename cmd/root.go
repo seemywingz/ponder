@@ -15,7 +15,7 @@ import (
 )
 
 var ponderMessages = []goai.Message{}
-var APP_VERSION = "v0.1.0"
+var APP_VERSION = "v0.4.0"
 var ai *goai.Client
 
 var verbose,
@@ -41,15 +41,7 @@ var rootCmd = &cobra.Command{
   Or whatever else you can think of. 🤔
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if convo && len(args) == 0 {
-			// When --convo is used, no args are required
-			return nil
-		}
-		// Otherwise, exactly one arg must be provided
-		if len(args) != 1 {
-			return fmt.Errorf("Prompt Required")
-		}
-		return nil
+		return checkArgs(args)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		var prompt string
@@ -59,6 +51,19 @@ var rootCmd = &cobra.Command{
 		// Assuming chatCmd can handle this
 		chatCmd.Run(cmd, []string{prompt})
 	},
+}
+
+func checkArgs(args []string) error {
+	if convo && len(args) == 0 {
+		// When --convo is used, no args are required
+		return nil
+	}
+	// Otherwise, exactly one arg must be provided
+	if len(args) != 1 {
+		return fmt.Errorf("Prompt Required")
+	}
+	prompt = args[0]
+	return nil
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -78,8 +83,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.PersistentFlags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&narrate, "narrate", "n", false, "Narrate the response using TTS and the default audio output")
-	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, echo, fable, onyx, nova, and shimmer")
+	rootCmd.PersistentFlags().BoolVar(&narrate, "narrate", false, "Narrate the response using TTS and the default audio output")
+	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, ash, coral, echo, fable, onyx, nova, sage and shimmer")
 
 	// Check for Required Environment Variables
 	OPENAI_API_KEY = os.Getenv("OPENAI_API_KEY")
@@ -155,7 +160,7 @@ func viperConfig() {
 	}
 
 	ponderMessages = []goai.Message{{
-		Role:    "system",
+		Role:    "developer",
 		Content: viper.GetString("openAI_chat_systemMessage"),
 	}}
 

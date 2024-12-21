@@ -197,9 +197,6 @@ func discordScrapeImages(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if len(v.Attachments) > 0 {
 			url := v.Attachments[0].URL
 			s.ChannelMessageSend(savedImagesChannelID, url)
-			if strings.Contains(v.Content, "Upscaled") {
-				printify_UploadImage(fileNameFromURL(url), url)
-			}
 		}
 	}
 

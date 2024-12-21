@@ -163,11 +163,12 @@ func catchErr(err error, level ...string) {
 			lvl = level[0] // Use the provided level
 		}
 
+		fmt.Println("")
 		switch lvl {
 		case "warn":
-			fmt.Println("💔 Warning:", err)
+			fmt.Println("❗️", err)
 		case "fatal":
-			fmt.Println("💀 Fatal:", err)
+			fmt.Println("💀", err)
 			os.Exit(1)
 		}
 	}

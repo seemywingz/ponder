@@ -68,7 +68,7 @@ func chatCompletion(prompt string) string {
 
 	// Send the messages to OpenAI
 	res, err := ai.ChatCompletion(ponderMessages)
-	catchErr(err)
+	catchErr(err, "fatal")
 	ponderMessages = append(ponderMessages, goai.Message{
 		Role:    "assistant",
 		Content: res.Choices[0].Message.Content,

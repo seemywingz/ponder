@@ -95,49 +95,48 @@ func syntaxHighlight(message string) {
 	yellow := "\033[33m" // Yellow color ANSI escape code
 	reset := "\033[0m"   // Reset ANSI escape code
 
+	processLine := func(line string) string {
+		line = backtickRegex.ReplaceAllStringFunc(line, func(match string) string {
+			return cyan + strings.Trim(match, "`") + reset
+		})
+		line = doubleQuoteRegex.ReplaceAllStringFunc(line, func(match string) string {
+			return yellow + match + reset
+		})
+		return line
+	}
+
 	for _, line := range lines {
-		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+		trimmedLine := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmedLine, "```") {
 			if inCodeBlock {
-				// Ending a code block, apply syntax highlighting
 				iterator, err := currentLexer.Tokenise(nil, codeBuffer.String())
 				if err == nil {
 					formatter.Format(os.Stdout, style, iterator)
 				}
-				fmt.Println() // Ensure there's a newline after the code block
+				fmt.Println()
 				codeBuffer.Reset()
 				inCodeBlock = false
 			} else {
-				// Starting a code block
 				inCodeBlock = true
-				lang := strings.TrimPrefix(strings.TrimSpace(line), "```")
+				lang := strings.TrimPrefix(trimmedLine, "```")
 				currentLexer = lexers.Get(lang)
 				if currentLexer == nil {
 					currentLexer = lexers.Fallback
 				}
-				continue // Skip the line with opening backticks
 			}
 		} else if inCodeBlock {
-			codeBuffer.WriteString(line + "\n") // Collect code lines
+			codeBuffer.WriteString(line + "\n")
 		} else {
-			// Process and set colors
-			processedLine := line
-			processedLine = backtickRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
-				return cyan + strings.Trim(match, "`") + reset
-			})
-			processedLine = doubleQuoteRegex.ReplaceAllStringFunc(processedLine, func(match string) string {
-				return yellow + match + reset
-			})
-			fmt.Println("    " + processedLine) // Print with white color
+			fmt.Println("    " + processLine(line))
 		}
 	}
 
-	// Flush the remaining content if still in a code block
 	if inCodeBlock {
 		iterator, err := currentLexer.Tokenise(nil, codeBuffer.String())
 		if err == nil {
 			formatter.Format(os.Stdout, style, iterator)
 		}
-		fmt.Println() // Ensure there's a newline after the code block
+		fmt.Println()
 	}
 }
 

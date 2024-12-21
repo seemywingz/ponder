@@ -83,7 +83,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file")
 	rootCmd.PersistentFlags().BoolVarP(&convo, "convo", "c", false, "Conversational Style chat")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&narrate, "narrate", "n", false, "Narrate the response using TTS and the default audio output")
+	rootCmd.PersistentFlags().BoolVar(&narrate, "narrate", false, "Narrate the response using TTS and the default audio output")
 	rootCmd.PersistentFlags().StringVar(&voice, "voice", "onyx", "Voice to use: alloy, ash, coral, echo, fable, onyx, nova, sage and shimmer")
 
 	// Check for Required Environment Variables

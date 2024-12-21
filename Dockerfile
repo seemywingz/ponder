@@ -11,5 +11,6 @@ RUN go build -o /$APP_NAME
 FROM alpine:3.21.0
 ENV APP_NAME=ponder
 WORKDIR /
+RUN apk add --no-cache alsa-lib
 COPY --from=builder /$APP_NAME /$APP_NAME
 ENTRYPOINT ["/ponder"]

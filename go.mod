@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/pterm/pterm v0.12.80
-	github.com/seemywingz/goai v0.0.0-20240428060229-cce9aefb4824
+	github.com/seemywingz/goai v0.1.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 )

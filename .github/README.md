@@ -1,7 +1,7 @@
 Ponder
 -------
 ###### OpenAI Powered Chat Tool    
-[![main](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml/badge.svg?branch=main)](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml)
+[![main](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml/badge.svg?branch=v0.4.2)](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml)
 
 
 # Install
@@ -73,7 +73,7 @@ ponder image "a ferocious cat with wings and fire"
 
         Ponder
         GitHub: https://github.com/seemywingz/ponder
-        App Version: v0.4.1
+        App Version: v0.4.2
 
   Ponder uses OpenAI's API to generate text responses to user input.
   Or whatever else you can think of. 🤔

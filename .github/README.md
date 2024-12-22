@@ -1,7 +1,7 @@
 Ponder
 -------
 ###### OpenAI Powered Chat Tool    
-[![main](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml/badge.svg?branch=main)](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml)
+[![main](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml/badge.svg?branch=v0.4.2)](https://github.com/seemywingz/ponder/actions/workflows/dockerBuildX.yml)
 
 
 # Install
